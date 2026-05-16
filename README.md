@@ -4,3 +4,5 @@ Hệ thống Quản lý Phòng khám Nha khoa (Dental Clinic Management System) 
 [https://ezse.net/javaweb/install/sql.html](https://ezse.net/javaweb/install/cai-dat.html) //Link hướng dẫn cài môi trường và hướng dẫn kết nối nebeen và sql để có thể đẩy dữ liệu qua lại
 
 https://docs.google.com/document/d/1VBnGDa7wVKZrxGTidcdUxVMiHAKXYf_hhtsGvLIbNR0/edit?usp=sharing //Src về cấu trúc của dự án và mọi người vào phần plan và chọn đoạn mình sẽ triển khai đi nha
+
+https://app.eraser.io/workspace/h6ckwbxyD6EXwJK70JIv?origin=share //Link diagram của database
