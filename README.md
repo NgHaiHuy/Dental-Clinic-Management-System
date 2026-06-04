@@ -1,7 +1,7 @@
 # Dental Clinic Management System
 Hệ thống Quản lý Phòng khám Nha khoa (Dental Clinic Management System) là giải pháp chuyển đổi số toàn diện nhằm tối ưu hóa toàn bộ quy trình vận hành và nâng cao chất lượng dịch vụ y tế. Hệ thống tích hợp các tính năng thông minh từ đặt lịch hẹn tự động, quản lý hồ sơ bệnh án điện tử trực quan với sơ đồ răng tương tác, đến kiểm soát chặt chẽ kho vật tư và tự động hóa báo cáo tài chính. Bằng cách kết nối mượt mà dữ liệu giữa chủ phòng khám, nha sĩ và bệnh nhân, dự án không chỉ loại bỏ các sai sót từ quy trình quản lý thủ công truyền thống mà còn giúp tối giản hóa thủ tục hành chính. Đây là công cụ cốt lõi giúp các phòng khám nha khoa nâng cao hiệu suất làm việc của đội ngũ y bác sĩ, tối ưu chi phí vận hành và mang lại trải nghiệm chăm sóc răng miệng hiện đại, chuyên nghiệp cho khách hàng.
 
-### [https://ezse.net/javaweb/install/sql.html](https://ezse.net/javaweb/install/cai-dat.html) //Link hướng dẫn cài môi trường và hướng dẫn kết nối nebeen và sql để có thể đẩy dữ liệu qua lại
+### Link hướng dẫn cài môi trường và hướng dẫn kết nối nebeen và sql để có thể đẩy dữ liệu qua lại: [https://ezse.net/javaweb/install/sql.html](https://ezse.net/javaweb/install/cai-dat.html)
 
 ### Src về cấu trúc của dự án: https://docs.google.com/document/d/1VBnGDa7wVKZrxGTidcdUxVMiHAKXYf_hhtsGvLIbNR0/edit?usp=sharing
 
