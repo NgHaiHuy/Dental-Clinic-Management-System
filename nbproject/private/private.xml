@@ -2,6 +2,31 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/DBContext.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/admin/ManageServiceController.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/User.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/receptionist/CheckIn.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/auth/LoginController.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/receptionist/NewAppointment.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/AppointmentDAO.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/receptionist/Reception.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Service.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/web/receptionist/reception.jsp</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/web/receptionist/manage-booking.jsp</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Invoice.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/Test.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/web/receptionist/dashboard.jsp</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/MedicineDAO.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/controller/receptionist/CheckInController.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Prescription.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Medicine.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Appointment.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/InvoiceDAO.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/model/Role.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/src/java/dal/ServiceDAO.java</file>
+            <file>file:/D:/PRJ/Project/Dental-Clinic-Management-System/web/META-INF/context.xml</file>
+        </group>
     </open-files>
 </project-private>
