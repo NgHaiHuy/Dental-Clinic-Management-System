@@ -3,14 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Nguye
  */
-public class Appointment {
+public class Appointment implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int appointmentId;
     private int customerId;
@@ -19,6 +24,7 @@ public class Appointment {
     private Time appointmentTime;
     private String status;
     private String notes;
+    private List<Integer> serviceIds = new ArrayList<>();
 
     public Appointment() {
     }
@@ -98,5 +104,13 @@ public class Appointment {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public List<Integer> getServiceIds() {
+        return serviceIds;
+    }
+
+    public void setServiceIds(List<Integer> serviceIds) {
+        this.serviceIds = serviceIds == null ? new ArrayList<>() : new ArrayList<>(serviceIds);
     }
 }
