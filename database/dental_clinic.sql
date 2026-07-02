@@ -183,3 +183,43 @@ INSERT INTO Medicines (MedicineName, Unit, Price, StockQuantity, Status) VALUES
 (N'Ibuprofen 400mg', N'Viên', 3000, 300, 1),
 (N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1);
 GO
+
+-- 6. Thêm Appointments mẫu (Lịch hẹn khám)
+-- Note: UserID từ 6-25 tương ứng với customer01 đến customer20. 
+-- UserID 2 và 3 là doctor01 và doctor02.
+INSERT INTO Appointments (CustomerID, DoctorID, AppointmentDate, AppointmentTime, Status, Notes) VALUES
+(6, 2, '2026-07-01', '09:00:00', 'Attended', N'Khám định kỳ tẩy trắng răng'),
+(7, 3, '2026-07-02', '10:30:00', 'Attended', N'Đau nhức răng số 6'),
+(8, 2, '2026-07-02', '14:00:00', 'Pending', N'Đặt lịch tư vấn trám răng'),
+(9, 3, '2026-07-03', '15:30:00', 'Pending', N'Nhổ răng khôn'),
+(10, 2, '2026-07-01', '16:00:00', 'Attended', N'Khám răng sâu số 7');
+GO
+
+-- 7. Chi tiết dịch vụ hẹn trước (AppointmentServices)
+INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES
+(1, 2), -- Hẹn Tẩy trắng răng
+(2, 1), -- Hẹn làm Răng sứ Cercon
+(5, 3); -- Hẹn Trám răng Composite
+GO
+
+-- 8. Hồ sơ bệnh án / Kết quả khám (MedicalRecords)
+INSERT INTO MedicalRecords (AppointmentID, DoctorID, Diagnosis, TreatmentPlan) VALUES
+(1, 2, N'Răng ố vàng nhẹ do mảng bám thức ăn', N'Thực hiện tẩy trắng răng LumaCool tại phòng khám'),
+(2, 3, N'Răng sâu nặng hỏng tủy răng số 6', N'Điều trị tủy và bọc răng sứ Cercon bảo vệ răng'),
+(5, 2, N'Sâu men răng số 7', N'Trám thẩm mỹ bằng Composite răng số 7');
+GO
+
+-- 9. Đơn thuốc mẫu (Prescriptions)
+INSERT INTO Prescriptions (RecordID) VALUES
+(1), -- Đơn thuốc cho bệnh án 1 (thường chỉ khuyên dùng nước súc miệng)
+(2), -- Đơn thuốc cho bệnh án 2 (kháng sinh và giảm đau sau khi điều trị tủy)
+(3); -- Đơn thuốc cho bệnh án 3 (giảm đau sau trám răng)
+GO
+
+-- 10. Chi tiết đơn thuốc (PrescriptionDetails)
+INSERT INTO PrescriptionDetails (PrescriptionID, MedicineID, Quantity, Dosage) VALUES
+(1, 4, 1, N'Súc miệng 2 lần/ngày sau khi đánh răng'),
+(2, 1, 10, N'Uống 2 viên/ngày chia 2 lần sau ăn sáng/tối'),
+(2, 2, 10, N'Uống 1 viên khi đau nhức nhiều, cách nhau ít nhất 6 tiếng'),
+(3, 3, 5, N'Uống 1 viên khi đau nhức sau ăn');
+GO
