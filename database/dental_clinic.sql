@@ -208,6 +208,8 @@ GO
 
 -- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
 
+-- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
+
 -- 1. Thêm Roles mẫu
 INSERT INTO Roles (RoleName) VALUES 
 ('Admin'), 
