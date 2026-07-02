@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Other/SQLTemplate.sql to edit this template
  */
@@ -124,11 +124,62 @@ CREATE TABLE InvoiceDetails (
 );
 GO
 
--- THÊM DỮ LIỆU KHỞI TẠO MẪU CHO ROLES (DATA SEEDING)
+-- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
 
+-- 1. Thêm Roles mẫu
 INSERT INTO Roles (RoleName) VALUES 
 ('Admin'), 
 ('Doctor'), 
 ('Staff'), 
 ('Customer');
+GO
+
+-- 2. Thêm Users mẫu (Admin, Doctors, Staff)
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('admin', '123', N'Quản trị viên', '0900000001', 'admin@dental.com', 1),
+('doctor01', '123', N'Bác sĩ Nguyễn Văn Minh', '0900000002', 'minh.nv@dental.com', 2),
+('doctor02', '123', N'Bác sĩ Trần Thị Lan', '0900000003', 'lan.tt@dental.com', 2),
+('staff01', '123', N'Lễ tân Nguyễn Ngọc Ánh', '0900000004', 'anh.nn@dental.com', 3),
+('staff02', '123', N'Lễ tân Lê Quang Hải', '0900000005', 'hai.lq@dental.com', 3);
+GO
+
+-- 3. Thêm 20 Khách hàng (Customers) mẫu (RoleID = 4)
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('customer01', '123', N'Nguyễn Văn A', '0912345678', 'nguyenvana@gmail.com', 4),
+('customer02', '123', N'Trần Thị B', '0987654321', 'tranthib@gmail.com', 4),
+('customer03', '123', N'Phạm Văn C', '0901234567', 'phamvanc@gmail.com', 4),
+('customer04', '123', N'Lê Thị D', '0934567890', 'lethid@gmail.com', 4),
+('customer05', '123', N'Hoàng Văn E', '0978901234', 'hoangvane@gmail.com', 4),
+('customer06', '123', N'Phan Thị F', '0967890123', 'phanthif@gmail.com', 4),
+('customer07', '123', N'Vũ Văn G', '0945678901', 'vuvang@gmail.com', 4),
+('customer08', '123', N'Đỗ Thị H', '0911223344', 'dothih@gmail.com', 4),
+('customer09', '123', N'Bùi Văn I', '0922334455', 'buivani@gmail.com', 4),
+('customer10', '123', N'Hồ Thị K', '0933445566', 'hothik@gmail.com', 4),
+('customer11', '123', N'Ngô Văn L', '0944556677', 'ngovanl@gmail.com', 4),
+('customer12', '123', N'Dương Thị M', '0955667788', 'duongthim@gmail.com', 4),
+('customer13', '123', N'Lý Văn N', '0966778899', 'lyvann@gmail.com', 4),
+('customer14', '123', N'Đặng Thị O', '0977889900', 'dangthio@gmail.com', 4),
+('customer15', '123', N'Trịnh Văn P', '0988990011', 'trinhvanp@gmail.com', 4),
+('customer16', '123', N'Vương Thị Q', '0999001122', 'vuongthiq@gmail.com', 4),
+('customer17', '123', N'Đinh Văn R', '0900112233', 'dinhvanr@gmail.com', 4),
+('customer18', '123', N'Lâm Thị S', '0911335577', 'lamthis@gmail.com', 4),
+('customer19', '123', N'Mai Văn T', '0922446688', 'maivant@gmail.com', 4),
+('customer20', '123', N'Đoàn Thị U', '0933557799', 'doanthiu@gmail.com', 4);
+GO
+
+-- 4. Thêm Services mẫu
+INSERT INTO Services (ServiceName, Price, Description, Status) VALUES
+(N'Răng sứ Cercon', 5000000, N'Răng sứ không kim loại cao cấp Cercon CAD/CAM', 1),
+(N'Tẩy trắng răng LumaCool', 1500000, N'Tẩy trắng răng công nghệ ánh sáng xanh LumaCool', 1),
+(N'Trám răng Composite', 300000, N'Trám thẩm mỹ bằng vật liệu Composite', 1),
+(N'Nhổ răng khôn (Răng số 8)', 1000000, N'Nhổ răng khôn mọc lệch/ngầm sử dụng thuốc tê', 1),
+(N'Niềng răng kim loại chuẩn', 30000000, N'Chỉnh nha mắc cài kim loại không tự buộc', 1);
+GO
+
+-- 5. Thêm Medicines mẫu
+INSERT INTO Medicines (MedicineName, Unit, Price, StockQuantity, Status) VALUES
+(N'Amoxicillin 500mg', N'Viên', 5000, 500, 1),
+(N'Paracetamol 500mg', N'Viên', 2000, 1000, 1),
+(N'Ibuprofen 400mg', N'Viên', 3000, 300, 1),
+(N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1);
 GO
