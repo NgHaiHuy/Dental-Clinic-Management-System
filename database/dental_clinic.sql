@@ -124,6 +124,88 @@ CREATE TABLE InvoiceDetails (
 );
 GO
 
+-- 6. CÁC BẢNG BỔ SUNG THEO YÊU CẦU MỚI
+
+-- Bảng DoctorInfo (Thông tin chi tiết Bác sĩ)
+CREATE TABLE DoctorInfo (
+    DoctorID INT PRIMARY KEY FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
+    Specialization NVARCHAR(100) NULL,
+    ExperienceYears INT NULL,
+    Biography NVARCHAR(MAX) NULL
+);
+
+-- Bảng StaffInfo (Thông tin chi tiết Nhân viên)
+CREATE TABLE StaffInfo (
+    StaffID INT PRIMARY KEY FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
+    Department NVARCHAR(100) NULL,
+    Position NVARCHAR(50) NULL
+);
+
+-- Bảng CustomerInfo (Thông tin chi tiết Khách hàng/Bệnh nhân)
+CREATE TABLE CustomerInfo (
+    CustomerID INT PRIMARY KEY FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
+    Address NVARCHAR(255) NULL,
+    Gender NVARCHAR(10) NULL,
+    DateOfBirth DATE NULL
+);
+
+-- Bảng Payments (Quản lý Thanh toán Hóa đơn)
+CREATE TABLE Payments (
+    PaymentID INT IDENTITY(1,1) PRIMARY KEY,
+    InvoiceID INT FOREIGN KEY REFERENCES Invoices(InvoiceID),
+    PaymentMethod NVARCHAR(50) NOT NULL, -- 'Cash', 'Credit Card', 'Bank Transfer'
+    PaymentDate DATETIME DEFAULT GETDATE(),
+    AmountPaid DECIMAL(18,2) NOT NULL,
+    Status NVARCHAR(50) DEFAULT 'Completed' -- 'Completed', 'Refunded'
+);
+
+-- Bảng PatientProfiles (Hồ sơ sức khỏe nền & Lịch sử bệnh án)
+CREATE TABLE PatientProfiles (
+    ProfileID INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
+    Allergies NVARCHAR(MAX) NULL,
+    BloodType VARCHAR(5) NULL,
+    MedicalHistory NVARCHAR(MAX) NULL,
+    DentalHistory NVARCHAR(MAX) NULL,
+    Notes NVARCHAR(MAX) NULL,
+    UpdatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- Bảng LabOrders (Quản lý gửi Labo làm răng giả/sứ)
+CREATE TABLE LabOrders (
+    LabOrderID INT IDENTITY(1,1) PRIMARY KEY,
+    RecordID INT FOREIGN KEY REFERENCES MedicalRecords(RecordID),
+    LabName NVARCHAR(150) NOT NULL,
+    Material NVARCHAR(100) NOT NULL,
+    Cost DECIMAL(18,2) NOT NULL,
+    OrderDate DATE NOT NULL,
+    ExpectedDeliveryDate DATE NULL,
+    ActualDeliveryDate DATE NULL,
+    Status NVARCHAR(50) DEFAULT 'Ordered' -- 'Ordered', 'Completed', 'Cancelled'
+);
+
+-- Bảng DoctorSchedules (Lịch làm việc của Bác sĩ)
+CREATE TABLE DoctorSchedules (
+    ScheduleID INT IDENTITY(1,1) PRIMARY KEY,
+    DoctorID INT FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
+    WorkDate DATE NOT NULL,
+    ShiftName NVARCHAR(50) NOT NULL, -- 'Morning', 'Afternoon', 'FullDay'
+    Status NVARCHAR(50) DEFAULT 'Active' -- 'Active', 'Off'
+);
+
+-- Bảng MedicalSupplies (Quản lý Kho vật tư y tế)
+CREATE TABLE MedicalSupplies (
+    SupplyID INT IDENTITY(1,1) PRIMARY KEY,
+    SupplyName NVARCHAR(150) NOT NULL,
+    Unit NVARCHAR(30) NOT NULL,
+    Quantity INT DEFAULT 0,
+    MinQuantity INT DEFAULT 5,
+    UnitPrice DECIMAL(18,2) NOT NULL,
+    Supplier NVARCHAR(150) NULL,
+    LastUpdated DATETIME DEFAULT GETDATE()
+);
+GO
+
 -- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
 
 -- 1. Thêm Roles mẫu
@@ -222,4 +304,46 @@ INSERT INTO PrescriptionDetails (PrescriptionID, MedicineID, Quantity, Dosage) V
 (2, 1, 10, N'Uống 2 viên/ngày chia 2 lần sau ăn sáng/tối'),
 (2, 2, 10, N'Uống 1 viên khi đau nhức nhiều, cách nhau ít nhất 6 tiếng'),
 (3, 3, 5, N'Uống 1 viên khi đau nhức sau ăn');
+GO
+
+-- 11. Thêm DoctorInfo mẫu
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(2, N'Răng Hàm Mặt', 8, N'Bác sĩ chuyên khoa I, 8 năm kinh nghiệm trong lĩnh vực Chỉnh nha & Niềng răng.'),
+(3, N'Nha khoa Thẩm mỹ', 5, N'Tốt nghiệp Đại học Y Dược, chuyên gia phục hình sứ và tẩy trắng răng thẩm mỹ.');
+GO
+
+-- 12. Thêm StaffInfo mẫu
+INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
+(4, N'Bộ phận Tiếp đón', N'Trưởng nhóm Lễ tân'),
+(5, N'Bộ phận Thu ngân & Kế toán', N'Nhân viên Thu ngân chính');
+GO
+
+-- 13. Thêm CustomerInfo mẫu
+INSERT INTO CustomerInfo (CustomerID, Address, Gender, DateOfBirth) VALUES
+(6, N'123 Cầu Giấy, Hà Nội', N'Nam', '1995-04-12'),
+(7, N'456 Lạch Tray, Hải Phòng', N'Nữ', '1998-09-23'),
+(8, N'789 Nguyễn Văn Linh, Đà Nẵng', N'Nam', '1990-11-05');
+GO
+
+-- 14. Thêm DoctorSchedules mẫu (Lịch làm việc bác sĩ)
+INSERT INTO DoctorSchedules (DoctorID, WorkDate, ShiftName, Status) VALUES
+(2, '2026-07-01', 'Morning', 'Active'),
+(2, '2026-07-01', 'Afternoon', 'Active'),
+(3, '2026-07-02', 'Morning', 'Active'),
+(3, '2026-07-02', 'Afternoon', 'Active'),
+(2, '2026-07-02', 'FullDay', 'Active');
+GO
+
+-- 15. Thêm PatientProfiles mẫu (Hồ sơ sức khỏe nền)
+INSERT INTO PatientProfiles (CustomerID, Allergies, BloodType, MedicalHistory, DentalHistory, Notes) VALUES
+(6, N'Dị ứng Penicillin', 'A', N'Không có tiền sử bệnh tim mạch', N'Đã từng trám răng cách đây 2 năm', N'Bệnh nhân nhạy cảm với thuốc tê nhóm Amide'),
+(7, N'Không dị ứng thuốc', 'O', N'Huyết áp thấp nhẹ', N'Chưa từng can thiệp nha khoa lớn', N'Khám kỹ trước khi tiến hành bọc sứ');
+GO
+
+-- 16. Thêm MedicalSupplies mẫu (Kho vật tư y tế)
+INSERT INTO MedicalSupplies (SupplyName, Unit, Quantity, MinQuantity, UnitPrice, Supplier) VALUES
+(N'Găng tay y tế Nitrile', N'Hộp', 100, 10, 150000, N'Công ty Thiết bị Y tế Phú An'),
+(N'Khẩu trang y tế 4 lớp', N'Hộp', 150, 15, 50000, N'Công ty Thiết bị Y tế Phú An'),
+(N'Thuốc tê Septodont (Pháp)', N'Hộp', 20, 5, 850000, N'Nha khoa Medent'),
+(N'Chỉ nha khoa Oral-B', N'Cuộn', 200, 20, 45000, N'Nha khoa Medent');
 GO
