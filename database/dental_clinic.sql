@@ -145,26 +145,26 @@ GO
 
 -- 3. Thêm 20 Khách hàng (Customers) mẫu (RoleID = 4)
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
-('customer01', '123', N'Nguyễn Văn A', '0912345678', 'nguyenvana@gmail.com', 4),
-('customer02', '123', N'Trần Thị B', '0987654321', 'tranthib@gmail.com', 4),
-('customer03', '123', N'Phạm Văn C', '0901234567', 'phamvanc@gmail.com', 4),
-('customer04', '123', N'Lê Thị D', '0934567890', 'lethid@gmail.com', 4),
-('customer05', '123', N'Hoàng Văn E', '0978901234', 'hoangvane@gmail.com', 4),
-('customer06', '123', N'Phan Thị F', '0967890123', 'phanthif@gmail.com', 4),
-('customer07', '123', N'Vũ Văn G', '0945678901', 'vuvang@gmail.com', 4),
-('customer08', '123', N'Đỗ Thị H', '0911223344', 'dothih@gmail.com', 4),
-('customer09', '123', N'Bùi Văn I', '0922334455', 'buivani@gmail.com', 4),
-('customer10', '123', N'Hồ Thị K', '0933445566', 'hothik@gmail.com', 4),
-('customer11', '123', N'Ngô Văn L', '0944556677', 'ngovanl@gmail.com', 4),
-('customer12', '123', N'Dương Thị M', '0955667788', 'duongthim@gmail.com', 4),
-('customer13', '123', N'Lý Văn N', '0966778899', 'lyvann@gmail.com', 4),
-('customer14', '123', N'Đặng Thị O', '0977889900', 'dangthio@gmail.com', 4),
-('customer15', '123', N'Trịnh Văn P', '0988990011', 'trinhvanp@gmail.com', 4),
-('customer16', '123', N'Vương Thị Q', '0999001122', 'vuongthiq@gmail.com', 4),
-('customer17', '123', N'Đinh Văn R', '0900112233', 'dinhvanr@gmail.com', 4),
-('customer18', '123', N'Lâm Thị S', '0911335577', 'lamthis@gmail.com', 4),
-('customer19', '123', N'Mai Văn T', '0922446688', 'maivant@gmail.com', 4),
-('customer20', '123', N'Đoàn Thị U', '0933557799', 'doanthiu@gmail.com', 4);
+('customer01', '123', N'Nguyễn Hoàng Nam', '0912345678', 'nam.nh@gmail.com', 4),
+('customer02', '123', N'Trần Tuyết Mai', '0987654321', 'mai.tt@gmail.com', 4),
+('customer03', '123', N'Phạm Minh Đức', '0901234567', 'duc.pm@gmail.com', 4),
+('customer04', '123', N'Lê Thanh Hương', '0934567890', 'huong.lt@gmail.com', 4),
+('customer05', '123', N'Hoàng Quốc Khánh', '0978901234', 'khanh.hq@gmail.com', 4),
+('customer06', '123', N'Phan Minh Anh', '0967890123', 'anh.pm@gmail.com', 4),
+('customer07', '123', N'Vũ Hoàng Long', '0945678901', 'long.vh@gmail.com', 4),
+('customer08', '123', N'Đỗ Kim Chi', '0911223344', 'chi.dk@gmail.com', 4),
+('customer09', '123', N'Bùi Tiến Dũng', '0922334455', 'dung.bt@gmail.com', 4),
+('customer10', '123', N'Hồ Bảo Ngọc', '0933445566', 'ngoc.hb@gmail.com', 4),
+('customer11', '123', N'Ngô Thanh Tùng', '0944556677', 'tung.nt@gmail.com', 4),
+('customer12', '123', N'Dương Thùy Linh', '0955667788', 'linh.dt@gmail.com', 4),
+('customer13', '123', N'Lý Gia Bảo', '0966778899', 'bao.lg@gmail.com', 4),
+('customer14', '123', N'Đặng Hồng Hạnh', '0977889900', 'hanh.dh@gmail.com', 4),
+('customer15', '123', N'Trịnh Gia Huy', '0988990011', 'huy.tg@gmail.com', 4),
+('customer16', '123', N'Vương Khánh Huyền', '0999001122', 'huyen.vk@gmail.com', 4),
+('customer17', '123', N'Đinh Quang Minh', '0900112233', 'minh.dq@gmail.com', 4),
+('customer18', '123', N'Lâm Quỳnh Chi', '0911335577', 'chi.lq@gmail.com', 4),
+('customer19', '123', N'Mai Đức Duy', '0922446688', 'duy.md@gmail.com', 4),
+('customer20', '123', N'Đoàn Thu Trang', '0933557799', 'trang.dt@gmail.com', 4);
 GO
 
 -- 4. Thêm Services mẫu
