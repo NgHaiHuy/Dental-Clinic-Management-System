@@ -61,7 +61,7 @@ CREATE TABLE Appointments (
     CustomerID INT FOREIGN KEY REFERENCES Users(UserID),
     DoctorID INT NULL FOREIGN KEY REFERENCES Users(UserID), -- Null nếu khám tổng quát
     AppointmentDate DATE NOT NULL,
-    AppointmentTime TIME NOT NULL,
+    AppointmentTime TIME(0) NOT NULL,
     Status NVARCHAR(50) DEFAULT 'Pending', -- Pending, Confirmed, Attended, Cancelled
     Notes NVARCHAR(MAX) NULL
 );
