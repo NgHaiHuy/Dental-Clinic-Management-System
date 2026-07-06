@@ -1,15 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 /**
- *
- * @author Nguye
+ * Model class for Users.
  */
 public class User {
-
     private int userID;
     private String username;
     private String password;
@@ -18,6 +12,7 @@ public class User {
     private String email;
     private int roleID;
 
+    // Constructors
     public User() {
     }
 
@@ -31,6 +26,7 @@ public class User {
         this.roleID = roleID;
     }
 
+    // Getters and Setters
     public int getUserID() {
         return userID;
     }
@@ -87,4 +83,15 @@ public class User {
         this.roleID = roleID;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userID=" + userID +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", roleID=" + roleID +
+                '}';
+    }
 }

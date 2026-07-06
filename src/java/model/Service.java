@@ -1,21 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 /**
- *
- * @author Nguye
+ * Model class for Services (Dental Clinic Services).
  */
 public class Service {
-
     private int serviceID;
     private String serviceName;
     private double price;
     private String description;
-    private boolean status;
+    private boolean status; // 1: Active, 0: Inactive
 
+    // Constructors
     public Service() {
     }
 
@@ -27,6 +22,7 @@ public class Service {
         this.status = status;
     }
 
+    // Getters and Setters
     public int getServiceID() {
         return serviceID;
     }
@@ -67,4 +63,14 @@ public class Service {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Service{" +
+                "serviceID=" + serviceID +
+                ", serviceName='" + serviceName + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

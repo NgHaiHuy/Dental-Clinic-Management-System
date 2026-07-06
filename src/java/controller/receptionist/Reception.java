@@ -61,14 +61,53 @@ public class Reception extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AppointmentDAO dao = new AppointmentDAO();
-        List<Appointment> list;
         String keyword = request.getParameter("keyword");
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = dao.searchAppointment(keyword);
-        } else {
+
+        List<Appointment> list;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+
             list = dao.getTodayAppointments();
+
+        } else {
+
+            list = dao.searchAppointment(keyword.trim());
+
         }
+
+        // Dashboard Statistics
+        int pending = 0;
+        int attended = 0;
+        int cancelled = 0;
+
+        for (Appointment a : list) {
+
+            if ("Pending".equalsIgnoreCase(a.getStatus())) {
+
+                pending++;
+
+            } else if ("Attended".equalsIgnoreCase(a.getStatus())) {
+
+                attended++;
+
+            } else if ("Cancelled".equalsIgnoreCase(a.getStatus())) {
+
+                cancelled++;
+
+            }
+
+        }
+
         request.setAttribute("list", list);
+
+        request.setAttribute("totalAppointment", list.size());
+
+        request.setAttribute("pending", pending);
+
+        request.setAttribute("attended", attended);
+
+        request.setAttribute("cancelled", cancelled);
+
         request.getRequestDispatcher("receptionist/dashboard.jsp")
                 .forward(request, response);
     }

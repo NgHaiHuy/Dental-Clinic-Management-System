@@ -1,18 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-import java.util.Date;
 import java.sql.Time;
+import java.util.Date;
 
-/**
- *
- * @author Nguye
- */
 public class Appointment {
 
+    // Appointment
     private int appointmentID;
     private int customerID;
     private int doctorID;
@@ -20,13 +13,28 @@ public class Appointment {
     private Time appointmentTime;
     private String status;
     private String notes;
+
+    // Customer
     private String customerName;
+    private String customerPhone;
+    private String customerAddress;
+    private String customerGender;
+    private Date customerDOB;
+
+    // Doctor
     private String doctorName;
+    private String doctorPhone;
+    private String doctorSpecialization;
+
+    // Invoice
+    private double totalPrice;
 
     public Appointment() {
     }
 
-    public Appointment(int appointmentID, int customerID, int doctorID, Date appointmentDate, Time appointmentTime, String status, String notes, String customerName, String doctorName) {
+    public Appointment(int appointmentID, int customerID, int doctorID,
+            Date appointmentDate, Time appointmentTime,
+            String status, String notes) {
         this.appointmentID = appointmentID;
         this.customerID = customerID;
         this.doctorID = doctorID;
@@ -34,8 +42,6 @@ public class Appointment {
         this.appointmentTime = appointmentTime;
         this.status = status;
         this.notes = notes;
-        this.customerName = customerName;
-        this.doctorName = doctorName;
     }
 
     public int getAppointmentID() {
@@ -102,6 +108,38 @@ public class Appointment {
         this.customerName = customerName;
     }
 
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public String getCustomerGender() {
+        return customerGender;
+    }
+
+    public void setCustomerGender(String customerGender) {
+        this.customerGender = customerGender;
+    }
+
+    public Date getCustomerDOB() {
+        return customerDOB;
+    }
+
+    public void setCustomerDOB(Date customerDOB) {
+        this.customerDOB = customerDOB;
+    }
+
     public String getDoctorName() {
         return doctorName;
     }
@@ -110,5 +148,28 @@ public class Appointment {
         this.doctorName = doctorName;
     }
 
-    
+    public String getDoctorPhone() {
+        return doctorPhone;
+    }
+
+    public void setDoctorPhone(String doctorPhone) {
+        this.doctorPhone = doctorPhone;
+    }
+
+    public String getDoctorSpecialization() {
+        return doctorSpecialization;
+    }
+
+    public void setDoctorSpecialization(String doctorSpecialization) {
+        this.doctorSpecialization = doctorSpecialization;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
 }

@@ -1,13 +1,56 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
+import java.sql.Timestamp;
+
 /**
- *
- * @author Nguye
+ * Model class for Prescriptions.
  */
 public class Prescription {
-    
+    private int prescriptionID;
+    private int recordID;
+    private Timestamp createdAt;
+
+    // Constructors
+    public Prescription() {
+    }
+
+    public Prescription(int prescriptionID, int recordID, Timestamp createdAt) {
+        this.prescriptionID = prescriptionID;
+        this.recordID = recordID;
+        this.createdAt = createdAt;
+    }
+
+    // Getters and Setters
+    public int getPrescriptionID() {
+        return prescriptionID;
+    }
+
+    public void setPrescriptionID(int prescriptionID) {
+        this.prescriptionID = prescriptionID;
+    }
+
+    public int getRecordID() {
+        return recordID;
+    }
+
+    public void setRecordID(int recordID) {
+        this.recordID = recordID;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Prescription{" +
+                "prescriptionID=" + prescriptionID +
+                ", recordID=" + recordID +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

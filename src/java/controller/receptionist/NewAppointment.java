@@ -5,6 +5,8 @@
 
 package controller.receptionist;
 
+import dal.ServiceDAO;
+import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +14,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Service;
+import model.User;
 
 /**
  *
@@ -55,7 +60,12 @@ public class NewAppointment extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        UserDAO udao = new UserDAO();
+        ServiceDAO sdao = new ServiceDAO();
+        request.setAttribute("customers", udao.getAllCustomers());
+        request.setAttribute("doctors", udao.getAllDoctors());
+        request.setAttribute("services", sdao.getAllServices());
+        request.getRequestDispatcher("receptionist/newAppointment.jsp").forward(request, response);
     } 
 
     /** 
@@ -68,7 +78,18 @@ public class NewAppointment extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+       UserDAO userDAO = new UserDAO();
+       ServiceDAO serviceDAO = new ServiceDAO();
+        List<User> customers = userDAO.getAllCustomers();
+        List<User> doctors = userDAO.getAllDoctors();
+        List<Service> services = serviceDAO.getAllServices();
+
+        request.setAttribute("customers", customers);
+        request.setAttribute("doctors", doctors);
+        request.setAttribute("services", services);
+
+        request.getRequestDispatcher("receptionist/newAppointment.jsp")
+                .forward(request, response);
     }
 
     /** 

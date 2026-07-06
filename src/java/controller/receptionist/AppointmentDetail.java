@@ -12,14 +12,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import model.Appointment;
+import model.Service;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "CheckIn", urlPatterns = {"/checkIn"})
-public class CheckIn extends HttpServlet {
+@WebServlet(name = "AppointmentDetail", urlPatterns = {"/appointmentDetail"})
+public class AppointmentDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +40,10 @@ public class CheckIn extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CheckIn</title>");
+            out.println("<title>Servlet AppointmentDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CheckIn at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AppointmentDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,23 +74,17 @@ public class CheckIn extends HttpServlet {
                 response.sendRedirect("reception");
                 return;
             }
-            // Chỉ Pending mới được Check In
-            if (!appointment.getStatus().equalsIgnoreCase("Pending")) {
-                request.getSession().setAttribute("message", "Appointment cannot be checked in!");
-                response.sendRedirect("reception");
-                return;
-            }
-            boolean check = dao.updateStatus(id, "Attended");
-            if (check) {
-                request.getSession().setAttribute("message", "Check In Successfully!");
-            } else {
-                request.getSession().setAttribute("message", "Check In Failed!");
-            }
-            response.sendRedirect("reception");
+            List<Service> services = dao.getServicesByAppointment(id);
+            double totalPrice = dao.getTotalServicePrice(id);
+            request.setAttribute("appointment", appointment);
+            request.setAttribute("services", services);
+            request.setAttribute("totalPrice", totalPrice);
+            request.getRequestDispatcher("receptionist/appointmentDetail.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("reception");
         }
+
     }
 
     /**
