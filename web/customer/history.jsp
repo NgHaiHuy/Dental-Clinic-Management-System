@@ -1,105 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.LinkedHashMap"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%@page import="model.Appointment"%>
-<%!
-    private String h(Object value) {
-        if (value == null) {
-            return "";
-        }
-        return String.valueOf(value)
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
-    }
-
-    private String doctorName(Appointment appointment, Map<Integer, String> doctorOptions) {
-        if (appointment == null || appointment.getDoctorId() == null) {
-            return "";
-        }
-
-        String doctorName = doctorOptions == null ? null : doctorOptions.get(appointment.getDoctorId());
-        return doctorName == null ? "Doctor ID: " + appointment.getDoctorId() : doctorName;
-    }
-
-    private String serviceSummary(Appointment appointment, Map<Integer, String> serviceOptions) {
-        if (appointment == null || appointment.getServiceIds() == null || appointment.getServiceIds().isEmpty()) {
-            return "Chưa chọn";
-        }
-
-        StringBuilder summary = new StringBuilder();
-        for (Integer serviceId : appointment.getServiceIds()) {
-            if (summary.length() > 0) {
-                summary.append(", ");
-            }
-            String serviceName = serviceOptions == null ? null : serviceOptions.get(serviceId);
-            summary.append(serviceName == null ? "Service ID: " + serviceId : serviceName);
-        }
-        return summary.toString();
-    }
-
-    private String statusLabel(String status) {
-        if ("Pending".equals(status)) {
-            return "Chờ xác nhận";
-        }
-        if ("Confirmed".equals(status)) {
-            return "Đã xác nhận";
-        }
-        if ("Attended".equals(status)) {
-            return "Đã khám";
-        }
-        if ("Cancelled".equals(status)) {
-            return "Đã hủy";
-        }
-        return status == null ? "" : status;
-    }
-
-    private String statusClass(String status) {
-        if ("Cancelled".equals(status)) {
-            return "status status-cancelled";
-        }
-        if ("Confirmed".equals(status)) {
-            return "status status-confirmed";
-        }
-        if ("Attended".equals(status)) {
-            return "status status-attended";
-        }
-        return "status status-pending";
-    }
-
-    private boolean canCancel(Appointment appointment) {
-        return appointment != null && "Pending".equals(appointment.getStatus());
-    }
-
-    private String formatTime(Appointment appointment) {
-        if (appointment == null || appointment.getAppointmentTime() == null) {
-            return "";
-        }
-        return appointment.getAppointmentTime().toLocalTime().toString();
-    }
-%>
-<%
-    List<Appointment> appointments = (List<Appointment>) request.getAttribute("appointments");
-    if (appointments == null) {
-        appointments = (List<Appointment>) session.getAttribute("customerAppointments");
-    }
-
-    Map<Integer, String> doctorOptions = (Map<Integer, String>) request.getAttribute("doctorOptions");
-    if (doctorOptions == null) {
-        doctorOptions = new LinkedHashMap<>();
-    }
-
-    Map<Integer, String> serviceOptions = (Map<Integer, String>) request.getAttribute("serviceOptions");
-    if (serviceOptions == null) {
-        serviceOptions = new LinkedHashMap<>();
-    }
-
-    String successMessage = (String) request.getAttribute("successMessage");
-    String errorMessage = (String) request.getAttribute("errorMessage");
-%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -264,75 +165,136 @@
             <div class="page-header">
                 <div>
                     <h1>Lịch khám đã đặt</h1>
-                    <p class="hint">Danh sách lịch trong phiên làm việc hiện tại.</p>
+                    <p class="hint">Danh sách lịch hẹn của bạn.</p>
                 </div>
                 <a class="link" href="${pageContext.request.contextPath}/customer/booking">Đặt lịch mới</a>
             </div>
 
-            <% if (successMessage != null && !successMessage.isBlank()) { %>
-            <div class="alert alert-success"><%= h(successMessage) %></div>
-            <% } %>
+            <c:if test="${not empty successMessage}">
+                <div class="alert alert-success">
+                    <c:out value="${successMessage}"/>
+                </div>
+            </c:if>
 
-            <% if (errorMessage != null && !errorMessage.isBlank()) { %>
-            <div class="alert alert-error"><%= h(errorMessage) %></div>
-            <% } %>
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-error">
+                    <c:out value="${errorMessage}"/>
+                </div>
+            </c:if>
 
             <section class="panel">
-                <% if (appointments == null || appointments.isEmpty()) { %>
-                <div class="empty">
-                    <p>Bạn chưa có lịch đặt nào.</p>
-                    <a class="link" href="${pageContext.request.contextPath}/customer/booking">Đặt lịch khám đầu tiên</a>
-                </div>
-                <% } else { %>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Bác sĩ</th>
-                                <th>Dịch vụ</th>
-                                <th>Ngày khám</th>
-                                <th>Giờ khám</th>
-                                <th>Trạng thái</th>
-                                <th>Ghi chú</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% for (int i = 0; i < appointments.size(); i++) {
-                                    Appointment appointment = appointments.get(i);
-                            %>
-                            <tr>
-                                <td><%= i + 1 %></td>
-                                <td><%= h(doctorName(appointment, doctorOptions)) %></td>
-                                <td><%= h(serviceSummary(appointment, serviceOptions)) %></td>
-                                <td><%= h(appointment.getAppointmentDate()) %></td>
-                                <td><%= h(formatTime(appointment)) %></td>
-                                <td>
-                                    <span class="<%= h(statusClass(appointment.getStatus())) %>">
-                                        <%= h(statusLabel(appointment.getStatus())) %>
-                                    </span>
-                                </td>
-                                <td><%= h(appointment.getNotes()) %></td>
-                                <td>
-                                    <% if (canCancel(appointment)) { %>
-                                    <form class="cancel-form"
-                                          action="${pageContext.request.contextPath}/customer/booking/cancel"
-                                          method="post"
-                                          onsubmit="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
-                                        <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
-                                        <button class="cancel-button" type="submit">Hủy</button>
-                                    </form>
-                                    <% } else { %>
-                                    <span class="hint">Không có</span>
-                                    <% } %>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-                <% } %>
+                <c:choose>
+                    <c:when test="${empty appointments}">
+                        <div class="empty">
+                            <p>Bạn chưa có lịch đặt nào.</p>
+                            <a class="link" href="${pageContext.request.contextPath}/customer/booking">Đặt lịch khám đầu tiên</a>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Bác sĩ</th>
+                                        <th>Dịch vụ</th>
+                                        <th>Ngày khám</th>
+                                        <th>Giờ khám</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ghi chú</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="appointment" items="${appointments}" varStatus="loop">
+                                        <c:set var="statusClass" value="status status-pending"/>
+                                        <c:set var="statusLabel" value="${appointment.status}"/>
+
+                                        <c:choose>
+                                            <c:when test="${appointment.status eq 'Cancelled'}">
+                                                <c:set var="statusClass" value="status status-cancelled"/>
+                                                <c:set var="statusLabel" value="Đã hủy"/>
+                                            </c:when>
+                                            <c:when test="${appointment.status eq 'Confirmed'}">
+                                                <c:set var="statusClass" value="status status-confirmed"/>
+                                                <c:set var="statusLabel" value="Đã xác nhận"/>
+                                            </c:when>
+                                            <c:when test="${appointment.status eq 'Attended'}">
+                                                <c:set var="statusClass" value="status status-attended"/>
+                                                <c:set var="statusLabel" value="Đã khám"/>
+                                            </c:when>
+                                            <c:when test="${appointment.status eq 'Pending'}">
+                                                <c:set var="statusLabel" value="Chờ xác nhận"/>
+                                            </c:when>
+                                        </c:choose>
+
+                                        <tr>
+                                            <td><c:out value="${loop.count}"/></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty doctorOptions[appointment.doctorId]}">
+                                                        <c:out value="${doctorOptions[appointment.doctorId]}"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        Doctor ID: <c:out value="${appointment.doctorId}"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${empty appointment.serviceIds}">
+                                                        Chưa chọn
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:forEach var="serviceId" items="${appointment.serviceIds}" varStatus="serviceLoop">
+                                                            <c:if test="${not serviceLoop.first}">, </c:if>
+                                                            <c:choose>
+                                                                <c:when test="${not empty serviceOptions[serviceId]}">
+                                                                    <c:out value="${serviceOptions[serviceId]}"/>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    Service ID: <c:out value="${serviceId}"/>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:forEach>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td><c:out value="${appointment.appointmentDate}"/></td>
+                                            <td>
+                                                <c:if test="${not empty appointment.appointmentTime}">
+                                                    <c:out value="${fn:substring(appointment.appointmentTime, 0, 5)}"/>
+                                                </c:if>
+                                            </td>
+                                            <td>
+                                                <span class="${statusClass}">
+                                                    <c:out value="${statusLabel}"/>
+                                                </span>
+                                            </td>
+                                            <td><c:out value="${appointment.notes}"/></td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${appointment.status eq 'Pending'}">
+                                                        <form class="cancel-form"
+                                                              action="${pageContext.request.contextPath}/customer/booking/cancel"
+                                                              method="post"
+                                                              onsubmit="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
+                                                            <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
+                                                            <button class="cancel-button" type="submit">Hủy</button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="hint">Không có</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </section>
         </main>
     </body>

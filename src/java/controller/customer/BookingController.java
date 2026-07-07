@@ -1,7 +1,11 @@
 package controller.customer;
 
+import dal.AppointmentDAO;
+import dal.ServiceDAO;
+import dal.UserDAO;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -34,20 +38,17 @@ public class BookingController extends HttpServlet {
     private static final String HISTORY_PATH = "/customer/history";
     private static final String CANCEL_PATH = "/customer/booking/cancel";
 
-    private static final String SESSION_APPOINTMENTS = "customerAppointments";
-    private static final String SESSION_NEXT_APPOINTMENT_ID = "customerNextAppointmentId";
     private static final String FLASH_SUCCESS = "bookingSuccessMessage";
     private static final String FLASH_ERROR = "bookingErrorMessage";
 
-    private static final int MOCK_CUSTOMER_ID = 1;
+    private static final int MOCK_CUSTOMER_ID = 6;
     private static final int MAX_NOTES_LENGTH = 500;
+    private static final int APPOINTMENT_DURATION_MINUTES = 30;
     private static final String STATUS_PENDING = "Pending";
     private static final String STATUS_CANCELLED = "Cancelled";
     private static final LocalTime OPEN_TIME = LocalTime.of(8, 0);
     private static final LocalTime CLOSE_TIME = LocalTime.of(17, 0);
-
-    private static final Map<Integer, String> DOCTOR_OPTIONS = createDoctorOptions();
-    private static final Map<Integer, String> SERVICE_OPTIONS = createServiceOptions();
+    private static final Map<String, String> APPOINTMENT_TIME_OPTIONS = createAppointmentTimeOptions();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -81,33 +82,51 @@ public class BookingController extends HttpServlet {
             throws ServletException, IOException {
         Map<String, String> form = captureBookingForm(request);
         List<String> errors = new ArrayList<>();
+        Map<Integer, String> doctorOptions = loadDoctorOptions(errors);
+        Map<Integer, String> serviceOptions = loadServiceOptions(errors);
 
         Integer doctorId = parseOption(
                 form.get("doctorId"),
-                DOCTOR_OPTIONS,
+                doctorOptions,
                 "Vui lòng chọn bác sĩ.",
                 "Bác sĩ được chọn không hợp lệ.",
                 errors
         );
         LocalDate appointmentDate = parseAppointmentDate(form.get("appointmentDate"), errors);
         LocalTime appointmentTime = parseAppointmentTime(form.get("appointmentTime"), errors);
-        Set<Integer> selectedServiceIds = parseSelectedServiceIds(request.getParameterValues("serviceIds"), errors);
+        Set<Integer> selectedServiceIds = parseSelectedServiceIds(
+                request.getParameterValues("serviceIds"),
+                serviceOptions,
+                errors
+        );
         String notes = form.get("notes");
 
         if (notes.length() > MAX_NOTES_LENGTH) {
             errors.add("Ghi chú không được vượt quá " + MAX_NOTES_LENGTH + " ký tự.");
         }
 
+        if (doctorId != null && appointmentDate != null && appointmentTime != null) {
+            try {
+                boolean doctorBooked = new AppointmentDAO().hasDoctorScheduleConflict(
+                        doctorId,
+                        Date.valueOf(appointmentDate),
+                        Time.valueOf(appointmentTime),
+                        APPOINTMENT_DURATION_MINUTES
+                );
+                if (doctorBooked) {
+                    errors.add("Bác sĩ đã có lịch hẹn trong khung giờ này. Vui lòng chọn giờ khác.");
+                }
+            } catch (SQLException ex) {
+                errors.add("Không thể kiểm tra lịch trống của bác sĩ. Vui lòng thử lại.");
+            }
+        }
+
         if (!errors.isEmpty()) {
-            showBookingPage(request, response, form, selectedServiceIds, errors);
+            showBookingPage(request, response, form, selectedServiceIds, errors, doctorOptions, serviceOptions);
             return;
         }
 
-        HttpSession session = request.getSession();
-        List<Appointment> appointments = getCustomerAppointments(session);
-
         Appointment appointment = new Appointment(
-                nextAppointmentId(session, appointments),
                 MOCK_CUSTOMER_ID,
                 doctorId,
                 Date.valueOf(appointmentDate),
@@ -117,8 +136,16 @@ public class BookingController extends HttpServlet {
         );
         appointment.setServiceIds(new ArrayList<>(selectedServiceIds));
 
-        appointments.add(appointment);
-        session.setAttribute(SESSION_APPOINTMENTS, appointments);
+        try {
+            int appointmentId = new AppointmentDAO().insertAppointment(appointment);
+            appointment.setAppointmentId(appointmentId);
+        } catch (SQLException ex) {
+            errors.add("Không thể lưu lịch hẹn vào cơ sở dữ liệu. Vui lòng kiểm tra dữ liệu khách hàng, bác sĩ và dịch vụ.");
+            showBookingPage(request, response, form, selectedServiceIds, errors, doctorOptions, serviceOptions);
+            return;
+        }
+
+        HttpSession session = request.getSession();
         setFlash(session, FLASH_SUCCESS, "Đặt lịch thành công. Lịch đang chờ phòng khám xác nhận.");
 
         response.sendRedirect(request.getContextPath() + HISTORY_PATH);
@@ -135,14 +162,15 @@ public class BookingController extends HttpServlet {
             return;
         }
 
-        Appointment appointment = findAppointment(getCustomerAppointments(session), appointmentId);
-        if (appointment == null) {
-            setFlash(session, FLASH_ERROR, "Lịch hẹn không tồn tại trong phiên hiện tại.");
-        } else if (!STATUS_PENDING.equals(appointment.getStatus())) {
-            setFlash(session, FLASH_ERROR, "Chỉ có thể hủy lịch đang chờ xác nhận.");
-        } else {
-            appointment.setStatus(STATUS_CANCELLED);
-            setFlash(session, FLASH_SUCCESS, "Đã hủy lịch hẹn.");
+        try {
+            boolean cancelled = new AppointmentDAO().cancelPendingAppointment(appointmentId, MOCK_CUSTOMER_ID);
+            if (cancelled) {
+                setFlash(session, FLASH_SUCCESS, "Đã hủy lịch hẹn.");
+            } else {
+                setFlash(session, FLASH_ERROR, "Không tìm thấy lịch đang chờ xác nhận để hủy.");
+            }
+        } catch (SQLException ex) {
+            setFlash(session, FLASH_ERROR, "Không thể hủy lịch hẹn trong cơ sở dữ liệu.");
         }
 
         response.sendRedirect(request.getContextPath() + HISTORY_PATH);
@@ -151,7 +179,17 @@ public class BookingController extends HttpServlet {
     private void showBookingPage(HttpServletRequest request, HttpServletResponse response,
             Map<String, String> form, Set<Integer> selectedServiceIds, List<String> errors)
             throws ServletException, IOException {
-        prepareCommonAttributes(request);
+        List<String> pageErrors = new ArrayList<>(errors);
+        Map<Integer, String> doctorOptions = loadDoctorOptions(pageErrors);
+        Map<Integer, String> serviceOptions = loadServiceOptions(pageErrors);
+        showBookingPage(request, response, form, selectedServiceIds, pageErrors, doctorOptions, serviceOptions);
+    }
+
+    private void showBookingPage(HttpServletRequest request, HttpServletResponse response,
+            Map<String, String> form, Set<Integer> selectedServiceIds, List<String> errors,
+            Map<Integer, String> doctorOptions, Map<Integer, String> serviceOptions)
+            throws ServletException, IOException {
+        prepareCommonAttributes(request, doctorOptions, serviceOptions);
         request.setAttribute("form", form);
         request.setAttribute("selectedServiceIds", selectedServiceIds);
         request.setAttribute("errors", errors);
@@ -161,10 +199,17 @@ public class BookingController extends HttpServlet {
     private void showHistoryPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        prepareCommonAttributes(request);
+        prepareCommonAttributes(request, loadDoctorOptions(null), loadServiceOptions(null));
         consumeFlash(session, request, FLASH_SUCCESS, "successMessage");
         consumeFlash(session, request, FLASH_ERROR, "errorMessage");
-        request.setAttribute("appointments", new ArrayList<>(getCustomerAppointments(session)));
+
+        try {
+            request.setAttribute("appointments", new AppointmentDAO().getAppointmentsByCustomerId(MOCK_CUSTOMER_ID));
+        } catch (SQLException ex) {
+            request.setAttribute("appointments", Collections.emptyList());
+            request.setAttribute("errorMessage", "Không thể tải lịch hẹn từ cơ sở dữ liệu.");
+        }
+
         request.getRequestDispatcher(HISTORY_VIEW).forward(request, response);
     }
 
@@ -222,6 +267,14 @@ public class BookingController extends HttpServlet {
             if (appointmentTime.isBefore(OPEN_TIME) || appointmentTime.isAfter(CLOSE_TIME)) {
                 errors.add("Giờ khám phải nằm trong khoảng " + OPEN_TIME + " - " + CLOSE_TIME + ".");
             }
+            if (appointmentTime.getMinute() % APPOINTMENT_DURATION_MINUTES != 0
+                    || appointmentTime.getSecond() != 0
+                    || appointmentTime.getNano() != 0) {
+                errors.add("Giờ khám phải theo khung 30 phút.");
+            }
+            if (appointmentTime.plusMinutes(APPOINTMENT_DURATION_MINUTES).isAfter(CLOSE_TIME)) {
+                errors.add("Khung giờ khám phải kết thúc trước hoặc đúng " + CLOSE_TIME + ".");
+            }
             return appointmentTime;
         } catch (DateTimeParseException ex) {
             errors.add("Giờ khám không hợp lệ.");
@@ -229,14 +282,15 @@ public class BookingController extends HttpServlet {
         }
     }
 
-    private Set<Integer> parseSelectedServiceIds(String[] values, List<String> errors) {
+    private Set<Integer> parseSelectedServiceIds(String[] values, Map<Integer, String> serviceOptions,
+            List<String> errors) {
         Set<Integer> selectedServiceIds = new LinkedHashSet<>();
         boolean hasInvalidService = false;
 
         if (values != null) {
             for (String value : values) {
                 Integer serviceId = parseInteger(value);
-                if (serviceId == null || !SERVICE_OPTIONS.containsKey(serviceId)) {
+                if (serviceId == null || !serviceOptions.containsKey(serviceId)) {
                     hasInvalidService = true;
                 } else {
                     selectedServiceIds.add(serviceId);
@@ -266,50 +320,36 @@ public class BookingController extends HttpServlet {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Appointment> getCustomerAppointments(HttpSession session) {
-        Object appointments = session.getAttribute(SESSION_APPOINTMENTS);
-        if (appointments instanceof List<?>) {
-            return (List<Appointment>) appointments;
-        }
-
-        List<Appointment> newAppointments = new ArrayList<>();
-        session.setAttribute(SESSION_APPOINTMENTS, newAppointments);
-        return newAppointments;
-    }
-
-    private int nextAppointmentId(HttpSession session, List<Appointment> appointments) {
-        Object nextIdAttribute = session.getAttribute(SESSION_NEXT_APPOINTMENT_ID);
-        int nextId;
-
-        if (nextIdAttribute instanceof Integer) {
-            nextId = (Integer) nextIdAttribute;
-        } else {
-            nextId = 1;
-            for (Appointment appointment : appointments) {
-                nextId = Math.max(nextId, appointment.getAppointmentId() + 1);
-            }
-        }
-
-        session.setAttribute(SESSION_NEXT_APPOINTMENT_ID, nextId + 1);
-        return nextId;
-    }
-
-    private Appointment findAppointment(List<Appointment> appointments, int appointmentId) {
-        for (Appointment appointment : appointments) {
-            if (appointment.getAppointmentId() == appointmentId) {
-                return appointment;
-            }
-        }
-        return null;
-    }
-
-    private void prepareCommonAttributes(HttpServletRequest request) {
-        request.setAttribute("doctorOptions", DOCTOR_OPTIONS);
-        request.setAttribute("serviceOptions", SERVICE_OPTIONS);
+    private void prepareCommonAttributes(HttpServletRequest request, Map<Integer, String> doctorOptions,
+            Map<Integer, String> serviceOptions) {
+        request.setAttribute("doctorOptions", doctorOptions);
+        request.setAttribute("serviceOptions", serviceOptions);
+        request.setAttribute("appointmentTimeOptions", APPOINTMENT_TIME_OPTIONS);
         request.setAttribute("today", LocalDate.now().toString());
         request.setAttribute("clinicOpenTime", OPEN_TIME.toString());
         request.setAttribute("clinicCloseTime", CLOSE_TIME.toString());
+    }
+
+    private Map<Integer, String> loadDoctorOptions(List<String> errors) {
+        try {
+            return new UserDAO().getDoctorOptions();
+        } catch (SQLException ex) {
+            if (errors != null) {
+                errors.add("Không thể tải danh sách bác sĩ từ cơ sở dữ liệu.");
+            }
+            return Collections.emptyMap();
+        }
+    }
+
+    private Map<Integer, String> loadServiceOptions(List<String> errors) {
+        try {
+            return new ServiceDAO().getActiveServiceOptions();
+        } catch (SQLException ex) {
+            if (errors != null) {
+                errors.add("Không thể tải danh sách dịch vụ từ cơ sở dữ liệu.");
+            }
+            return Collections.emptyMap();
+        }
     }
 
     private void setFlash(HttpSession session, String key, String message) {
@@ -328,20 +368,16 @@ public class BookingController extends HttpServlet {
         return value == null ? "" : value.trim();
     }
 
-    private static Map<Integer, String> createDoctorOptions() {
-        Map<Integer, String> options = new LinkedHashMap<>();
-        options.put(1, "BS. A");
-        options.put(2, "BS. B");
-        options.put(3, "BS. C");
-        return Collections.unmodifiableMap(options);
-    }
+    private static Map<String, String> createAppointmentTimeOptions() {
+        Map<String, String> options = new LinkedHashMap<>();
 
-    private static Map<Integer, String> createServiceOptions() {
-        Map<Integer, String> options = new LinkedHashMap<>();
-        options.put(1, "Khám tổng quát");
-        options.put(2, "Cạo vôi răng");
-        options.put(3, "Trám răng");
-        options.put(4, "Nhổ răng");
+        for (LocalTime startTime = OPEN_TIME;
+                !startTime.plusMinutes(APPOINTMENT_DURATION_MINUTES).isAfter(CLOSE_TIME);
+                startTime = startTime.plusMinutes(APPOINTMENT_DURATION_MINUTES)) {
+            LocalTime endTime = startTime.plusMinutes(APPOINTMENT_DURATION_MINUTES);
+            options.put(startTime.toString(), startTime + " - " + endTime);
+        }
+
         return Collections.unmodifiableMap(options);
     }
 }

@@ -22,6 +22,10 @@
         return String.valueOf(optionId).equals(value) ? " selected" : "";
     }
 
+    private String selected(String value, String optionValue) {
+        return optionValue != null && optionValue.equals(value) ? " selected" : "";
+    }
+
     private String checked(Set<Integer> selectedServiceIds, Integer serviceId) {
         return selectedServiceIds != null && selectedServiceIds.contains(serviceId) ? " checked" : "";
     }
@@ -35,6 +39,11 @@
     Map<Integer, String> serviceOptions = (Map<Integer, String>) request.getAttribute("serviceOptions");
     if (serviceOptions == null) {
         serviceOptions = new LinkedHashMap<>();
+    }
+
+    Map<String, String> appointmentTimeOptions = (Map<String, String>) request.getAttribute("appointmentTimeOptions");
+    if (appointmentTimeOptions == null) {
+        appointmentTimeOptions = new LinkedHashMap<>();
     }
 
     Map<String, String> form = (Map<String, String>) request.getAttribute("form");
@@ -267,13 +276,14 @@
 
                         <div class="field">
                             <label for="appointmentTime">Giờ khám</label>
-                            <input type="time"
-                                   id="appointmentTime"
-                                   name="appointmentTime"
-                                   min="<%= h(request.getAttribute("clinicOpenTime")) %>"
-                                   max="<%= h(request.getAttribute("clinicCloseTime")) %>"
-                                   value="<%= h(form.get("appointmentTime")) %>"
-                                   required>
+                            <select id="appointmentTime" name="appointmentTime" required>
+                                <option value="">-- Chọn giờ khám --</option>
+                                <% for (Map.Entry<String, String> timeSlot : appointmentTimeOptions.entrySet()) { %>
+                                <option value="<%= h(timeSlot.getKey()) %>"<%= selected(form.get("appointmentTime"), timeSlot.getKey()) %>>
+                                    <%= h(timeSlot.getValue()) %>
+                                </option>
+                                <% } %>
+                            </select>
                         </div>
 
                         <fieldset class="field-full">
