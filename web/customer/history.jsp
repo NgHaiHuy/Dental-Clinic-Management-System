@@ -138,6 +138,40 @@
                 margin: 0;
             }
 
+            .action-stack {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .detail-link {
+                border: 1px solid #91caff;
+                border-radius: 6px;
+                color: #0958d9;
+                display: inline-block;
+                font-weight: 700;
+                padding: 7px 12px;
+                text-decoration: none;
+            }
+
+            .detail-link:hover {
+                background: #e6f4ff;
+            }
+
+            .edit-link {
+                border: 1px solid #b7eb8f;
+                border-radius: 6px;
+                color: #237804;
+                display: inline-block;
+                font-weight: 700;
+                padding: 7px 12px;
+                text-decoration: none;
+            }
+
+            .edit-link:hover {
+                background: #f6ffed;
+            }
+
             .cancel-button {
                 border: 1px solid #ff7875;
                 border-radius: 6px;
@@ -273,8 +307,16 @@
                                             </td>
                                             <td><c:out value="${appointment.notes}"/></td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${appointment.status eq 'Pending'}">
+                                                <div class="action-stack">
+                                                    <a class="detail-link"
+                                                       href="${pageContext.request.contextPath}/customer/booking/detail?id=${appointment.appointmentId}">
+                                                        Chi tiết
+                                                    </a>
+                                                    <c:if test="${appointment.status eq 'Pending'}">
+                                                        <a class="edit-link"
+                                                           href="${pageContext.request.contextPath}/customer/booking/edit?id=${appointment.appointmentId}">
+                                                            Sửa
+                                                        </a>
                                                         <form class="cancel-form"
                                                               action="${pageContext.request.contextPath}/customer/booking/cancel"
                                                               method="post"
@@ -282,11 +324,8 @@
                                                             <input type="hidden" name="appointmentId" value="${appointment.appointmentId}">
                                                             <button class="cancel-button" type="submit">Hủy</button>
                                                         </form>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="hint">Không có</span>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                    </c:if>
+                                                </div>
                                             </td>
                                         </tr>
                                     </c:forEach>
