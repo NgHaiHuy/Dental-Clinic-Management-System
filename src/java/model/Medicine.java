@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Model class for Medicines.
+ * Model class for Medicines (Dental Clinic Medications).
  */
 public class Medicine {
     private int medicineID;
@@ -9,7 +9,7 @@ public class Medicine {
     private String unit;
     private double price;
     private int stockQuantity;
-    private boolean status; // 1: Selling, 0: Discontinued
+    private boolean status; // 1: Active/Selling, 0: Inactive/Not Selling
 
     // Constructors
     public Medicine() {
