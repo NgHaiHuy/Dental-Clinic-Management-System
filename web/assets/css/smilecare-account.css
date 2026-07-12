@@ -1,0 +1,12 @@
+.account-menu { position: relative; }
+.account-trigger { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border: 0; background: transparent; color: #23343e; cursor: pointer; }
+.account-trigger:hover, .account-menu.is-open .account-trigger { background: #f4f6f7; }
+.account-avatar { width: 31px; height: 31px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.5; }
+.account-avatar .avatar-head, .account-avatar .avatar-body { fill: currentColor; stroke: none; }
+.account-chevron { color: #91a0aa; font-size: 17px; line-height: 1; transition: transform .2s; }
+.account-menu.is-open .account-chevron { transform: rotate(180deg); }
+.account-dropdown { position: absolute; z-index: 40; top: calc(100% + 1px); right: 0; display: none; width: 280px; padding: 22px 0; border-radius: 0 0 15px 15px; background: #fff; box-shadow: 0 14px 35px rgba(24,55,74,.13); }
+.account-menu.is-open .account-dropdown { display: block; }
+.account-dropdown a { display: block; padding: 12px 48px; color: #303538; font-size: 17px; font-weight: 600; white-space: nowrap; }
+.account-dropdown a:hover { background: #f4f8f8; color: #167f82; }
+.account-dropdown .logout-link { color: #303538; }

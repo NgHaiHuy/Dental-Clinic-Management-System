@@ -1,0 +1,33 @@
+@media (max-width: 800px) {
+    .container { width: min(100% - 30px, 1120px); }
+    .site-header { height: 68px; }
+    .main-nav { position: absolute; top: 62px; left: 15px; right: 15px; display: none; flex-direction: column; gap: 14px; padding: 19px; border: 1px solid #dcebea; border-radius: 12px; background: #fff; box-shadow: 0 15px 30px rgba(24,55,74,.12); }
+    .main-nav.mobile-open { display: flex; }
+    .menu-toggle { display: block; }
+    .nav-actions:not(.has-user) { display: none; }
+    .nav-actions.has-user { display: flex; margin-left: auto; }
+    .account-dropdown { right: -45px; width: 250px; }
+    .account-dropdown a { padding-right: 35px; padding-left: 35px; }
+    .hero { padding: 50px 0; }
+    .hero-grid, .feature-grid { grid-template-columns: 1fr; gap: 38px; }
+    .hero h1 { font-size: 42px; }
+    .hero-visual { width: 100%; max-width: 470px; height: 335px; margin: auto; }
+    .quick-booking-inner { min-height: auto; padding: 25px 0; align-items: flex-start; flex-direction: column; }
+    .section { padding: 70px 0; }
+    .section-heading { align-items: flex-start; gap: 18px; flex-direction: column; }
+    .service-grid, .doctor-panel, .footer-grid { grid-template-columns: 1fr; }
+    .doctor-photo { min-height: 270px; }
+    .doctor-content { padding: 40px 27px; }
+    .footer-grid { gap: 28px; }
+    .floating-card { transform: scale(.9); transform-origin: left bottom; }
+}
+
+@media (max-width: 430px) {
+    .hero-actions { align-items: flex-start; flex-direction: column; gap: 18px; }
+    .hero h1 { font-size: 36px; }
+    .hero-visual { height: 285px; }
+    .hero-image-frame { left: 22px; }
+    .rating-card { right: -16px; }
+    .section-intro h2, .section-heading h2 { font-size: 33px; }
+    .quick-booking h2 { font-size: 20px; }
+}
