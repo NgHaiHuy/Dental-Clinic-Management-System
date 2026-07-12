@@ -2,6 +2,7 @@ package controller.customer;
 
 import dal.UserDAO;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.UUID;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,7 +17,6 @@ public class ProfileController extends HttpServlet {
 
     private static final String VIEW = "/customer/profile.jsp";
     private static final String CSRF_KEY = "customerProfileCsrfToken";
-    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,16 +42,29 @@ public class ProfileController extends HttpServlet {
             forwardProfile(request, response, session);
             return;
         }
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.getConnection() == null) {
+            request.setAttribute("errorMessage",
+                    "Không thể kết nối cơ sở dữ liệu. Vui lòng khởi động lại ứng dụng rồi thử lại.");
+            request.setAttribute("activeTab", "change-password".equals(request.getParameter("action"))
+                    ? "password" : "profile");
+            forwardProfile(request, response, session);
+            return;
+        }
 
-        if ("change-password".equals(request.getParameter("action"))) {
-            changePassword(request, response, session, user);
-        } else {
-            updateProfile(request, response, session, user);
+        try {
+            if ("change-password".equals(request.getParameter("action"))) {
+                changePassword(request, response, session, user, userDAO);
+            } else {
+                updateProfile(request, response, session, user, userDAO);
+            }
+        } finally {
+            closeConnection(userDAO);
         }
     }
 
     private void updateProfile(HttpServletRequest request, HttpServletResponse response,
-            HttpSession session, User user) throws ServletException, IOException {
+            HttpSession session, User user, UserDAO userDAO) throws ServletException, IOException {
         String fullName = clean(request.getParameter("fullName"));
         String phone = clean(request.getParameter("phone"));
         String email = clean(request.getParameter("email"));
@@ -85,7 +98,7 @@ public class ProfileController extends HttpServlet {
     }
 
     private void changePassword(HttpServletRequest request, HttpServletResponse response,
-            HttpSession session, User user) throws ServletException, IOException {
+            HttpSession session, User user, UserDAO userDAO) throws ServletException, IOException {
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -129,6 +142,16 @@ public class ProfileController extends HttpServlet {
 
     private void rotateCsrfToken(HttpSession session) {
         session.setAttribute(CSRF_KEY, UUID.randomUUID().toString());
+    }
+
+    private void closeConnection(UserDAO userDAO) {
+        try {
+            if (userDAO.getConnection() != null && !userDAO.getConnection().isClosed()) {
+                userDAO.getConnection().close();
+            }
+        } catch (SQLException ignored) {
+            // Không làm hỏng response nếu việc đóng kết nối gặp lỗi.
+        }
     }
 
     private String clean(String value) { return value == null ? "" : value.trim(); }

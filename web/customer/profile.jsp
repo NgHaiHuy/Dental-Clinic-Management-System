@@ -37,7 +37,7 @@
     <header class="profile-header">
         <div class="container header-inner">
             <a class="brand" href="${pageContext.request.contextPath}/index.jsp"><span class="brand-mark">✦</span><span>Smile<span>Care</span></span></a>
-            <nav class="header-links"><a href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a><a href="${pageContext.request.contextPath}/customer/dashboard.jsp">Tài khoản</a><a class="logout" href="${pageContext.request.contextPath}/auth/logout">Đăng xuất</a></nav>
+            <nav class="header-links"><a href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a><a class="logout" href="${pageContext.request.contextPath}/auth/logout">Đăng xuất</a></nav>
         </div>
     </header>
 
@@ -50,7 +50,6 @@
                     <button class="tab-button<%= "profile".equals(activeTab) ? " active" : "" %>" type="button" data-tab="profile-panel"><span>👤</span> Thông tin cá nhân</button>
                     <button class="tab-button<%= "password".equals(activeTab) ? " active" : "" %>" type="button" data-tab="password-panel"><span>🔒</span> Đổi mật khẩu</button>
                     <a href="${pageContext.request.contextPath}/customer/booking.jsp"><span>▣</span> Lịch khám</a>
-                    <a href="${pageContext.request.contextPath}/customer/history.jsp"><span>⌁</span> Lịch sử giao dịch</a>
                 </nav>
             </aside>
 
