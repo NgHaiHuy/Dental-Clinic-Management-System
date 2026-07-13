@@ -32,6 +32,7 @@
     <p>Đây là Dashboard của Bác sĩ. Thành viên 5 sẽ phát triển đầy đủ giao diện này.</p>
     <div class="links">
         <a href="${pageContext.request.contextPath}/doctor/checkup">Khám bệnh</a>
+        <a href="${pageContext.request.contextPath}/examination-history">Lịch sử ca đã khám</a>
         <a href="${pageContext.request.contextPath}/auth/logout" class="sec"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </div>
 </div>

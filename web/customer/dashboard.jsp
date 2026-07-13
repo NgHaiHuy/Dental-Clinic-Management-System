@@ -32,7 +32,7 @@
     <p>Đây là trang dành cho Khách hàng. Thành viên 2 & 3 sẽ phát triển đầy đủ giao diện này.</p>
     <div class="links">
         <a href="${pageContext.request.contextPath}/customer/booking">Đặt lịch hẹn</a>
-        <a href="${pageContext.request.contextPath}/customer/history">Lịch sử khám</a>
+        <a href="${pageContext.request.contextPath}/examination-history">Lịch sử khám</a>
         <a href="${pageContext.request.contextPath}/auth/logout" class="sec"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
     </div>
 </div>

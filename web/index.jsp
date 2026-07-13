@@ -67,8 +67,8 @@
                         <div class="account-dropdown" role="menu">
                             <% if (roleId == 4) { %>
                                 <a href="${pageContext.request.contextPath}/customer/booking.jsp" role="menuitem">Lịch khám</a>
-                                <a href="${pageContext.request.contextPath}/customer/history.jsp" role="menuitem">Lịch sử thanh toán</a>
-                                <a href="${pageContext.request.contextPath}/customer/dashboard.jsp" role="menuitem">Hồ sơ</a>
+                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử khám của tôi</a>
+                                <a href="${pageContext.request.contextPath}/customer/profile" role="menuitem">Hồ sơ</a>
                             <% } else if (roleId == 1) { %>
                                 <a href="${pageContext.request.contextPath}/admin/dashboard.jsp" role="menuitem">Trang quản lý</a>
                                 <a href="${pageContext.request.contextPath}/admin/manage-users" role="menuitem">Quản lý tài khoản</a>
@@ -76,9 +76,11 @@
                             <% } else if (roleId == 2) { %>
                                 <a href="${pageContext.request.contextPath}/doctor/dashboard.jsp" role="menuitem">Trang bác sĩ</a>
                                 <a href="${pageContext.request.contextPath}/doctor/checkup.jsp" role="menuitem">Khám bệnh</a>
+                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử ca đã khám</a>
                             <% } else if (roleId == 3) { %>
                                 <a href="${pageContext.request.contextPath}/receptionist/dashboard.jsp" role="menuitem">Trang tiếp nhận</a>
                                 <a href="${pageContext.request.contextPath}/receptionist/manage-booking.jsp" role="menuitem">Quản lý lịch khám</a>
+                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử khám toàn bộ</a>
                                 <a href="${pageContext.request.contextPath}/receptionist/billing" role="menuitem">Thanh toán</a>
                             <% } else { %>
                                 <a href="<%= dashboardUrl %>" role="menuitem">Trang quản lý</a>

@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * Model class for MedicalRecords.
@@ -16,6 +18,12 @@ public class MedicalRecord {
     // Optional helper fields for billing / UI display
     private String patientName;
     private String doctorName;
+    private int customerID;
+    private String customerPhone;
+    private LocalDate appointmentDate;
+    private LocalTime appointmentTime;
+    private String appointmentNotes;
+    private String serviceNames;
 
     // Constructors
     public MedicalRecord() {
@@ -93,6 +101,58 @@ public class MedicalRecord {
 
     public void setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+    }
+
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public LocalTime getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(LocalTime appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public String getAppointmentNotes() {
+        return appointmentNotes;
+    }
+
+    public void setAppointmentNotes(String appointmentNotes) {
+        this.appointmentNotes = appointmentNotes;
+    }
+
+    public String getServiceNames() {
+        return serviceNames;
+    }
+
+    public void setServiceNames(String serviceNames) {
+        this.serviceNames = serviceNames;
+    }
+
+    public boolean hasTreatmentPlan() {
+        return treatmentPlan != null && !treatmentPlan.trim().isEmpty();
     }
 
     @Override
