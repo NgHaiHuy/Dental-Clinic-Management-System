@@ -21,8 +21,38 @@ public class CheckInController extends HttpServlet {
         AppointmentDAO appDAO = new AppointmentDAO();
         List<Appointment> appointments = appDAO.getAllAppointments();
         
+        // Sort: Confirmed -> Pending -> Attended -> Cancelled/Others
+        appointments.sort((a1, a2) -> {
+            int p1 = getStatusPriority(a1.getStatus());
+            int p2 = getStatusPriority(a2.getStatus());
+            if (p1 != p2) {
+                return Integer.compare(p1, p2);
+            }
+            // Same status -> sort by Date
+            int dateCompare = a1.getAppointmentDate().compareTo(a2.getAppointmentDate());
+            if (dateCompare != 0) {
+                return dateCompare;
+            }
+            // Same date -> sort by Time
+            return a1.getAppointmentTime().compareTo(a2.getAppointmentTime());
+        });
+        
         request.setAttribute("appointments", appointments);
         request.getRequestDispatcher("/receptionist/manage-booking.jsp").forward(request, response);
+    }
+
+    private int getStatusPriority(String status) {
+        if (status == null) return 4;
+        switch (status.toLowerCase()) {
+            case "confirmed":
+                return 1;
+            case "pending":
+                return 2;
+            case "attended":
+                return 3;
+            default:
+                return 4; // Cancelled, etc.
+        }
     }
 
     @Override
