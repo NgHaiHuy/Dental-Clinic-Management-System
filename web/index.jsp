@@ -10,7 +10,7 @@
     try {
         ServiceDAO serviceDAO = new ServiceDAO();
         // Check if connection is established
-        if (serviceDAO.connection == null) {
+        if (serviceDAO.getConnection() == null) {
             throw new Exception("Database connection is null");
         }
         services = serviceDAO.getAllServices();
@@ -37,7 +37,7 @@
                 </p>
             <% } else { %>
                 <p>
-                    Khách vãng lai | 
+                    Khách | 
                     <a href="<%= request.getContextPath() %>/auth/login"><strong>Đăng nhập</strong></a> | 
                     <a href="<%= request.getContextPath() %>/auth/register">Đăng ký tài khoản</a>
                 </p>
