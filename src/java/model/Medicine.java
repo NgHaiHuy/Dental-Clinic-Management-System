@@ -10,6 +10,7 @@ public class Medicine {
     private double price;
     private int stockQuantity;
     private boolean status; // 1: Active/Selling, 0: Inactive/Not Selling
+    private String imagePath; // Added for medical product images
 
     // Constructors
     public Medicine() {
@@ -22,6 +23,16 @@ public class Medicine {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.status = status;
+    }
+
+    public Medicine(int medicineID, String medicineName, String unit, double price, int stockQuantity, boolean status, String imagePath) {
+        this.medicineID = medicineID;
+        this.medicineName = medicineName;
+        this.unit = unit;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.status = status;
+        this.imagePath = imagePath;
     }
 
     // Getters and Setters
@@ -73,6 +84,14 @@ public class Medicine {
         this.status = status;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     @Override
     public String toString() {
         return "Medicine{" +
@@ -82,6 +101,7 @@ public class Medicine {
                 ", price=" + price +
                 ", stockQuantity=" + stockQuantity +
                 ", status=" + status +
+                ", imagePath='" + imagePath + '\'' +
                 '}';
     }
 }

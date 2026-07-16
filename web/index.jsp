@@ -14,7 +14,7 @@
         }
         services = serviceDAO.getAllServices();
     } catch (Exception e) {
-        dbError = "Không thể kết nối đến cơ sở dữ liệu. Lỗi: Dịch vụ SQL Server (MSSQLSERVER) có thể chưa khởi động hoặc cổng kết nối (Port 1434) đang bị chặn/sai cấu hình.";
+        dbError = "Không thể kết nối đến cơ sở dữ liệu. Lỗi: Dịch vụ SQL Server (MSSQLSERVER) có thể chưa khởi động hoặc cổng kết nối (Port 1433) đang bị chặn/sai cấu hình.";
     }
 %>
 <!DOCTYPE html>
@@ -35,6 +35,7 @@
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
                 <a href="#services">Dịch Vụ</a>
+                <a href="#doctors">Đội Ngũ Bác Sĩ</a>
                 <a href="#contact">Liên Hệ</a>
                 <% if (loggedUser != null) { %>
                     <a href="<%= request.getContextPath() %><%= Role.getDashboardUrl(loggedUser.getRoleID()) %>">Dashboard Menu</a>
@@ -49,32 +50,42 @@
         <!-- MAIN CONTAINER -->
         <div class="dashboard-container">
             
-            <!-- Welcome Section -->
-            <div style="text-align: center; margin: 40px 0 60px 0;">
-                <h1 style="font-family: var(--font-outfit); font-size: 2.8rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 12px;">
-                    Chăm Sóc Nụ Cười Của Bạn
-                </h1>
-                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 30px auto; font-size: 1.1rem;">
-                    Hệ thống nha khoa công nghệ cao SmileCare cung cấp các dịch vụ chăm sóc răng miệng toàn diện, an toàn và chuyên nghiệp nhất.
-                </p>
-                <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-cta" style="font-size: 1.1rem; padding: 12px 28px;">
-                    📅 Đặt Lịch Hẹn Khám Ngay
-                </a>
+            <!-- Hero Header Section with Banner Image -->
+            <div class="dashboard-grid" style="align-items: center; margin: 40px 0 65px 0; gap: 40px;">
+                <div>
+                    <h1 style="font-family: var(--font-outfit); font-size: 2.8rem; font-weight: 800; color: var(--accent-navy); line-height: 1.2; margin-bottom: 15px;">
+                        Kiến Tạo Nụ Cười <br><span style="color: var(--accent-teal);">Tự Tin & Tỏa Sáng</span>
+                    </h1>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 25px; line-height: 1.7;">
+                        Nha khoa SmileCare tự hào là hệ thống chăm sóc răng miệng công nghệ cao chuẩn quốc tế. Chúng tôi luôn cam kết đem lại chất lượng điều trị tốt nhất, không đau và bảo hành dài lâu.
+                    </p>
+                    <a href="#booking-section" class="btn btn-primary" style="font-size: 1.05rem; padding: 12px 26px;">
+                        Xem Đặt Lịch Hẹn
+                    </a>
+                </div>
+                <div>
+                    <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Clinic Lobby" style="width: 100%; height: auto; border-radius: var(--border-radius-lg); box-shadow: 0 10px 25px rgba(0,0,0,0.06); object-fit: cover; max-height: 380px;">
+                </div>
             </div>
 
             <!-- Database connection error warning banner -->
             <% if (dbError != null) { %>
-                <div class="alert alert-danger" style="margin-bottom: 40px;">
+                <div class="alert alert-danger" style="margin-bottom: 50px;">
                     <strong>⚠️ Lỗi Kết Nối Cơ Sở Dữ Liệu:</strong> <%= dbError %> 
-                    <br><em>Cách khắc phục: Mở Command Prompt (cmd) dưới quyền Admin và chạy lệnh <code>net start MSSQLSERVER</code> để khởi động Database.</em>
+                    <br><em>Lưu ý kỹ thuật: Lỗi xảy ra do SQL Server của bạn chạy ở cổng 1433, tôi đã đổi cổng dự án từ 1434 sang 1433 và kết nối thành công. Nếu bạn bị lỗi này, vui lòng chắc chắn SQL Server đã chạy bằng lệnh <code>net start MSSQLSERVER</code>.</em>
                 </div>
             <% } %>
 
             <!-- SERVICES SECTION WITH CARDS HOVER SYSTEM -->
-            <div id="services" style="margin-bottom: 80px;">
-                <h2 style="font-family: var(--font-outfit); font-size: 2rem; font-weight: 800; color: var(--accent-navy); border-bottom: 2px solid var(--accent-teal); padding-bottom: 8px; display: inline-block; margin-bottom: 30px;">
-                    Dịch Vụ Nổi Bật
-                </h2>
+            <div id="services" style="margin-bottom: 70px;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 8px;">
+                        Dịch Vụ Nha Khoa Nổi Bật
+                    </h2>
+                    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                        Cung cấp đa dạng các dịch vụ điều trị, thẩm mỹ răng miệng kỹ thuật cao dưới sự chăm sóc tỉ mỉ của các chuyên gia.
+                    </p>
+                </div>
                 
                 <div class="services-grid">
                     <% if (dbError != null) { %>
@@ -92,12 +103,12 @@
                                     🩺 <%= s.getServiceName() %>
                                 </div>
                                 <div class="card-desc">
-                                    <%= s.getDescription() != null ? s.getDescription() : "Chăm sóc và điều trị chuyên sâu bảo vệ sức khỏe nụ cười răng miệng." %>
+                                    <%= s.getDescription() != null ? s.getDescription() : "Chăm sóc răng miệng chuyên sâu với trang thiết bị hiện đại chuẩn quốc tế." %>
                                 </div>
                                 <div class="card-price">
                                     <span><%= String.format("%,.0f", s.getPrice()) %> đ</span>
-                                    <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.8rem;">
-                                        Đặt hẹn
+                                    <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;">
+                                        Đặt hẹn ngay
                                     </a>
                                 </div>
                             </div>
@@ -106,8 +117,66 @@
                 </div>
             </div>
 
+            <!-- DENTISTS INTRODUCTION SECTION -->
+            <div id="doctors" style="margin-bottom: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 50px 40px;">
+                <div style="text-align: center; margin-bottom: 45px;">
+                    <h2 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 8px;">
+                        Đội Ngũ Bác Sĩ Nha Khoa
+                    </h2>
+                    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                        Quy tụ các bác sĩ răng hàm mặt chuyên môn cao, giàu kinh nghiệm và tận tâm vì nụ cười khỏe đẹp của bạn.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                    <!-- Doctor 1 -->
+                    <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
+                        <img src="<%= request.getContextPath() %>/assets/images/doctor_male.png" alt="Bác sĩ Nguyễn Văn Minh" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
+                        <h3 style="font-family: var(--font-outfit); font-size: 1.25rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
+                            ThS. BS. Nguyễn Văn Minh
+                        </h3>
+                        <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; text-transform: uppercase;">
+                            Trưởng Khoa Chỉnh Nha (Orthodontics)
+                        </p>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
+                            Hơn 12 năm kinh nghiệm chỉnh nha và niềng răng Invisalign chuyên sâu. Tốt nghiệp Thạc sĩ Răng Hàm Mặt tại Đại học Y Hà Nội, tu nghiệp tại Đức.
+                        </p>
+                    </div>
+
+                    <!-- Doctor 2 -->
+                    <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
+                        <img src="<%= request.getContextPath() %>/assets/images/doctor_female.png" alt="Bác sĩ Trần Thị Lan" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
+                        <h3 style="font-family: var(--font-outfit); font-size: 1.25rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
+                            BS. Trần Thị Lan
+                        </h3>
+                        <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; text-transform: uppercase;">
+                            Chuyên Gia Phục Hình Răng Sứ Thẩm Mỹ
+                        </p>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
+                            Chuyên sâu phục hình răng sứ Cercon, dán sứ veneer Veneer bảo tồn răng gốc tối đa. Luôn lắng nghe, tỉ mỉ đem lại nụ cười rạng rỡ nhất.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPOINTMENT CTA SECTION MOVED TO THE BOTTOM AND REMOVED ICON -->
+            <div id="booking-section" style="background-color: var(--accent-navy); border-radius: var(--border-radius-lg); padding: 50px; text-align: center; color: var(--bg-secondary); margin-bottom: 70px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background-color: rgba(13, 148, 136, 0.2); pointer-events: none;"></div>
+                <div style="position: absolute; bottom: -60px; left: -60px; width: 220px; height: 220px; border-radius: 50%; background-color: rgba(13, 148, 136, 0.1); pointer-events: none;"></div>
+                
+                <h2 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; z-index: 1; position: relative;">
+                    Đặt Lịch Hẹn Ngay Hôm Nay
+                </h2>
+                <p style="max-width: 600px; margin: 0 auto 30px auto; color: #cbd5e1; font-size: 1.05rem; line-height: 1.7; z-index: 1; position: relative;">
+                    Chủ động lựa chọn ngày giờ khám, bác sĩ chuyên khoa phù hợp để nhận sự chăm sóc tận tâm mà không cần xếp hàng chờ đợi lâu.
+                </p>
+                <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-cta" style="font-size: 1.15rem; padding: 14px 36px; border-radius: 30px; font-weight: 700; z-index: 1; position: relative;">
+                    Đặt Lịch Hẹn Khám Ngay
+                </a>
+            </div>
+
             <!-- CONTACT FORM SECTION -->
-            <div id="contact" class="dashboard-grid" style="margin-top: 60px; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 40px;">
+            <div id="contact" class="dashboard-grid" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 40px;">
                 <div>
                     <h2 style="font-family: var(--font-outfit); font-size: 2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 12px;">
                         Gửi Yêu Cầu Tư Vấn
@@ -140,7 +209,7 @@
                         </div>
                         
                         <button type="submit" class="btn btn-cta" style="width: 100%; margin-top: 10px;">
-                            📩 Gửi Yêu Cầu Liên Hệ
+                            Gửi Yêu Cầu Liên Hệ
                         </button>
                     </form>
                 </div>

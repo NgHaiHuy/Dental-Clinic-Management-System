@@ -134,9 +134,12 @@
                                         <% if (medicines != null) {
                                             for (Medicine m : medicines) { %>
                                                 <tr>
-                                                    <td>
-                                                        <strong><%= m.getMedicineName() %></strong>
-                                                        <input type="hidden" name="medicineIDs" value="<%= m.getMedicineID() %>">
+                                                    <td style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="${pageContext.request.contextPath}<%= m.getImagePath() %>" alt="<%= m.getMedicineName() %>" style="width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 2px; background: white;">
+                                                        <div>
+                                                            <strong><%= m.getMedicineName() %></strong>
+                                                            <input type="hidden" name="medicineIDs" value="<%= m.getMedicineID() %>">
+                                                        </div>
                                                     </td>
                                                     <td><%= m.getUnit() %></td>
                                                     <td><%= String.format("%,.0f", m.getPrice()) %> đ</td>
