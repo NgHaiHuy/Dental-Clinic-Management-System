@@ -158,7 +158,8 @@
                                 '<%= doc.getPhone() %>',
                                 '<%= (doc.getBiography() != null ? doc.getBiography() : "Chuyên gia răng hàm mặt giàu kinh nghiệm của SmileCare.").replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>',
                                 '<%= request.getContextPath() %>/img/<%= imgName %>',
-                                <%= doc.getUserID() %>
+                                <%= doc.getUserID() %>,
+                                '<%= doc.getUsername() %>'
                             )" style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary); cursor: pointer;">
                                 <img src="<%= request.getContextPath() %>/img/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
                                 <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
@@ -325,7 +326,7 @@
 
         <!-- DOCTOR DETAILS MODAL -->
         <div id="doctorModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
-            <div class="modal-content" style="background: white; width: 100%; max-width: 600px; border-radius: var(--border-radius-lg); padding: 35px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: modalFadeIn 0.3s ease;">
+            <div class="modal-content" style="background: white; width: 100%; max-width: 650px; border-radius: var(--border-radius-lg); padding: 35px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: modalFadeIn 0.3s ease;">
                 <!-- Close Button -->
                 <button onclick="closeDoctorModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); line-height: 1; transition: color 0.2s;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--text-secondary)'">&times;</button>
                 
@@ -334,6 +335,7 @@
                     <div style="flex: 1; min-width: 250px;">
                         <span id="modalDocSpec" style="background-color: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"></span>
                         <h2 id="modalDocName" style="font-family: var(--font-outfit); font-size: 1.6rem; font-weight: 800; color: var(--accent-navy); margin-top: 8px; margin-bottom: 8px;"></h2>
+                        <div id="modalDocTitle" style="font-size: 0.92rem; font-weight: 600; color: var(--accent-teal); margin-bottom: 8px;"></div>
                         <div style="font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
                             <div><i class="fas fa-briefcase" style="width: 18px; color: var(--accent-teal);"></i> <span id="modalDocExp"></span> kinh nghiệm</div>
                             <div><i class="fas fa-envelope" style="width: 18px; color: var(--accent-teal);"></i> <span id="modalDocEmail"></span></div>
@@ -344,7 +346,25 @@
                 
                 <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
                     <h4 style="font-family: var(--font-outfit); font-size: 1rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 8px;">Tiểu sử & Kinh nghiệm lâm sàng</h4>
-                    <p id="modalDocBio" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 25px; text-align: justify;"></p>
+                    <p id="modalDocBio" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px; text-align: justify;"></p>
+                    
+                    <!-- Advanced Info grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
+                        <div>
+                            <h5 style="font-family: var(--font-outfit); font-size: 0.9rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 8px;">
+                                <i class="fas fa-graduation-cap" style="color: var(--accent-teal); margin-right: 6px;"></i> Học vấn & Đào tạo
+                            </h5>
+                            <ul id="modalDocEdu" style="padding-left: 16px; margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; display: flex; flex-direction: column; gap: 4px;">
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 style="font-family: var(--font-outfit); font-size: 0.9rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 8px;">
+                                <i class="fas fa-star" style="color: var(--accent-teal); margin-right: 6px;"></i> Chuyên môn thế mạnh
+                            </h5>
+                            <ul id="modalDocSkills" style="padding-left: 16px; margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; display: flex; flex-direction: column; gap: 4px;">
+                            </ul>
+                        </div>
+                    </div>
                     
                     <a id="modalBookLink" href="" class="btn btn-register" style="display: block; text-align: center; padding: 12px 24px; font-size: 1rem; text-decoration: none; border-radius: 6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
                         <i class="fas fa-calendar-alt" style="margin-right: 8px;"></i> Đặt Lịch Hẹn Với Bác Sĩ
@@ -354,7 +374,88 @@
         </div>
 
         <script>
-            function openDoctorModal(name, spec, exp, email, phone, bio, imgUrl, docId) {
+            const doctorDetails = {
+                'doctor01': {
+                    title: 'Bác sĩ Chuyên khoa I - Chỉnh nha chuyên sâu',
+                    education: [
+                        'Tốt nghiệp Đại học Y Dược Hà Nội',
+                        'Chứng chỉ Chỉnh nha tăng trưởng quốc tế',
+                        'Hội viên Hội Chỉnh nha Việt Nam (VOSA)'
+                    ],
+                    skills: [
+                        'Chỉnh nha mắc cài kim loại & sứ',
+                        'Niềng răng trong suốt Invisalign',
+                        'Cân chỉnh khớp cắn chuyên sâu'
+                    ]
+                },
+                'doctor02': {
+                    title: 'Bác sĩ Thẩm mỹ Nha khoa - Thành viên AACD',
+                    education: [
+                        'Tốt nghiệp Bác sĩ Răng Hàm Mặt - ĐH Y Dược TP.HCM',
+                        'Chứng chỉ Phục hình răng sứ thẩm mỹ chuyên sâu',
+                        'Hội viên Hiệp hội Nha khoa Thẩm mỹ Hoa Kỳ (AACD)'
+                    ],
+                    skills: [
+                        'Dán sứ Veneer siêu mỏng phục hình tối thiểu',
+                        'Bọc răng sứ toàn sứ cao cấp Cercon/Emax',
+                        'Tẩy trắng răng Laser Whitening không ê buốt'
+                    ]
+                },
+                'doctor03': {
+                    title: 'Bác sĩ Chuyên khoa II - Chuyên gia Implant',
+                    education: [
+                        'Bác sĩ Chuyên khoa II Răng Hàm Mặt',
+                        'Tu nghiệp chuyên sâu về cấy ghép Implant tại Hoa Kỳ',
+                        'Thành viên Hiệp hội Implant Quốc tế (ITI)'
+                    ],
+                    skills: [
+                        'Cấy ghép Implant tức thì sau nhổ răng',
+                        'Phẫu thuật nâng xoang, ghép xương hàm',
+                        'Tiểu phẫu răng khôn mọc ngầm, mọc lệch khó'
+                    ]
+                },
+                'doctor04': {
+                    title: 'Thạc sĩ Bác sĩ - Nội nha & Nha khoa Trẻ em',
+                    education: [
+                        'Thạc sĩ Răng Hàm Mặt - Đại học Y Hà Nội',
+                        'Chứng chỉ Nội nha lâm sàng nâng cao',
+                        'Chứng chỉ Nha khoa Trẻ em chuyên sâu'
+                    ],
+                    skills: [
+                        'Điều trị tủy răng bằng máy WaveOne hiện đại',
+                        'Nha khoa trẻ em không đau & tâm lý học trẻ em',
+                        'Trám răng sâu thẩm mỹ ngăn ngừa tái phát'
+                    ]
+                },
+                'doctor05': {
+                    title: 'Bác sĩ Nha khoa - Chuyên gia Nha chu',
+                    education: [
+                        'Tốt nghiệp loại Giỏi Bác sĩ Răng Hàm Mặt - ĐH Y Dược TP.HCM',
+                        'Chứng chỉ điều trị bệnh lý nha chu chuyên sâu',
+                        'Khóa đào tạo chuyên sâu về Laser trong Nha khoa'
+                    ],
+                    skills: [
+                        'Điều trị viêm nha chu toàn diện',
+                        'Phẫu thuật tạo hình nướu, ghép nướu rời',
+                        'Điều trị dứt điểm hôi miệng do bệnh lý'
+                    ]
+                },
+                'doctor06': {
+                    title: 'Bác sĩ Răng Hàm Mặt - Nha khoa Tổng quát',
+                    education: [
+                        'Tốt nghiệp Bác sĩ Răng Hàm Mặt chính quy',
+                        'Chứng chỉ nhổ răng khôn bằng sóng siêu âm Piezotome',
+                        'Chứng chỉ cấy ghép nha khoa cơ bản'
+                    ],
+                    skills: [
+                        'Nhổ răng khôn không đau công nghệ Piezotome',
+                        'Điều trị sâu răng, viêm tủy cấp tính',
+                        'Khám tổng quát & Lập phác đồ điều trị'
+                    ]
+                }
+            };
+
+            function openDoctorModal(name, spec, exp, email, phone, bio, imgUrl, docId, username) {
                 document.getElementById('modalDocName').innerText = name;
                 document.getElementById('modalDocSpec').innerText = spec;
                 document.getElementById('modalDocExp').innerText = exp + " năm";
@@ -364,6 +465,32 @@
                 document.getElementById('modalDocImg').src = imgUrl;
                 document.getElementById('modalDocImg').alt = name;
                 document.getElementById('modalBookLink').href = "<%= request.getContextPath() %>/customer/booking?doctorID=" + docId;
+                
+                const details = doctorDetails[username] || {
+                    title: spec,
+                    education: ['Tốt nghiệp Bác sĩ Răng Hàm Mặt chuyên khoa', 'Thành viên các hiệp hội nha khoa uy tín'],
+                    skills: ['Điều trị nha khoa tổng quát', 'Chăm sóc sức khỏe răng miệng toàn diện']
+                };
+                
+                document.getElementById('modalDocTitle').innerText = details.title;
+                
+                // Populate education list
+                const eduList = document.getElementById('modalDocEdu');
+                eduList.innerHTML = '';
+                details.education.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerText = item;
+                    eduList.appendChild(li);
+                });
+                
+                // Populate skills list
+                const skillsList = document.getElementById('modalDocSkills');
+                skillsList.innerHTML = '';
+                details.skills.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerText = item;
+                    skillsList.appendChild(li);
+                });
                 
                 const modal = document.getElementById('doctorModal');
                 modal.style.display = 'flex';
