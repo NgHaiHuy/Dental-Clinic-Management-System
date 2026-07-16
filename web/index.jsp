@@ -27,6 +27,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Nha Khoa SmileCare - Dịch Vụ Nha Khoa Chuyên Nghiệp</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
     </head>
     <body>
@@ -191,10 +192,19 @@
                     <p style="color: var(--text-secondary); margin-bottom: 25px;">
                         Hãy để lại thông tin liên hệ và tình trạng răng miệng hiện tại, đội ngũ nha sĩ SmileCare sẽ gọi lại tư vấn miễn phí cho bạn trong vòng 15 phút.
                     </p>
-                    <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 2;">
-                        📍 <strong>Địa chỉ:</strong> 123 Cầu Giấy, Hà Nội<br>
-                        📞 <strong>Hotline:</strong> (024) 3756 8888<br>
-                        ✉️ <strong>Email:</strong> contact@smilecare.vn
+                    <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 2; margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-map-marker-alt" style="color: var(--accent-teal); width: 16px;"></i>
+                            <span><strong>Địa chỉ:</strong> 123 Cầu Giấy, Hà Nội</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-phone-alt" style="color: var(--accent-teal); width: 16px;"></i>
+                            <span><strong>Hotline:</strong> (024) 3756 8888</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-envelope" style="color: var(--accent-teal); width: 16px;"></i>
+                            <span><strong>Email:</strong> contact@smilecare.vn</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -223,5 +233,82 @@
             </div>
 
         </div>
+
+        <!-- PREMIUM FOOTER -->
+        <footer style="background-color: var(--accent-navy); color: #cbd5e1; padding: 60px 0 30px 0; margin-top: 85px; font-family: var(--font-inter);">
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr 1.2fr 1.3fr; gap: 40px; text-align: left;">
+                <!-- Column 1: Brand -->
+                <div>
+                    <h3 style="font-family: var(--font-outfit); font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        🦷 SmileCare<span style="color: var(--accent-teal);">+</span>
+                    </h3>
+                    <p style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; color: #94a3b8;">
+                        Hệ thống nha khoa thẩm mỹ công nghệ cao chuẩn quốc tế. SmileCare tự hào kiến tạo hơn 10,000 nụ cười rạng rỡ và tự tin mỗi năm.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: background-color 0.2s;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: background-color 0.2s;"><i class="fab fa-youtube"></i></a>
+                        <a href="#" style="width: 36px; height: 36px; border-radius: 50%; background-color: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: background-color 0.2s;"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h4 style="color: white; font-size: 1.05rem; font-weight: 600; margin-bottom: 18px; position: relative; padding-bottom: 8px;">
+                        Liên Kết Nhanh
+                        <span style="position: absolute; bottom: 0; left: 0; width: 30px; height: 2px; background-color: var(--accent-teal);"></span>
+                    </h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem;">
+                        <li><a href="<%= request.getContextPath() %>/" style="color: #94a3b8; text-decoration: none; transition: color 0.2s;">Trang Chủ</a></li>
+                        <li><a href="#services" style="color: #94a3b8; text-decoration: none; transition: color 0.2s;">Dịch Vụ</a></li>
+                        <li><a href="#doctors" style="color: #94a3b8; text-decoration: none; transition: color 0.2s;">Đội Ngũ Bác Sĩ</a></li>
+                        <li><a href="#booking-section" style="color: #94a3b8; text-decoration: none; transition: color 0.2s;">Đặt Lịch Hẹn</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Working Hours -->
+                <div>
+                    <h4 style="color: white; font-size: 1.05rem; font-weight: 600; margin-bottom: 18px; position: relative; padding-bottom: 8px;">
+                        Giờ Làm Việc
+                        <span style="position: absolute; bottom: 0; left: 0; width: 30px; height: 2px; background-color: var(--accent-teal);"></span>
+                    </h4>
+                    <p style="font-size: 0.9rem; line-height: 1.6; color: #94a3b8; margin-bottom: 10px;">
+                        Thứ 2 - Thứ 6:<br>
+                        <strong style="color: #cbd5e1;">08:00 - 20:00</strong>
+                    </p>
+                    <p style="font-size: 0.9rem; line-height: 1.6; color: #94a3b8;">
+                        Thứ 7 - Chủ Nhật:<br>
+                        <strong style="color: #cbd5e1;">08:30 - 18:00</strong>
+                    </p>
+                </div>
+
+                <!-- Column 4: Newsletter -->
+                <div>
+                    <h4 style="color: white; font-size: 1.05rem; font-weight: 600; margin-bottom: 18px; position: relative; padding-bottom: 8px;">
+                        Đăng Ký Bản Tin
+                        <span style="position: absolute; bottom: 0; left: 0; width: 30px; height: 2px; background-color: var(--accent-teal);"></span>
+                    </h4>
+                    <p style="font-size: 0.9rem; line-height: 1.6; color: #94a3b8; margin-bottom: 15px;">
+                        Đăng ký nhận ưu đãi và mẹo chăm sóc răng miệng định kỳ.
+                    </p>
+                    <form onsubmit="alert('Cảm ơn bạn đã đăng ký!'); return false;" style="display: flex; gap: 8px;">
+                        <input type="email" placeholder="Email..." required style="width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background-color: rgba(255,255,255,0.05); color: white; font-size: 0.85rem; outline: none;">
+                        <button type="submit" style="background-color: var(--accent-teal); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s;"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div style="max-width: 1200px; margin: 40px auto 20px auto; border-top: 1px solid rgba(255,255,255,0.08);"></div>
+
+            <!-- Copyright -->
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; font-size: 0.85rem; color: #64748b;">
+                <span>&copy; 2026 Nha Khoa SmileCare. Bảo lưu mọi quyền.</span>
+                <div style="display: flex; gap: 20px;">
+                    <a href="#" style="color: #64748b; text-decoration: none;">Chính sách bảo mật</a>
+                    <a href="#" style="color: #64748b; text-decoration: none;">Điều khoản dịch vụ</a>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>
