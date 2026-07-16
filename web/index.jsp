@@ -138,11 +138,9 @@
                             Hiện tại chưa thể hiển thị danh sách bác sĩ.
                         </div>
                     <% } else {
-                        int index = 0;
                         for (User doc : doctors) {
-                            // Alternate placeholder avatar between male and female dentists
-                            String imgName = (index % 2 == 0) ? "doctor_male.png" : "doctor_female.png";
-                            index++;
+                            // Map profile image dynamically based on username
+                            String imgName = "doctor_" + doc.getUsername() + ".png";
                     %>
                             <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
                                 <img src="<%= request.getContextPath() %>/assets/images/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
