@@ -1,4 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="model.User, model.Role"%>
+<%
+    User loggedUser = (User) session.getAttribute("loggedInUser");
+    String brandUrl = (loggedUser != null) ? (request.getContextPath() + Role.getDashboardUrl(loggedUser.getRoleID())) : (request.getContextPath() + "/");
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -83,11 +88,18 @@
             background: rgba(255,255,255,0.04);
         }
 
-        .brand {
+        a.brand {
             display: flex;
             align-items: center;
             gap: 12px;
             z-index: 1;
+            text-decoration: none;
+            color: var(--white) !important;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        a.brand:hover {
+            opacity: 0.85;
         }
         .brand-icon {
             width: 48px; height: 48px;
@@ -258,13 +270,13 @@
 <div class="auth-wrapper">
     <!-- LEFT: Branding panel -->
     <div class="auth-panel-left">
-        <div class="brand">
+        <a href="<%= brandUrl %>" class="brand">
             <div class="brand-icon"><i class="fas fa-tooth"></i></div>
             <div>
                 <div class="brand-name">SmileCare</div>
                 <div class="brand-sub">Dental Management System</div>
             </div>
-        </div>
+        </a>
 
         <div class="panel-content">
             <h2>Hệ thống quản lý<br>Phòng khám Nha khoa</h2>
