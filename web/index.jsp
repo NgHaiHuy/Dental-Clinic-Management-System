@@ -150,7 +150,16 @@
                             // Map profile image dynamically based on username
                             String imgName = "doctor_" + doc.getUsername() + ".png";
                     %>
-                            <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
+                            <div class="doctor-card-item" onclick="openDoctorModal(
+                                '<%= doc.getFullName().replace("'", "\\'") %>',
+                                '<%= (doc.getSpecialization() != null ? doc.getSpecialization() : "Bác sĩ Nha khoa").replace("'", "\\'") %>',
+                                <%= doc.getExperienceYears() %>,
+                                '<%= doc.getEmail() %>',
+                                '<%= doc.getPhone() %>',
+                                '<%= (doc.getBiography() != null ? doc.getBiography() : "Chuyên gia răng hàm mặt giàu kinh nghiệm của SmileCare.").replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>',
+                                '<%= request.getContextPath() %>/img/<%= imgName %>',
+                                <%= doc.getUserID() %>
+                            )" style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary); cursor: pointer;">
                                 <img src="<%= request.getContextPath() %>/img/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
                                 <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
                                     <%= doc.getFullName() %>
@@ -158,9 +167,12 @@
                                 <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.88rem; margin-bottom: 12px; text-transform: uppercase;">
                                     <%= doc.getSpecialization() != null ? doc.getSpecialization() : "Bác sĩ Nha khoa" %>
                                 </p>
-                                <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
+                                <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8rem; text-overflow: ellipsis; margin-bottom: 10px;">
                                     <%= doc.getBiography() != null ? doc.getBiography() : "Chuyên gia răng hàm mặt tận tâm chăm sóc sức khỏe răng miệng của bạn." %>
                                 </p>
+                                <div style="margin-top: 15px; color: var(--primary); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Xem chi tiết <i class="fas fa-arrow-right" style="font-size: 0.75rem; margin-left: 4px;"></i>
+                                </div>
                             </div>
                     <% }
                     } %>
@@ -310,5 +322,64 @@
                 </div>
             </div>
         </footer>
+
+        <!-- DOCTOR DETAILS MODAL -->
+        <div id="doctorModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+            <div class="modal-content" style="background: white; width: 100%; max-width: 600px; border-radius: var(--border-radius-lg); padding: 35px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: modalFadeIn 0.3s ease;">
+                <!-- Close Button -->
+                <button onclick="closeDoctorModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); line-height: 1; transition: color 0.2s;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--text-secondary)'">&times;</button>
+                
+                <div style="display: flex; gap: 25px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+                    <img id="modalDocImg" src="" alt="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                    <div style="flex: 1; min-width: 250px;">
+                        <span id="modalDocSpec" style="background-color: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                        <h2 id="modalDocName" style="font-family: var(--font-outfit); font-size: 1.6rem; font-weight: 800; color: var(--accent-navy); margin-top: 8px; margin-bottom: 8px;"></h2>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                            <div><i class="fas fa-briefcase" style="width: 18px; color: var(--accent-teal);"></i> <span id="modalDocExp"></span> kinh nghiệm</div>
+                            <div><i class="fas fa-envelope" style="width: 18px; color: var(--accent-teal);"></i> <span id="modalDocEmail"></span></div>
+                            <div><i class="fas fa-phone-alt" style="width: 18px; color: var(--accent-teal);"></i> <span id="modalDocPhone"></span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h4 style="font-family: var(--font-outfit); font-size: 1rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 8px;">Tiểu sử & Kinh nghiệm lâm sàng</h4>
+                    <p id="modalDocBio" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 25px; text-align: justify;"></p>
+                    
+                    <a id="modalBookLink" href="" class="btn btn-register" style="display: block; text-align: center; padding: 12px 24px; font-size: 1rem; text-decoration: none; border-radius: 6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
+                        <i class="fas fa-calendar-alt" style="margin-right: 8px;"></i> Đặt Lịch Hẹn Với Bác Sĩ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openDoctorModal(name, spec, exp, email, phone, bio, imgUrl, docId) {
+                document.getElementById('modalDocName').innerText = name;
+                document.getElementById('modalDocSpec').innerText = spec;
+                document.getElementById('modalDocExp').innerText = exp + " năm";
+                document.getElementById('modalDocEmail').innerText = email;
+                document.getElementById('modalDocPhone').innerText = phone;
+                document.getElementById('modalDocBio').innerText = bio;
+                document.getElementById('modalDocImg').src = imgUrl;
+                document.getElementById('modalDocImg').alt = name;
+                document.getElementById('modalBookLink').href = "<%= request.getContextPath() %>/customer/booking?doctorID=" + docId;
+                
+                const modal = document.getElementById('doctorModal');
+                modal.style.display = 'flex';
+            }
+            
+            function closeDoctorModal() {
+                document.getElementById('doctorModal').style.display = 'none';
+            }
+            
+            // Close modal when clicking outside content
+            window.addEventListener('click', function(e) {
+                const modal = document.getElementById('doctorModal');
+                if (e.target === modal) {
+                    closeDoctorModal();
+                }
+            });
+        </script>
     </body>
 </html>
