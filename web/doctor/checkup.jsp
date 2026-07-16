@@ -13,138 +13,172 @@
     if (errorMessage != null) request.getSession().removeAttribute("errorMessage");
 %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Bác Sĩ - Khám Bệnh & Kê Đơn</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bác Sĩ - Khám Bệnh & Kê Đơn - SmileCare</title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
     </head>
     <body>
-        <h1>Phòng Khám Răng - Bác Sĩ</h1>
-        
-        <p>
-            <a href="<%= request.getContextPath() %>/doctor/dashboard">Quay lại Dashboard</a>
-        </p>
-        
-        <% if (successMessage != null) { %>
-            <p style="color: green;"><strong><%= successMessage %></strong></p>
-        <% } %>
-        
-        <% if (errorMessage != null) { %>
-            <p style="color: red;"><strong><%= errorMessage %></strong></p>
-        <% } %>
-        
-        <% if (app == null) { %>
-            <!-- QUEUE MODE: List checked-in patients waiting for checkup -->
-            <h2>Hàng chờ khám bệnh (Đã Check-in)</h2>
-            <table border="1" cellpadding="5" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Mã Lịch Hẹn</th>
-                        <th>Bệnh Nhân</th>
-                        <th>Ngày Hẹn</th>
-                        <th>Giờ Hẹn</th>
-                        <th>Ghi chú lúc đặt</th>
-                        <th>Thao Tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (queue == null || queue.isEmpty()) { %>
-                        <tr>
-                            <td colspan="6" align="center">Hiện tại chưa có bệnh nhân nào check-in đợi khám.</td>
-                        </tr>
-                    <% } else {
-                        for (Appointment q : queue) { %>
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <a href="<%= request.getContextPath() %>/" class="navbar-brand">
+                🦷 SmileCare<span>+</span>
+            </a>
+            <div class="navbar-menu">
+                <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
+                <a href="<%= request.getContextPath() %>/doctor/dashboard">Dashboard</a>
+                <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
+            </div>
+        </nav>
+
+        <!-- CONTAINER -->
+        <div class="dashboard-container">
+            <% if (successMessage != null) { %>
+                <div class="alert alert-success">
+                    <%= successMessage %>
+                </div>
+            <% } %>
+            
+            <% if (errorMessage != null) { %>
+                <div class="alert alert-danger">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+            
+            <% if (app == null) { %>
+                <!-- QUEUE MODE: List checked-in patients -->
+                <h1 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 35px;">
+                    🩺 Hàng chờ khám bệnh của Bác sĩ
+                </h1>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
                             <tr>
-                                <td>#<%= q.getAppointmentID() %></td>
-                                <td><%= q.getCustomerName() %></td>
-                                <td><%= q.getAppointmentDate() %></td>
-                                <td><%= q.getAppointmentTime() %></td>
-                                <td><%= q.getNotes() != null ? q.getNotes() : "" %></td>
-                                <td>
-                                    <a href="<%= request.getContextPath() %>/doctor/checkup?appointmentID=<%= q.getAppointmentID() %>">
-                                        <button type="button">Tiến hành Khám</button>
-                                    </a>
-                                </td>
+                                <th>Mã Lịch Hẹn</th>
+                                <th>Bệnh Nhân</th>
+                                <th>Ngày Hẹn</th>
+                                <th>Giờ Hẹn</th>
+                                <th>Ghi Chú Triệu Chứng</th>
+                                <th>Thao Tác</th>
                             </tr>
-                        <% }
-                    } %>
-                </tbody>
-            </table>
-        <% } else { %>
-            <!-- FORM MODE: Fill medical record and prescription -->
-            <h2>Lập Bệnh Án Cho Bệnh Nhân: <%= app.getCustomerName() %></h2>
-            <p>Mã lịch hẹn: #<%= app.getAppointmentID() %></p>
-            
-            <h3>Dịch vụ yêu cầu ban đầu:</h3>
-            <ul>
-                <% if (selectedServices == null || selectedServices.isEmpty()) { %>
-                    <li>Không đăng ký dịch vụ trước.</li>
-                <% } else {
-                    for (Service s : selectedServices) { %>
-                        <li><%= s.getServiceName() %> (<%= String.format("%,.0f", s.getPrice()) %> đ)</li>
-                    <% }
-                } %>
-            </ul>
-            
-            <hr>
-            
-            <form action="<%= request.getContextPath() %>/doctor/checkup" method="POST">
-                <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
-                
-                <div>
-                    <label><strong>Chẩn Đoán Lâm Sàng (Bắt buộc):</strong></label><br>
-                    <textarea name="diagnosis" rows="4" cols="50" required placeholder="Nhập kết quả chẩn đoán bệnh lý răng miệng..."></textarea>
-                </div>
-                
-                <br>
-                
-                <div>
-                    <label><strong>Kế Hoạch Điều Trị (Không bắt buộc):</strong></label><br>
-                    <textarea name="treatmentPlan" rows="4" cols="50" placeholder="Nhập hướng điều trị tiếp theo..."></textarea>
-                </div>
-                
-                <br>
-                
-                <h3>Kê Đơn Thuốc (Nhập số lượng > 0 để kê đơn):</h3>
-                <table border="1" cellpadding="5" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Tên Thuốc</th>
-                            <th>Đơn vị</th>
-                            <th>Đơn giá</th>
-                            <th>Số Lượng Kê</th>
-                            <th>Liều Dùng / Cách Dùng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (medicines != null) {
-                            for (Medicine m : medicines) { %>
+                        </thead>
+                        <tbody>
+                            <% if (queue == null || queue.isEmpty()) { %>
                                 <tr>
-                                    <td>
-                                        <%= m.getMedicineName() %>
-                                        <input type="hidden" name="medicineIDs" value="<%= m.getMedicineID() %>">
-                                    </td>
-                                    <td><%= m.getUnit() %></td>
-                                    <td><%= String.format("%,.0f", m.getPrice()) %> đ</td>
-                                    <td>
-                                        <input type="number" name="quantities" min="0" value="0" style="width: 60px;">
-                                    </td>
-                                    <td>
-                                        <input type="text" name="dosages" placeholder="Uống ngày 2 lần sau ăn..." style="width: 250px;">
-                                    </td>
+                                    <td colspan="6" align="center" style="color: var(--text-muted); padding: 30px 0;">Không có bệnh nhân nào đang chờ khám.</td>
                                 </tr>
-                            <% }
-                        } %>
-                    </tbody>
-                </table>
+                            <% } else {
+                                for (Appointment q : queue) { %>
+                                    <tr>
+                                        <td>#<%= q.getAppointmentID() %></td>
+                                        <td><strong><%= q.getCustomerName() %></strong></td>
+                                        <td><%= q.getAppointmentDate() %></td>
+                                        <td><%= q.getAppointmentTime() %></td>
+                                        <td style="font-size: 0.85rem; color: var(--text-secondary);"><%= q.getNotes() != null ? q.getNotes() : "" %></td>
+                                        <td>
+                                            <a href="<%= request.getContextPath() %>/doctor/checkup?appointmentID=<%= q.getAppointmentID() %>" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">
+                                                🩺 Tiến hành khám
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }
+                            } %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <!-- FORM MODE: Fill medical record and prescription -->
+                <h1 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 35px;">
+                    📝 Lập bệnh án & Đơn thuốc
+                </h1>
                 
-                <br>
-                
-                <button type="submit">Lưu Hồ Sơ Khám & Chuyển Thanh Toán</button>
-                <a href="<%= request.getContextPath() %>/doctor/checkup">
-                    <button type="button">Hủy bỏ</button>
-                </a>
-            </form>
-        <% } %>
+                <div class="dashboard-grid">
+                    <!-- Left: Form -->
+                    <div class="glass-card">
+                        <h2 style="font-family: var(--font-outfit); font-size: 1.4rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 20px;">
+                            Bệnh nhân: <%= app.getCustomerName() %> (Mã hẹn: #<%= app.getAppointmentID() %>)
+                        </h2>
+                        
+                        <form action="<%= request.getContextPath() %>/doctor/checkup" method="POST">
+                            <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                            
+                            <div class="form-group">
+                                <label class="form-label">Chẩn đoán lâm sàng (Bắt buộc)</label>
+                                <textarea name="diagnosis" class="form-control" placeholder="Mô tả kết quả chuẩn đoán bệnh lý..." required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Kế hoạch điều trị / Hướng dẫn tiếp theo</label>
+                                <textarea name="treatmentPlan" class="form-control" placeholder="Nhập phác đồ điều trị hoặc lời dặn của bác sĩ..."></textarea>
+                            </div>
+                            
+                            <h3 style="font-family: var(--font-outfit); font-size: 1.15rem; font-weight: 700; color: var(--accent-navy); margin: 25px 0 12px 0;">
+                                💊 Kê đơn thuốc ngoại trú (Nhập số lượng > 0)
+                            </h3>
+                            
+                            <div class="table-responsive" style="margin-bottom: 25px;">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên Thuốc</th>
+                                            <th>Đơn vị</th>
+                                            <th>Đơn giá</th>
+                                            <th style="width: 100px;">Số Lượng</th>
+                                            <th>Hướng Dẫn Sử Dụng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (medicines != null) {
+                                            for (Medicine m : medicines) { %>
+                                                <tr>
+                                                    <td>
+                                                        <strong><%= m.getMedicineName() %></strong>
+                                                        <input type="hidden" name="medicineIDs" value="<%= m.getMedicineID() %>">
+                                                    </td>
+                                                    <td><%= m.getUnit() %></td>
+                                                    <td><%= String.format("%,.0f", m.getPrice()) %> đ</td>
+                                                    <td>
+                                                        <input type="number" name="quantities" min="0" value="0" class="form-control" style="padding: 6px 10px;">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="dosages" class="form-control" placeholder="VD: Uống ngày 2 lần sau ăn" style="padding: 6px 10px;">
+                                                    </td>
+                                                </tr>
+                                            <% }
+                                        } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div style="display: flex; gap: 15px;">
+                                <button type="submit" class="btn btn-cta">💾 Lưu Hồ Sơ Khám & Gửi Thanh Toán</button>
+                                <a href="<%= request.getContextPath() %>/doctor/checkup" class="btn btn-secondary">Quay lại</a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Right: Info Summary -->
+                    <div>
+                        <div class="glass-card" style="position: sticky; top: 100px;">
+                            <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;">
+                                Yêu cầu dịch vụ ban đầu
+                            </h3>
+                            <ul style="padding-left: 20px; font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8;">
+                                <% if (selectedServices == null || selectedServices.isEmpty()) { %>
+                                    <li>Khách không đăng ký dịch vụ trước. Khám tổng quát.</li>
+                                <% } else {
+                                    for (Service s : selectedServices) { %>
+                                        <li><%= s.getServiceName() %> (<code><%= String.format("%,.0f", s.getPrice()) %> đ</code>)</li>
+                                    <% }
+                                } %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     </body>
 </html>

@@ -6,69 +6,90 @@
     String errorMessage = (String) request.getAttribute("errorMessage");
 %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Đặt Lịch Hẹn</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Đặt Lịch Hẹn - SmileCare</title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
     </head>
     <body>
-        <h1>Đặt Lịch Hẹn Khám Răng</h1>
-        
-        <p><a href="<%= request.getContextPath() %>/customer/dashboard">Quay lại Dashboard</a></p>
-        
-        <% if (errorMessage != null) { %>
-            <p style="color: red;"><%= errorMessage %></p>
-        <% } %>
-        
-        <form action="<%= request.getContextPath() %>/customer/booking" method="POST">
-            <div>
-                <label>Chọn Bác sĩ:</label><br>
-                <select name="doctorID">
-                    <option value="0">Khám tổng quát (Bác sĩ ngẫu nhiên)</option>
-                    <% if (doctors != null) {
-                        for (User doc : doctors) { %>
-                            <option value="<%= doc.getUserID() %>">Bác sĩ: <%= doc.getFullName() %></option>
-                        <% }
-                    } %>
-                </select>
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <a href="<%= request.getContextPath() %>/" class="navbar-brand">
+                🦷 SmileCare<span>+</span>
+            </a>
+            <div class="navbar-menu">
+                <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
+                <a href="<%= request.getContextPath() %>/customer/dashboard">Dashboard</a>
+                <a href="<%= request.getContextPath() %>/customer/history">Lịch sử khám</a>
+                <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
-            
-            <br>
-            
-            <div>
-                <label>Ngày khám:</label><br>
-                <input type="date" name="date" required>
+        </nav>
+
+        <!-- CONTAINER -->
+        <div class="dashboard-container" style="max-width: 600px;">
+            <div class="glass-card" style="margin-top: 30px;">
+                <h2 style="font-family: var(--font-outfit); font-size: 1.8rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 20px;">
+                    📅 Đăng Ký Đặt Lịch Hẹn Khám
+                </h2>
+                
+                <% if (errorMessage != null) { %>
+                    <div class="alert alert-danger">
+                        <%= errorMessage %>
+                    </div>
+                <% } %>
+                
+                <form action="<%= request.getContextPath() %>/customer/booking" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">Chọn Bác sĩ chỉ định</label>
+                        <select name="doctorID" class="form-select">
+                            <option value="0">Khám tổng quát (Bác sĩ ngẫu nhiên)</option>
+                            <% if (doctors != null) {
+                                for (User doc : doctors) { %>
+                                    <option value="<%= doc.getUserID() %>">Bác sĩ: <%= doc.getFullName() %></option>
+                                <% }
+                            } %>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Ngày khám mong muốn</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Giờ khám (Giờ làm việc: 08:00 - 17:00)</label>
+                        <input type="time" name="time" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Ghi chú triệu chứng / Nhu cầu khám</label>
+                        <textarea name="notes" class="form-control" placeholder="Mô tả tình trạng răng miệng hiện tại của bạn..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" style="margin-bottom: 12px;">Dịch vụ quan tâm (chọn trước)</label>
+                        <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 15px; background-color: var(--bg-tertiary); max-height: 200px; overflow-y: auto;">
+                            <% if (services != null) {
+                                for (Service s : services) { %>
+                                    <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" name="services" value="<%= s.getServiceID() %>" id="s-<%= s.getServiceID() %>">
+                                        <label for="s-<%= s.getServiceID() %>" style="font-size: 0.92rem; cursor: pointer;">
+                                            <%= s.getServiceName() %> (<code><%= String.format("%,.0f", s.getPrice()) %> đ</code>)
+                                        </label>
+                                    </div>
+                                <% }
+                            } %>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 30px;">
+                        <button type="submit" class="btn btn-cta" style="flex: 1;">📅 Đặt Lịch Hẹn</button>
+                        <a href="<%= request.getContextPath() %>/customer/dashboard" class="btn btn-secondary">Hủy bỏ</a>
+                    </div>
+                </form>
             </div>
-            
-            <br>
-            
-            <div>
-                <label>Giờ khám (Giờ mở cửa: 08:00 - 17:00):</label><br>
-                <input type="time" name="time" required>
-            </div>
-            
-            <br>
-            
-            <div>
-                <label>Ghi chú / Triệu chứng:</label><br>
-                <textarea name="notes" rows="4" cols="40" placeholder="Mô tả tình trạng răng miệng..."></textarea>
-            </div>
-            
-            <br>
-            
-            <div>
-                <label>Chọn dịch vụ quan tâm trước (không bắt buộc):</label><br>
-                <% if (services != null) {
-                    for (Service s : services) { %>
-                        <input type="checkbox" name="services" value="<%= s.getServiceID() %>"> 
-                        <%= s.getServiceName() %> - <%= String.format("%,.0f", s.getPrice()) %> đ<br>
-                    <% }
-                } %>
-            </div>
-            
-            <br>
-            
-            <button type="submit">Đặt Lịch Hẹn</button>
-        </form>
+        </div>
     </body>
 </html>
