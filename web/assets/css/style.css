@@ -9,15 +9,15 @@
     --accent-navy: #0f172a;      /* Deep Navy Blue for headers, primary buttons (20%) */
     --accent-navy-hover: #1e293b;
     
-    --accent-teal: #0d9488;      /* Teal/Cyan for switches, accent links, CTA highlights (10%) */
-    --accent-teal-hover: #0f766e;
+    --accent-teal: #1e40af;      /* Navy Blue for switches, accent links, CTA highlights (10%) */
+    --accent-teal-hover: #1e3a8a;
     
     --text-primary: #0f172a;     /* Deep slate for readability */
     --text-secondary: #475569;   /* Slate gray for descriptions */
     --text-muted: #64748b;       /* Gray for placeholders and metadata */
     
     --border-color: #e2e8f0;     /* Soft slate border */
-    --border-focus: #0d9488;     /* Teal focus border */
+    --border-focus: #1e40af;     /* Navy focus border */
     
     --emerald-soft: #d1fae5;
     --emerald-text: #065f46;
@@ -152,12 +152,12 @@ body {
 .btn-cta {
     background-color: var(--accent-teal);
     color: var(--bg-secondary) !important;
-    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
 }
 
 .btn-cta:hover {
     background-color: var(--accent-teal-hover);
-    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.3);
+    box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
     transform: translateY(-1px);
 }
 
@@ -181,7 +181,7 @@ body {
 
 .glass-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(13, 148, 136, 0.3);
+    border-color: rgba(30, 64, 175, 0.3);
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
 }
 
@@ -267,7 +267,7 @@ body {
 
 .form-control:focus {
     border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
 }
 
 textarea.form-control {
@@ -410,7 +410,7 @@ textarea.form-control {
 
 .search-input:focus {
     border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
 }
 
 .search-icon-svg {
@@ -465,7 +465,7 @@ textarea.form-control {
 /*  HEADER BANNER SYSTEM                                       */
 /* ============================================================ */
 .header-banner {
-    background: linear-gradient(135deg, rgba(13, 148, 136, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%);
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
     padding: 24px 30px;

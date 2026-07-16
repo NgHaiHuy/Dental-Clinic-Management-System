@@ -70,7 +70,7 @@
             .form-control:focus, .form-select:focus {
                 border-color: var(--accent-teal);
                 background-color: var(--bg-secondary);
-                box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+                box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
                 outline: none;
             }
             textarea.form-control {
@@ -139,8 +139,8 @@
             /* Active state */
             .service-card.active {
                 border-color: var(--accent-teal);
-                background-color: rgba(13, 148, 136, 0.02);
-                box-shadow: 0 4px 12px rgba(13, 148, 136, 0.06);
+                background-color: rgba(30, 64, 175, 0.02);
+                box-shadow: 0 4px 12px rgba(30, 64, 175, 0.06);
             }
 
             .service-card.active .service-card-check {

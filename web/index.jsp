@@ -55,10 +55,10 @@
         <div class="dashboard-container">
             
             <!-- Premium Hero Header Section -->
-            <div style="background: linear-gradient(135deg, rgba(13, 148, 136, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%); border: 1px solid var(--border-color); border-radius: 0; padding: 50px; margin: 40px 0 65px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
+            <div style="background: linear-gradient(135deg, rgba(30, 64, 175, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%); border: 1px solid var(--border-color); border-radius: 0; padding: 50px; margin: 40px 0 65px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
                 <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px; align-items: center;">
                     <div>
-                        <div style="display: inline-flex; align-items: center; background-color: rgba(13, 148, 136, 0.08); color: var(--accent-teal); padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+                        <div style="display: inline-flex; align-items: center; background-color: rgba(30, 64, 175, 0.08); color: var(--accent-teal); padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
                             Hệ Thống Nha Khoa Thẩm Mỹ Quốc Tế
                         </div>
                         <h1 style="font-family: var(--font-outfit); font-size: 2.8rem; font-weight: 800; color: var(--accent-navy); line-height: 1.25; margin-bottom: 18px; letter-spacing: -0.5px;">
@@ -67,7 +67,7 @@
                         <p style="color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 30px; line-height: 1.75; max-width: 520px;">
                             Nha khoa SmileCare tự hào là hệ thống chăm sóc răng miệng công nghệ cao chuẩn quốc tế. Chúng tôi luôn cam kết đem lại chất lượng điều trị tốt nhất, không đau và bảo hành dài lâu.
                         </p>
-                        <a href="#booking-section" class="btn btn-cta" style="font-size: 1.05rem; padding: 13px 32px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);">
+                        <a href="#booking-section" class="btn btn-cta" style="font-size: 1.05rem; padding: 13px 32px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 14px rgba(30, 64, 175, 0.25);">
                             Xem Đặt Lịch Hẹn
                         </a>
                     </div>
@@ -168,8 +168,8 @@
 
             <!-- APPOINTMENT CTA SECTION MOVED TO THE BOTTOM AND REMOVED ICON -->
             <div id="booking-section" style="background-color: var(--accent-navy); border-radius: var(--border-radius-lg); padding: 50px; text-align: center; color: var(--bg-secondary); margin-bottom: 70px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden;">
-                <div style="position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background-color: rgba(13, 148, 136, 0.2); pointer-events: none;"></div>
-                <div style="position: absolute; bottom: -60px; left: -60px; width: 220px; height: 220px; border-radius: 50%; background-color: rgba(13, 148, 136, 0.1); pointer-events: none;"></div>
+                <div style="position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background-color: rgba(30, 64, 175, 0.2); pointer-events: none;"></div>
+                <div style="position: absolute; bottom: -60px; left: -60px; width: 220px; height: 220px; border-radius: 50%; background-color: rgba(30, 64, 175, 0.1); pointer-events: none;"></div>
                 
                 <h2 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; z-index: 1; position: relative;">
                     Đặt Lịch Hẹn Ngay Hôm Nay
