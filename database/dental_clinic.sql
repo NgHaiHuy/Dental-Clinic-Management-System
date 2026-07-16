@@ -257,7 +257,8 @@ INSERT INTO Services (ServiceName, Price, Description, Status) VALUES
 (N'Tẩy trắng răng LumaCool', 1500000, N'Tẩy trắng răng công nghệ ánh sáng xanh LumaCool', 1),
 (N'Trám răng Composite', 300000, N'Trám thẩm mỹ bằng vật liệu Composite', 1),
 (N'Nhổ răng khôn (Răng số 8)', 1000000, N'Nhổ răng khôn mọc lệch/ngầm sử dụng thuốc tê', 1),
-(N'Niềng răng kim loại chuẩn', 30000000, N'Chỉnh nha mắc cài kim loại không tự buộc', 1);
+(N'Niềng răng kim loại chuẩn', 30000000, N'Chỉnh nha mắc cài kim loại không tự buộc', 1),
+(N'Trồng răng Implant', 12500000, N'Phục hình răng đã mất bằng công nghệ Implant hiện đại, giúp ăn nhai như răng thật.', 1);
 GO
 
 -- 5. Thêm Medicines mẫu
