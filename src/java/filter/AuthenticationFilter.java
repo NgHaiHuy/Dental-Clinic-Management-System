@@ -87,6 +87,9 @@ public class AuthenticationFilter implements Filter {
      * @return true nếu là URL public
      */
     private boolean isPublicUrl(String relativePath) {
+        if (relativePath.equals("/") || relativePath.isEmpty()) {
+            return true;
+        }
         for (String prefix : PUBLIC_URL_PREFIXES) {
             if (relativePath.startsWith(prefix)) {
                 return true;
