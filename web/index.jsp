@@ -30,70 +30,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare-account.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare-mobile.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare.css?v=20260716-2">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare-account.css?v=20260716-2">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/smilecare-mobile.css?v=20260716-2">
 </head>
 <body>
-    <header class="site-header" id="top">
-        <div class="container nav-wrap">
-            <a class="brand" href="${pageContext.request.contextPath}/index.jsp" aria-label="Trang chủ SmileCare">
-                <span class="brand-mark" aria-hidden="true">✦</span>
-                <span>Smile<span>Care</span></span>
-            </a>
-
-            <nav class="main-nav" id="mainNav" aria-label="Điều hướng chính">
-                <a href="#about">Về SmileCare</a>
-                <a href="#services">Dịch vụ</a>
-                <a href="#doctors">Bác sĩ</a>
-                <a href="#contact">Liên hệ</a>
-            </nav>
-
-            <div class="nav-actions<%= isLoggedIn ? " has-user" : "" %>">
-                <% if (!isLoggedIn) { %>
-                    <a class="login-link" href="${pageContext.request.contextPath}/auth/login">Đăng nhập</a>
-                    <a class="button button-small" href="${pageContext.request.contextPath}/auth/register">Đăng ký</a>
-                <% } else { %>
-                    <div class="account-menu">
-                        <button class="account-trigger" type="button" aria-label="Mở menu tài khoản" aria-expanded="false" aria-haspopup="true">
-                            <svg class="account-avatar" viewBox="0 0 32 32" aria-hidden="true">
-                                <circle cx="16" cy="16" r="14"></circle>
-                                <circle class="avatar-head" cx="16" cy="11" r="4.5"></circle>
-                                <path class="avatar-body" d="M7.8 25c1.2-4.6 4.1-7 8.2-7s7 2.4 8.2 7"></path>
-                            </svg>
-                            <span class="account-chevron" aria-hidden="true">⌄</span>
-                        </button>
-
-                        <div class="account-dropdown" role="menu">
-                            <% if (roleId == 4) { %>
-                                <a href="${pageContext.request.contextPath}/customer/booking.jsp" role="menuitem">Lịch khám</a>
-                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử khám của tôi</a>
-                                <a href="${pageContext.request.contextPath}/customer/profile" role="menuitem">Hồ sơ</a>
-                            <% } else if (roleId == 1) { %>
-                                <a href="${pageContext.request.contextPath}/admin/dashboard.jsp" role="menuitem">Trang quản lý</a>
-                                <a href="${pageContext.request.contextPath}/admin/manage-users" role="menuitem">Quản lý tài khoản</a>
-                                <a href="${pageContext.request.contextPath}/admin/manage-services" role="menuitem">Quản lý dịch vụ</a>
-                            <% } else if (roleId == 2) { %>
-                                <a href="${pageContext.request.contextPath}/doctor/dashboard.jsp" role="menuitem">Trang bác sĩ</a>
-                                <a href="${pageContext.request.contextPath}/doctor/checkup.jsp" role="menuitem">Khám bệnh</a>
-                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử ca đã khám</a>
-                            <% } else if (roleId == 3) { %>
-                                <a href="${pageContext.request.contextPath}/receptionist/dashboard.jsp" role="menuitem">Trang tiếp nhận</a>
-                                <a href="${pageContext.request.contextPath}/receptionist/manage-booking.jsp" role="menuitem">Quản lý lịch khám</a>
-                                <a href="${pageContext.request.contextPath}/examination-history" role="menuitem">Lịch sử khám toàn bộ</a>
-                                <a href="${pageContext.request.contextPath}/receptionist/billing" role="menuitem">Thanh toán</a>
-                            <% } else { %>
-                                <a href="<%= dashboardUrl %>" role="menuitem">Trang quản lý</a>
-                            <% } %>
-                            <a class="logout-link" href="${pageContext.request.contextPath}/auth/logout" role="menuitem">Thoát</a>
-                        </div>
-                    </div>
-                <% } %>
-            </div>
-
-            <button class="menu-toggle" type="button" aria-label="Mở menu" aria-controls="mainNav" aria-expanded="false">☰</button>
-        </div>
-    </header>
+    <jsp:include page="/WEB-INF/components/header.jsp" />
 
     <main>
         <section class="hero">
@@ -164,16 +106,58 @@
                 <div class="doctor-content"><p class="eyebrow"><span>●</span> ĐỘI NGŨ CHUYÊN MÔN</p><h2>Người bạn đồng hành cùng nụ cười của bạn.</h2><p>Đội ngũ SmileCare luôn lấy sự an tâm của khách hàng làm ưu tiên trong từng buổi thăm khám.</p><a class="button" href="<%= bookingUrl %>">Đặt lịch tư vấn <span>→</span></a></div>
             </div>
         </section>
+
+        <section class="clinic-info-section" id="clinic-info">
+            <div class="container clinic-profile">
+                <article class="clinic-introduction">
+                    <span class="clinic-label"><span>✦</span> Nha khoa tận tâm</span>
+                    <h2>Chủ động lịch khám,<br><em>an tâm chăm sóc.</em></h2>
+                    <p>SmileCare là phòng khám nha khoa chuyên sâu, mang đến dịch vụ chăm sóc răng miệng an toàn, tận tâm và thuận tiện cho mọi khách hàng.</p>
+                    <ul class="clinic-benefits">
+                        <li><span>✓</span> Chọn giờ khám phù hợp</li>
+                        <li><span>✓</span> Không cần chờ lấy số</li>
+                        <li><span>✓</span> Nhắc lịch trước ngày khám</li>
+                        <li><span>✓</span> Hỗ trợ nhanh chóng</li>
+                    </ul>
+                    <a class="button clinic-booking-button" href="<%= bookingUrl %>">Đặt lịch khám ngay <span>→</span></a>
+                </article>
+
+                <aside class="clinic-sidebar" aria-label="Thông tin phòng khám">
+                    <section class="clinic-info-block">
+                        <div class="clinic-block-heading">
+                            <span class="clinic-block-icon" aria-hidden="true">◷</span>
+                            <div><small>Thời gian phục vụ</small><h3>Giờ làm việc</h3></div>
+                        </div>
+                        <div class="working-hours" aria-label="Giờ làm việc của phòng khám">
+                            <div class="working-hours-row"><strong>Thứ 2 - Thứ 6</strong><span>7h - 18h30</span></div>
+                            <div class="working-hours-row"><strong>Thứ 7</strong><span>7h30 - 18h30</span></div>
+                            <div class="working-hours-row"><strong>Chủ nhật</strong><span>8h - 14h</span></div>
+                        </div>
+                    </section>
+
+                    <section class="clinic-info-block support-block">
+                        <div class="clinic-block-heading">
+                            <span class="clinic-block-icon coral" aria-hidden="true">☎</span>
+                            <div><small>Chúng tôi luôn sẵn sàng</small><h3>Tổng đài hỗ trợ</h3></div>
+                        </div>
+                        <p class="support-description">Nếu bạn cần thêm thông tin, vui lòng liên hệ tổng đài bên dưới để được trợ giúp.</p>
+                        <div class="support-links">
+                            <a href="tel:1900636227">
+                                <span class="support-icon" aria-hidden="true">☎</span>
+                                <span>Tổng đài bệnh viện: <strong>1900 636 227</strong></span>
+                            </a>
+                            <a href="<%= bookingUrl %>">
+                                <span class="support-icon" aria-hidden="true">✦</span>
+                                <span>Tư vấn đặt khám</span>
+                            </a>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
     </main>
 
-    <footer id="contact">
-        <div class="container footer-grid">
-            <div><a class="brand brand-footer" href="#top"><span class="brand-mark">✦</span><span>Smile<span>Care</span></span></a><p>Nha khoa tận tâm cho nụ cười khỏe đẹp mỗi ngày.</p></div>
-            <div><h4>Liên hệ</h4><p>1900 1234</p><p>hello@smilecare.vn</p></div>
-            <div><h4>Phòng khám</h4><p>123 Nguyễn Văn Trỗi, TP. Hồ Chí Minh</p><p>08:00 – 20:00, Thứ 2 – Chủ nhật</p></div>
-        </div>
-        <div class="container footer-bottom">© 2026 SmileCare. All rights reserved.</div>
-    </footer>
+    <jsp:include page="/WEB-INF/components/footer.jsp" />
 
     <script src="${pageContext.request.contextPath}/assets/js/smilecare.js"></script>
 </body>

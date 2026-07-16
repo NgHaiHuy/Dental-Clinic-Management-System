@@ -20,8 +20,10 @@ a { color: inherit; text-decoration: none; }
 .brand { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font: 800 25px var(--heading); letter-spacing: -1.3px; }
 .brand > span:last-child > span { color: var(--teal); }
 .brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 10px; background: var(--teal); color: #fff; font-size: 18px; }
-.main-nav { display: flex; gap: 30px; color: #476776; font-size: 14px; font-weight: 700; }
+.main-nav { display: flex; gap: 24px; color: #476776; font-size: 14px; font-weight: 700; }
 .main-nav a:hover, .login-link:hover { color: var(--teal); }
+.mobile-booking-link { display: none; }
+.header-booking-button { flex: 0 0 auto; white-space: nowrap; }
 .nav-actions { display: flex; align-items: center; gap: 20px; font-size: 14px; font-weight: 700; }
 .menu-toggle { display: none; border: 0; background: transparent; color: var(--ink); font-size: 25px; cursor: pointer; }
 
@@ -102,9 +104,45 @@ a { color: inherit; text-decoration: none; }
 .doctor-content h2 { font-size: 33px; letter-spacing: -1.4px; }
 .doctor-content > p:not(.eyebrow) { max-width: 400px; margin: 16px 0 24px; color: var(--muted); }
 
-footer { padding: 58px 0 20px; background: #19394b; color: #e9f5f4; }
-.footer-grid { display: grid; grid-template-columns: 1.35fr .8fr 1fr; gap: 45px; padding-bottom: 40px; }
-.brand-footer { color: #fff; }
-.footer-grid > div > p { max-width: 260px; margin: 14px 0 0; color: #bdd1d7; font-size: 14px; }
-.footer-grid h4 { margin: 0; color: #fff; font: 700 14px var(--heading); }
-.footer-bottom { padding-top: 18px; border-top: 1px solid rgba(255,255,255,.11); color: #9eb7bd; font-size: 12px; }
+.clinic-info-section { position: relative; overflow: hidden; padding: 100px 0; border-top: 1px solid #dfedeb; background: linear-gradient(135deg, #eff9f7 0%, #f8fbfb 56%, #fff6ec 100%); }
+.clinic-info-section::before { position: absolute; top: -120px; right: -90px; width: 310px; height: 310px; border-radius: 50%; background: rgba(183,227,220,.34); content: ''; }
+.clinic-info-section::after { position: absolute; bottom: -90px; left: 7%; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,222,185,.35); content: ''; }
+.clinic-profile { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(365px, .94fr); align-items: center; gap: 65px; padding: 58px 62px; border: 1px solid rgba(190,220,216,.8); border-radius: 25px; background: rgba(255,255,255,.94); box-shadow: 0 24px 60px rgba(54,104,105,.12); }
+.clinic-label { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 17px; padding: 6px 11px; border-radius: 999px; background: #e5f5f2; color: var(--teal); font: 800 11px var(--heading); letter-spacing: .5px; text-transform: uppercase; }
+.clinic-label span { color: var(--coral); }
+.clinic-introduction h2 { max-width: 540px; margin-bottom: 19px; font-size: clamp(34px, 3.2vw, 45px); line-height: 1.15; letter-spacing: -1.8px; }
+.clinic-introduction h2 em { color: var(--teal); font-style: normal; }
+.clinic-introduction p { max-width: 540px; margin: 0; color: #55717e; font-size: 15px; line-height: 1.75; }
+.clinic-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 25px 0 29px; padding: 0; list-style: none; }
+.clinic-benefits li { display: flex; align-items: center; gap: 9px; min-height: 42px; padding: 9px 12px; border: 1px solid #e0eeee; border-radius: 11px; background: #f9fcfc; color: #405f6d; font-size: 13px; font-weight: 700; }
+.clinic-benefits li > span { display: grid; width: 20px; height: 20px; flex: 0 0 20px; place-items: center; border-radius: 50%; background: #dff2ef; color: var(--teal); font-size: 11px; }
+.clinic-booking-button { padding-right: 27px; padding-left: 27px; }
+.clinic-sidebar { display: grid; gap: 17px; }
+.clinic-info-block { padding: 23px 24px; border: 1px solid #dfeceb; border-radius: 17px; background: #fbfdfd; }
+.clinic-block-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.clinic-block-heading small { display: block; margin-bottom: 1px; color: #78909a; font-size: 10px; font-weight: 800; letter-spacing: .55px; text-transform: uppercase; }
+.clinic-info-block h3 { margin: 0; color: var(--ink); font: 800 18px var(--heading); letter-spacing: -.4px; }
+.clinic-block-icon { display: grid; width: 39px; height: 39px; flex: 0 0 39px; place-items: center; border-radius: 12px; background: #dff3f0; color: var(--teal); font: 800 21px var(--heading); }
+.clinic-block-icon.coral { background: #ffebe4; color: var(--coral); font-size: 16px; }
+.working-hours { display: grid; }
+.working-hours-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 39px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 13px; }
+.working-hours-row:last-child { border-bottom: 0; }
+.working-hours-row strong { font: 700 12px var(--heading); }
+.working-hours-row span { padding: 3px 8px; border-radius: 7px; background: #edf7f5; color: var(--teal); white-space: nowrap; font-size: 12px; font-weight: 800; }
+.support-description { margin: -3px 0 14px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.support-links { display: grid; gap: 7px; }
+.support-links a { display: flex; align-items: center; gap: 9px; min-height: 32px; padding: 5px 8px; border-radius: 8px; background: #f1f8f7; color: var(--ink); font-size: 12px; transition: .2s; }
+.support-links a:hover { color: var(--teal); }
+.support-links strong { font-weight: 800; }
+.support-icon { display: grid; width: 18px; height: 18px; flex: 0 0 18px; place-items: center; border-radius: 50%; background: #e3f4f2; color: var(--teal); font-size: 9px; font-weight: 800; }
+
+footer { padding: 52px 0 18px; border-top: 1px solid #e8eeee; background: #f7f9f9; color: #516b77; }
+.footer-grid { display: grid; grid-template-columns: 1.45fr repeat(3, .75fr); gap: 50px; padding-bottom: 38px; }
+.brand-footer { margin-bottom: 17px; color: var(--ink); font-size: 21px; }
+.brand-footer .brand-mark { width: 26px; height: 26px; font-size: 14px; }
+.footer-grid > div { display: flex; align-items: flex-start; flex-direction: column; }
+.footer-grid p, .footer-grid a { margin: 0 0 8px; color: #607985; font-size: 12px; line-height: 1.55; }
+.footer-grid a:hover { color: var(--teal); }
+.footer-grid h4 { margin: 3px 0 16px; color: var(--ink); font: 800 12px var(--heading); }
+.footer-company p { max-width: 290px; }
+.footer-bottom { display: flex; justify-content: space-between; gap: 30px; padding-top: 17px; border-top: 1px solid #dfe8e8; color: #81959d; font-size: 10px; }

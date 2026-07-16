@@ -3,6 +3,9 @@
     .site-header { height: 68px; }
     .main-nav { position: absolute; top: 62px; left: 15px; right: 15px; display: none; flex-direction: column; gap: 14px; padding: 19px; border: 1px solid #dcebea; border-radius: 12px; background: #fff; box-shadow: 0 15px 30px rgba(24,55,74,.12); }
     .main-nav.mobile-open { display: flex; }
+    .main-nav .mobile-booking-link { display: flex; align-items: center; justify-content: center; margin-top: 3px; padding: 10px 14px; border-radius: 8px; background: var(--teal); color: #fff; }
+    .main-nav .mobile-booking-link:hover { color: #fff; }
+    .header-booking-button { display: none; }
     .menu-toggle { display: block; }
     .nav-actions:not(.has-user) { display: none; }
     .nav-actions.has-user { display: flex; margin-left: auto; }
@@ -18,7 +21,10 @@
     .service-grid, .doctor-panel, .footer-grid { grid-template-columns: 1fr; }
     .doctor-photo { min-height: 270px; }
     .doctor-content { padding: 40px 27px; }
+    .clinic-info-section { padding: 65px 0; }
+    .clinic-profile { grid-template-columns: 1fr; gap: 42px; padding: 42px 35px; }
     .footer-grid { gap: 28px; }
+    .footer-bottom { align-items: flex-start; flex-direction: column; gap: 7px; }
     .floating-card { transform: scale(.9); transform-origin: left bottom; }
 }
 
@@ -29,5 +35,11 @@
     .hero-image-frame { left: 22px; }
     .rating-card { right: -16px; }
     .section-intro h2, .section-heading h2 { font-size: 33px; }
+    .clinic-benefits { grid-template-columns: 1fr 1fr; }
+    .working-hours-row, .working-hours-row span, .support-links a { font-size: 13px; }
     .quick-booking h2 { font-size: 20px; }
+    .clinic-profile { padding: 31px 20px; border-radius: 19px; }
+    .clinic-introduction h2 { font-size: 32px; }
+    .clinic-benefits { grid-template-columns: 1fr; }
+    .clinic-info-block { padding: 20px 17px; }
 }
