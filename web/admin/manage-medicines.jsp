@@ -85,7 +85,7 @@
             }
         </style>
     </head>
-    <body>
+    <body class="admin-body">
         
         <!-- SIDEBAR -->
         <aside class="sidebar">
