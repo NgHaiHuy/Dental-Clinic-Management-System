@@ -57,21 +57,21 @@ body {
     left: 0;
     right: 0;
     height: 70px;
-    background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--accent-navy);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 40px;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .navbar-brand {
     font-family: var(--font-outfit);
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--accent-navy);
+    color: white;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -79,7 +79,7 @@ body {
 }
 
 .navbar-brand span {
-    color: var(--accent-teal);
+    color: #60a5fa;
 }
 
 .navbar-menu {
@@ -89,7 +89,7 @@ body {
 }
 
 .navbar-menu a {
-    color: var(--text-secondary);
+    color: #cbd5e1;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
@@ -97,7 +97,7 @@ body {
 }
 
 .navbar-menu a:hover {
-    color: var(--accent-teal);
+    color: #60a5fa;
 }
 
 .navbar-user {
@@ -105,7 +105,19 @@ body {
     align-items: center;
     gap: 15px;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: #cbd5e1;
+}
+
+.navbar .btn-secondary {
+    background-color: rgba(255, 255, 255, 0.06);
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.navbar .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: white !important;
 }
 
 /* ============================================================ */
