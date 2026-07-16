@@ -102,20 +102,7 @@
                 transform: translateY(-2px);
                 box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
             }
-            .service-card-icon {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background-color: rgba(13, 148, 136, 0.08);
-                color: var(--accent-teal);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 700;
-                font-size: 1.1rem;
-                flex-shrink: 0;
-                transition: all 0.2s ease;
-            }
+
             .service-card-info {
                 flex-grow: 1;
             }
@@ -155,10 +142,7 @@
                 background-color: rgba(13, 148, 136, 0.02);
                 box-shadow: 0 4px 12px rgba(13, 148, 136, 0.06);
             }
-            .service-card.active .service-card-icon {
-                background-color: var(--accent-teal);
-                color: white;
-            }
+
             .service-card.active .service-card-check {
                 border-color: var(--accent-teal);
                 background-color: var(--accent-teal);
@@ -220,7 +204,7 @@
                             <option value="0">Khám tổng quát (Hệ thống tự động phân công bác sĩ)</option>
                             <% if (doctors != null) {
                                 for (User doc : doctors) { %>
-                                    <option value="<%= doc.getUserID() %>">Bác sĩ: <%= doc.getFullName() %></option>
+                                    <option value="<%= doc.getUserID() %>"><%= doc.getFullName() %></option>
                                 <% }
                             } %>
                         </select>
@@ -250,13 +234,9 @@
                     <div class="services-grid">
                         <% if (services != null) {
                             for (Service s : services) { 
-                                String firstChar = s.getServiceName().substring(0, 1).toUpperCase();
                         %>
                                 <div class="service-card" onclick="toggleServiceCard('s-<%= s.getServiceID() %>', this)">
                                     <input type="checkbox" name="services" value="<%= s.getServiceID() %>" id="s-<%= s.getServiceID() %>" style="display: none;">
-                                    <div class="service-card-icon">
-                                        <%= firstChar %>
-                                    </div>
                                     <div class="service-card-info">
                                         <div class="service-card-title"><%= s.getServiceName() %></div>
                                         <div class="service-card-price"><%= String.format("%,.0f", s.getPrice()) %> đ</div>
