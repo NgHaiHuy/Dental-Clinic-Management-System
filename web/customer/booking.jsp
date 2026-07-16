@@ -31,7 +31,7 @@
         <div class="dashboard-container" style="max-width: 600px;">
             <div class="glass-card" style="margin-top: 30px;">
                 <h2 style="font-family: var(--font-outfit); font-size: 1.8rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 20px;">
-                    📅 Đăng Ký Đặt Lịch Hẹn Khám
+                    Đăng Ký Đặt Lịch Hẹn Khám
                 </h2>
                 
                 <% if (errorMessage != null) { %>
@@ -85,7 +85,7 @@
                     </div>
                     
                     <div style="display: flex; gap: 15px; margin-top: 30px;">
-                        <button type="submit" class="btn btn-cta" style="flex: 1;">📅 Đặt Lịch Hẹn</button>
+                        <button type="submit" class="btn btn-cta" style="flex: 1;">Đặt Lịch Hẹn</button>
                         <a href="<%= request.getContextPath() %>/customer/dashboard" class="btn btn-secondary">Hủy bỏ</a>
                     </div>
                 </form>
