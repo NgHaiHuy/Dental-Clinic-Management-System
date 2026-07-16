@@ -26,7 +26,7 @@
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
                 <a href="<%= request.getContextPath() %>/receptionist/dashboard">Dashboard</a>
-                <a href="<%= request.getContextPath() %>/receptionist/billing" class="btn btn-secondary" style="padding: 6px 14px;">💵 Hàng chờ thanh toán</a>
+                <a href="<%= request.getContextPath() %>/receptionist/billing" class="btn btn-secondary" style="padding: 6px 14px;">Hàng chờ thanh toán</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>
