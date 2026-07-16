@@ -55,8 +55,8 @@
         <div class="dashboard-container">
             
             <!-- Premium Hero Header Section -->
-            <div style="background: linear-gradient(135deg, rgba(13, 148, 136, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 50px; margin: 40px 0 65px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center;">
+            <div style="background: linear-gradient(135deg, rgba(13, 148, 136, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%); border: 1px solid var(--border-color); border-radius: 0; padding: 50px; margin: 40px 0 65px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
+                <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px; align-items: center;">
                     <div>
                         <div style="display: inline-flex; align-items: center; background-color: rgba(13, 148, 136, 0.08); color: var(--accent-teal); padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
                             Hệ Thống Nha Khoa Thẩm Mỹ Quốc Tế
@@ -72,8 +72,8 @@
                         </a>
                     </div>
                     
-                    <div style="position: relative; border-radius: 0; overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
-                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover; max-height: 380px; border-radius: 0;">
+                    <div style="position: relative; border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
+                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover; max-height: 440px; border-radius: var(--border-radius-lg);">
                     </div>
                 </div>
             </div>
