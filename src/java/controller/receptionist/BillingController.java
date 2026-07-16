@@ -161,7 +161,6 @@ public class BillingController extends HttpServlet {
 
             // Re-fetch services and medicines to insert details securely
             List<Service> services = invoiceDAO.getServicesByAppointment(record.getAppointmentID());
-            List<InvoiceDetail> medicines = invoiceDAO.getPrescribedMedicines(recordID);
 
             List<InvoiceDetail> details = new ArrayList<>();
             for (Service s : services) {
@@ -172,13 +171,27 @@ public class BillingController extends HttpServlet {
                 d.setPrice(s.getPrice());
                 details.add(d);
             }
-            for (InvoiceDetail m : medicines) {
-                InvoiceDetail d = new InvoiceDetail();
-                d.setItemType("MEDICINE");
-                d.setItemID(m.getItemID());
-                d.setQuantity(m.getQuantity());
-                d.setPrice(m.getPrice());
-                details.add(d);
+            
+            // Get selected medicines parameters
+            String[] selectedMedsArr = request.getParameterValues("selectedMedicines");
+            if (selectedMedsArr != null) {
+                for (String medIDStr : selectedMedsArr) {
+                    int medID = Integer.parseInt(medIDStr);
+                    String qtyStr = request.getParameter("qty_" + medID);
+                    String priceStr = request.getParameter("price_" + medID);
+                    if (qtyStr != null && priceStr != null) {
+                        int qty = Integer.parseInt(qtyStr);
+                        double price = Double.parseDouble(priceStr);
+                        if (qty > 0) {
+                            InvoiceDetail d = new InvoiceDetail();
+                            d.setItemType("MEDICINE");
+                            d.setItemID(medID);
+                            d.setQuantity(qty);
+                            d.setPrice(price);
+                            details.add(d);
+                        }
+                    }
+                }
             }
 
             // Create Payment

@@ -139,14 +139,15 @@
 
                     <!-- Medicines Sub-Table -->
                     <div class="card-title" style="font-size: 1.25rem; margin-bottom: 15px; color: var(--accent-purple);">
-                        2. Đơn thuốc đi kèm
+                        2. Đơn thuốc đi kèm (Có thể chọn mua một phần hoặc toàn bộ)
                     </div>
                     <div class="table-responsive">
                         <table class="custom-table">
                             <thead>
                                 <tr>
+                                    <th style="width: 50px; text-align: center;">Mua</th>
                                     <th>Tên Thuốc / Quy cách</th>
-                                    <th style="width: 100px; text-align: center;">Số lượng</th>
+                                    <th style="width: 140px; text-align: center;">Số lượng mua</th>
                                     <th style="width: 120px; text-align: right;">Đơn Giá</th>
                                     <th style="width: 150px; text-align: right;">Thành Tiền</th>
                                 </tr>
@@ -154,17 +155,31 @@
                             <tbody>
                                 <% if (medicines == null || medicines.isEmpty()) { %>
                                     <tr>
-                                        <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 15px 0;">
+                                        <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 15px 0;">
                                             Bác sĩ không kê đơn thuốc cho ca khám này.
                                         </td>
                                     </tr>
                                 <% } else {
                                     for (InvoiceDetail m : medicines) { %>
                                         <tr>
-                                            <td class="service-name-cell"><%= m.getItemName() %></td>
-                                            <td style="text-align: center;"><%= m.getQuantity() %></td>
-                                            <td style="color: var(--text-secondary); text-align: right;"><%= String.format("%,.0f", m.getPrice()) %> đ</td>
-                                            <td class="service-price-cell" style="text-align: right;"><%= String.format("%,.0f", m.getPrice() * m.getQuantity()) %> đ</td>
+                                            <td style="text-align: center;">
+                                                <input type="checkbox" name="selectedMedicines" value="<%= m.getItemID() %>" checked onchange="calculateTotal()" style="width: 18px; height: 18px; cursor: pointer;">
+                                            </td>
+                                            <td class="service-name-cell">
+                                                <%= m.getItemName() %>
+                                                <input type="hidden" name="price_<%= m.getItemID() %>" value="<%= m.getPrice() %>">
+                                            </td>
+                                            <td style="text-align: center;">
+                                                <input type="number" name="qty_<%= m.getItemID() %>" id="qty_<%= m.getItemID() %>" value="<%= m.getQuantity() %>" min="1" max="<%= m.getQuantity() %>" oninput="calculateTotal()" onchange="calculateTotal()" class="form-control" style="width: 75px; display: inline-block; padding: 4px 8px; text-align: center;">
+                                                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-top: 2px;">Tối đa: <%= m.getQuantity() %></span>
+                                            </td>
+                                            <td style="color: var(--text-secondary); text-align: right;">
+                                                <span id="raw_price_<%= m.getItemID() %>" style="display:none;"><%= m.getPrice() %></span>
+                                                <%= String.format("%,.0f", m.getPrice()) %> đ
+                                            </td>
+                                            <td class="service-price-cell" style="text-align: right;">
+                                                <span id="subtotal_<%= m.getItemID() %>" class="med-subtotal"><%= String.format("%,.0f", m.getPrice() * m.getQuantity()) %></span> đ
+                                            </td>
                                         </tr>
                                     <% }
                                 } %>
@@ -177,7 +192,7 @@
                 <aside class="glass-card">
                     <div class="checkout-total-box">
                         <div class="checkout-total-label">Tổng cộng cần thanh toán</div>
-                        <div class="checkout-total-value">
+                        <div class="checkout-total-value" id="displayTotalAmount">
                             <%= String.format("%,.0f", totalAmount) %> đ
                         </div>
                     </div>
@@ -185,7 +200,7 @@
                     <form action="<%= request.getContextPath() %>/receptionist/billing" method="POST">
                         <input type="hidden" name="action" value="pay">
                         <input type="hidden" name="recordID" value="<%= record.getRecordID() %>">
-                        <input type="hidden" name="totalAmount" value="<%= totalAmount %>">
+                        <input type="hidden" name="totalAmount" id="formTotalAmount" value="<%= totalAmount %>">
 
                         <div class="form-group">
                             <label class="form-label">Phương Thức Thanh Toán</label>
@@ -211,5 +226,52 @@
                 </aside>
             </div>
         </div>
+
+        <script>
+            // Pre-calculated services sum
+            const servicesTotal = <%= services != null ? services.stream().mapToDouble(Service::getPrice).sum() : 0 %>;
+
+            function calculateTotal() {
+                let total = servicesTotal;
+                
+                const checkboxes = document.querySelectorAll('input[name="selectedMedicines"]');
+                checkboxes.forEach(cb => {
+                    const medId = cb.value;
+                    const qtyInput = document.getElementById('qty_' + medId);
+                    const rawPrice = parseFloat(document.getElementById('raw_price_' + medId).innerText);
+                    const subtotalSpan = document.getElementById('subtotal_' + medId);
+                    
+                    let qty = parseInt(qtyInput.value) || 0;
+                    const maxQty = parseInt(qtyInput.max);
+                    
+                    if (qty < 0) qty = 0;
+                    if (qty > maxQty) {
+                        qty = maxQty;
+                        qtyInput.value = maxQty;
+                    }
+                    
+                    const subtotal = qty * rawPrice;
+                    subtotalSpan.innerText = formatNumber(subtotal);
+                    
+                    if (cb.checked) {
+                        total += subtotal;
+                        qtyInput.disabled = false;
+                    } else {
+                        qtyInput.disabled = true;
+                    }
+                });
+                
+                // Update text display and form input
+                document.getElementById('displayTotalAmount').innerText = formatNumber(total) + " đ";
+                document.getElementById('formTotalAmount').value = total;
+            }
+
+            function formatNumber(num) {
+                return num.toLocaleString('vi-VN');
+            }
+
+            // Run initial check
+            window.addEventListener('DOMContentLoaded', calculateTotal);
+        </script>
     </body>
 </html>
