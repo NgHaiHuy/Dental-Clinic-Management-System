@@ -54,23 +54,51 @@
         <!-- MAIN CONTAINER -->
         <div class="dashboard-container">
             
-            <!-- Hero Header Section with Banner Image -->
-            <div class="dashboard-grid" style="align-items: center; margin: 40px 0 65px 0; gap: 40px;">
-                <div>
-                    <h1 style="font-family: var(--font-outfit); font-size: 2.8rem; font-weight: 800; color: var(--accent-navy); line-height: 1.2; margin-bottom: 15px;">
-                        Kiến Tạo Nụ Cười <br><span style="color: var(--accent-teal);">Tự Tin & Tỏa Sáng</span>
-                    </h1>
-                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 25px; line-height: 1.7;">
-                        Nha khoa SmileCare tự hào là hệ thống chăm sóc răng miệng công nghệ cao chuẩn quốc tế. Chúng tôi luôn cam kết đem lại chất lượng điều trị tốt nhất, không đau và bảo hành dài lâu.
-                    </p>
-                    <a href="#booking-section" class="btn btn-primary" style="font-size: 1.05rem; padding: 12px 26px;">
-                        Xem Đặt Lịch Hẹn
-                    </a>
-                </div>
-                <div>
-                    <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Clinic Lobby" style="width: 100%; height: auto; border-radius: var(--border-radius-lg); box-shadow: 0 10px 25px rgba(0,0,0,0.06); object-fit: cover; max-height: 380px;">
+            <!-- Upgraded Premium Hero Header Section -->
+            <div style="background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 23, 42, 0.02) 100%); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 45px 50px; margin: 40px 0 65px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 45px; align-items: center;">
+                    <div>
+                        <div style="display: inline-flex; align-items: center; gap: 6px; background-color: rgba(13, 148, 136, 0.1); color: var(--accent-teal); padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            ✨ Hệ Thống Nha Khoa Thẩm Mỹ Quốc Tế
+                        </div>
+                        <h1 style="font-family: var(--font-outfit); font-size: 2.8rem; font-weight: 800; color: var(--accent-navy); line-height: 1.2; margin-bottom: 18px;">
+                            Kiến Tạo Nụ Cười <br><span style="color: var(--accent-teal);">Tự Tin & Tỏa Sáng</span>
+                        </h1>
+                        <p style="color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 28px; line-height: 1.7; max-width: 530px;">
+                            Nha khoa SmileCare tự hào là hệ thống chăm sóc răng miệng công nghệ cao chuẩn quốc tế. Chúng tôi luôn cam kết đem lại chất lượng điều trị tốt nhất, không đau và bảo hành dài lâu.
+                        </p>
+                        <a href="#booking-section" class="btn btn-cta" style="font-size: 1.05rem; padding: 12px 28px; border-radius: 30px; font-weight: 700; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);">
+                            Xem Đặt Lịch Hẹn
+                        </a>
+                        
+                        <!-- Mini Stats Display -->
+                        <div style="display: flex; gap: 30px; margin-top: 35px; border-top: 1px solid var(--border-color); padding-top: 25px;">
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-teal);">06+</div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;">Bác Sĩ Chuyên Khoa</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-navy);">05+</div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;">Nhân Viên Lễ Tân</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-navy);">99%</div>
+                                <div style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 600;">Hài Lòng Tuyệt Đối</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative; border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
+                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 380px;">
+                        
+                        <!-- Floating 3D Acrylic Logo Badge covering OAKHAVEN on the wall -->
+                        <div style="position: absolute; top: 38%; left: 16%; background: rgba(255, 255, 255, 0.95); border: 1.5px solid var(--accent-teal); border-radius: 4px; padding: 4px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.85rem; color: var(--accent-navy); backdrop-filter: blur(4px); pointer-events: none;">
+                            <span style="font-size: 0.95rem;">🦷</span> SmileCare<span style="color: var(--accent-teal);">+</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             <!-- Database connection error warning banner -->
             <% if (dbError != null) { %>
