@@ -200,11 +200,22 @@
                     
                     <div class="form-group">
                         <label class="form-label">Chọn Bác sĩ chỉ định</label>
+                        <% 
+                            String preSelectedDocStr = request.getParameter("doctorID");
+                            int selectedDocID = 0;
+                            if (preSelectedDocStr != null) {
+                                try {
+                                    selectedDocID = Integer.parseInt(preSelectedDocStr);
+                                } catch (NumberFormatException e) {
+                                    // ignore invalid values
+                                }
+                            }
+                        %>
                         <select name="doctorID" class="form-select">
-                            <option value="0">Khám tổng quát (Hệ thống tự động phân công bác sĩ)</option>
+                            <option value="0" <%= selectedDocID == 0 ? "selected" : "" %>>Khám tổng quát (Hệ thống tự động phân công bác sĩ)</option>
                             <% if (doctors != null) {
                                 for (User doc : doctors) { %>
-                                    <option value="<%= doc.getUserID() %>"><%= doc.getFullName() %></option>
+                                    <option value="<%= doc.getUserID() %>" <%= selectedDocID == doc.getUserID() ? "selected" : "" %>><%= doc.getFullName() %></option>
                                 <% }
                             } %>
                         </select>

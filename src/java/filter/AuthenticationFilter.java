@@ -74,8 +74,13 @@ public class AuthenticationFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             // Chưa đăng nhập → redirect về trang login
-            // Lưu URL mà user muốn truy cập để sau khi login có thể redirect lại
-            httpRequest.getSession().setAttribute("redirectAfterLogin", relativePath);
+            // Lưu URL và query parameters mà user muốn truy cập để sau khi login có thể redirect lại chính xác
+            String redirectUrl = relativePath;
+            String queryString = httpRequest.getQueryString();
+            if (queryString != null && !queryString.isEmpty()) {
+                redirectUrl += "?" + queryString;
+            }
+            httpRequest.getSession().setAttribute("redirectAfterLogin", redirectUrl);
             httpResponse.sendRedirect(contextPath + "/auth/login");
         }
     }
