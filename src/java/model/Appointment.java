@@ -1,13 +1,108 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
+import java.sql.Date;
+import java.sql.Time;
+
 /**
- *
- * @author Nguye
+ * Model class for Appointments.
  */
 public class Appointment {
-    
+    private int appointmentID;
+    private int customerID;
+    private Integer doctorID; // Nullable if general checkup
+    private Date appointmentDate;
+    private Time appointmentTime;
+    private String status; // Pending, Confirmed, Attended, Cancelled
+    private String notes;
+
+    // Additional properties for convenient rendering (not in DB column)
+    private String customerName;
+    private String doctorName;
+
+    // Constructors
+    public Appointment() {
+    }
+
+    public Appointment(int appointmentID, int customerID, Integer doctorID, Date appointmentDate, Time appointmentTime, String status, String notes) {
+        this.appointmentID = appointmentID;
+        this.customerID = customerID;
+        this.doctorID = doctorID;
+        this.appointmentDate = appointmentDate;
+        this.appointmentTime = appointmentTime;
+        this.status = status;
+        this.notes = notes;
+    }
+
+    // Getters and Setters
+    public int getAppointmentID() {
+        return appointmentID;
+    }
+
+    public void setAppointmentID(int appointmentID) {
+        this.appointmentID = appointmentID;
+    }
+
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(int customerID) {
+        this.customerID = customerID;
+    }
+
+    public Integer getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(Integer doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public Time getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(Time appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
 }
