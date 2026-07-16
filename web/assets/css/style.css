@@ -424,3 +424,41 @@ textarea.form-control {
     pointer-events: none;
 }
 
+/* ============================================================ */
+/*  TABLE ACTIONS SPACING & ACCIDENTAL CLICK PREVENTION        */
+/* ============================================================ */
+.action-buttons {
+    display: flex;
+    gap: 15px; /* Increased gap to 15px to prevent admin from misclicking edit/delete */
+    align-items: center;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    text-decoration: none;
+}
+
+.btn-icon:hover {
+    background-color: var(--accent-navy);
+    color: var(--bg-secondary);
+    border-color: var(--accent-navy);
+    transform: translateY(-1px);
+}
+
+.btn-icon-danger:hover {
+    background-color: var(--rose-soft);
+    color: var(--rose-text);
+    border-color: var(--rose-text);
+}
+
+
