@@ -130,7 +130,7 @@ body {
 
 .btn-primary {
     background-color: var(--accent-navy);
-    color: var(--bg-secondary);
+    color: var(--bg-secondary) !important;
 }
 
 .btn-primary:hover {
@@ -151,7 +151,7 @@ body {
 
 .btn-cta {
     background-color: var(--accent-teal);
-    color: var(--bg-secondary);
+    color: var(--bg-secondary) !important;
     box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
 }
 
