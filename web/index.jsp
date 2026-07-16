@@ -75,14 +75,8 @@
                     <div style="position: relative; border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
                         <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 380px;">
                         
-                        <!-- Realistic 3D Acrylic Glass Logo Plaque covering OAKHAVEN on the wall -->
-                        <div style="position: absolute; top: 40.5%; left: 18.5%; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(226, 232, 240, 0.9); border-radius: 2px; padding: 3px 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.82rem; color: var(--accent-navy); backdrop-filter: blur(4px); pointer-events: none; letter-spacing: 0.5px;">
-                            <!-- Silver Corner Standoff Screws -->
-                            <span style="position: absolute; top: 2px; left: 2px; width: 3px; height: 3px; background: #94a3b8; border-radius: 50%;"></span>
-                            <span style="position: absolute; top: 2px; right: 2px; width: 3px; height: 3px; background: #94a3b8; border-radius: 50%;"></span>
-                            <span style="position: absolute; bottom: 2px; left: 2px; width: 3px; height: 3px; background: #94a3b8; border-radius: 50%;"></span>
-                            <span style="position: absolute; bottom: 2px; right: 2px; width: 3px; height: 3px; background: #94a3b8; border-radius: 50%;"></span>
-                            
+                        <!-- Realistic 3D Acrylic Glass Logo Plaque covering OAKHAVEN on the wall perfectly -->
+                        <div style="position: absolute; top: 32.2%; left: 27.5%; width: 17%; height: 7%; background: #f2f1ed; border-radius: 1px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: var(--accent-navy); pointer-events: none; letter-spacing: 0.5px;">
                             <span style="color: var(--accent-teal);">Smile</span><span>Care+</span>
                         </div>
                     </div>
