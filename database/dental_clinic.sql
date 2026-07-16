@@ -264,28 +264,28 @@ GO
 
 -- 5. Thêm Medicines mẫu
 INSERT INTO Medicines (MedicineName, Unit, Price, StockQuantity, Status, ImagePath) VALUES
-(N'Amoxicillin 500mg', N'Viên', 5000, 500, 1, '/assets/images/amoxicillin.png'),
-(N'Paracetamol 500mg', N'Viên', 2000, 1000, 1, '/assets/images/paracetamol.png'),
-(N'Ibuprofen 400mg', N'Viên', 3000, 300, 1, '/assets/images/ibuprofen.png'),
-(N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1, '/assets/images/mouthwash.png'),
-(N'Kem đánh răng chuyên dụng Sensodyne', N'Hộp', 85000, 120, 1, '/assets/images/mouthwash.png'),
-(N'Chỉ nha khoa bảo vệ nướu Oral-B', N'Hộp', 55000, 200, 1, '/assets/images/mouthwash.png'),
+(N'Amoxicillin 500mg', N'Viên', 5000, 500, 1, '/img/amoxicillin.png'),
+(N'Paracetamol 500mg', N'Viên', 2000, 1000, 1, '/img/paracetamol.png'),
+(N'Ibuprofen 400mg', N'Viên', 3000, 300, 1, '/img/ibuprofen.png'),
+(N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1, '/img/mouthwash.png'),
+(N'Kem đánh răng chuyên dụng Sensodyne', N'Hộp', 85000, 120, 1, '/img/mouthwash.png'),
+(N'Chỉ nha khoa bảo vệ nướu Oral-B', N'Hộp', 55000, 200, 1, '/img/mouthwash.png'),
 -- 15 thuốc nha khoa mới
-(N'Nước súc miệng trị viêm nướu Chlorhexidine 0.12%', N'Chai', 150000, 80, 1, '/assets/images/mouthwash.png'),
-(N'Kháng sinh răng miệng Clindamycin 300mg', N'Hộp', 120000, 100, 1, '/assets/images/box_medicine.png'),
-(N'Kháng sinh viêm nha chu Metronidazole 250mg', N'Hộp', 45000, 200, 1, '/assets/images/box_medicine.png'),
-(N'Kem đánh răng Sensodyne Repair & Protect', N'Tuýp', 95000, 150, 1, '/assets/images/toothpaste.png'),
-(N'Kem đánh răng cho răng niềng Colgate Ortho', N'Tuýp', 75000, 100, 1, '/assets/images/toothpaste.png'),
-(N'Nước súc miệng ngừa viêm nướu Kin Gingival', N'Chai', 135000, 90, 1, '/assets/images/mouthwash.png'),
-(N'Nước súc miệng diệt khuẩn Listerine Cool Mint', N'Chai', 80000, 300, 1, '/assets/images/mouthwash.png'),
-(N'Gel bôi trị nhiệt miệng loét nướu Aloclair Plus', N'Tuýp', 165000, 50, 1, '/assets/images/gel_tube.png'),
-(N'Gel gây tê giảm đau miệng Kamistad Gel N', N'Tuýp', 90000, 120, 1, '/assets/images/gel_tube.png'),
-(N'Gel đặc trị ê buốt cổ chân răng Emofluor', N'Tuýp', 220000, 40, 1, '/assets/images/gel_tube.png'),
-(N'Chỉ tơ nha khoa làm sạch kẽ răng Dentana', N'Cuộn', 35000, 250, 1, '/assets/images/mouthwash.png'),
-(N'Đầu phun máy tăm nước Waterpik Jet Tip', N'Cái', 150000, 60, 1, '/assets/images/toothbrush.png'),
-(N'Bàn chải chuyên dụng răng niềng TePe Ortho', N'Cái', 75000, 110, 1, '/assets/images/toothbrush.png'),
-(N'Bàn chải siêu mềm bảo vệ nướu Curaprox CS 5460', N'Cái', 115000, 180, 1, '/assets/images/toothbrush.png'),
-(N'Kem bôi tái khoáng ngừa sâu răng GC Tooth Mousse', N'Tuýp', 320000, 30, 1, '/assets/images/gel_tube.png');
+(N'Nước súc miệng trị viêm nướu Chlorhexidine 0.12%', N'Chai', 150000, 80, 1, '/img/mouthwash.png'),
+(N'Kháng sinh răng miệng Clindamycin 300mg', N'Hộp', 120000, 100, 1, '/img/box_medicine.png'),
+(N'Kháng sinh viêm nha chu Metronidazole 250mg', N'Hộp', 45000, 200, 1, '/img/box_medicine.png'),
+(N'Kem đánh răng Sensodyne Repair & Protect', N'Tuýp', 95000, 150, 1, '/img/toothpaste.png'),
+(N'Kem đánh răng cho răng niềng Colgate Ortho', N'Tuýp', 75000, 100, 1, '/img/toothpaste.png'),
+(N'Nước súc miệng ngừa viêm nướu Kin Gingival', N'Chai', 135000, 90, 1, '/img/mouthwash.png'),
+(N'Nước súc miệng diệt khuẩn Listerine Cool Mint', N'Chai', 80000, 300, 1, '/img/mouthwash.png'),
+(N'Gel bôi trị nhiệt miệng loét nướu Aloclair Plus', N'Tuýp', 165000, 50, 1, '/img/gel_tube.png'),
+(N'Gel gây tê giảm đau miệng Kamistad Gel N', N'Tuýp', 90000, 120, 1, '/img/gel_tube.png'),
+(N'Gel đặc trị ê buốt cổ chân răng Emofluor', N'Tuýp', 220000, 40, 1, '/img/gel_tube.png'),
+(N'Chỉ tơ nha khoa làm sạch kẽ răng Dentana', N'Cuộn', 35000, 250, 1, '/img/mouthwash.png'),
+(N'Đầu phun máy tăm nước Waterpik Jet Tip', N'Cái', 150000, 60, 1, '/img/toothbrush.png'),
+(N'Bàn chải chuyên dụng răng niềng TePe Ortho', N'Cái', 75000, 110, 1, '/img/toothbrush.png'),
+(N'Bàn chải siêu mềm bảo vệ nướu Curaprox CS 5460', N'Cái', 115000, 180, 1, '/img/toothbrush.png'),
+(N'Kem bôi tái khoáng ngừa sâu răng GC Tooth Mousse', N'Tuýp', 320000, 30, 1, '/img/gel_tube.png');
 GO
 
 -- 6. Thêm Appointments mẫu (Lịch hẹn khám)

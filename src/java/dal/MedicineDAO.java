@@ -83,7 +83,7 @@ public class MedicineDAO extends DBContext {
             ps.setDouble(3, m.getPrice());
             ps.setInt(4, m.getStockQuantity());
             ps.setBoolean(5, m.isStatus());
-            ps.setString(6, m.getImagePath() != null ? m.getImagePath() : "/assets/images/mouthwash.png");
+            ps.setString(6, m.getImagePath() != null ? m.getImagePath() : "/img/mouthwash.png");
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException ex) {

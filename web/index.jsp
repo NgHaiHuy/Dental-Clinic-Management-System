@@ -73,7 +73,7 @@
                     </div>
                     
                     <div style="position: relative; border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
-                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover; max-height: 440px; border-radius: var(--border-radius-lg);">
+                        <img src="<%= request.getContextPath() %>/img/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover; max-height: 440px; border-radius: var(--border-radius-lg);">
                     </div>
                 </div>
             </div>
@@ -150,7 +150,7 @@
                             String imgName = "doctor_" + doc.getUsername() + ".png";
                     %>
                             <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
-                                <img src="<%= request.getContextPath() %>/assets/images/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
+                                <img src="<%= request.getContextPath() %>/img/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
                                 <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
                                     <%= doc.getFullName() %>
                                 </h3>
