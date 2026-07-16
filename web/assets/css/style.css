@@ -461,4 +461,41 @@ textarea.form-control {
     border-color: var(--rose-text);
 }
 
+/* ============================================================ */
+/*  HEADER BANNER SYSTEM                                       */
+/* ============================================================ */
+.header-banner {
+    background: linear-gradient(135deg, rgba(13, 148, 136, 0.04) 0%, rgba(15, 23, 42, 0.02) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 24px 30px;
+    margin-top: 15px;
+    margin-bottom: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header-title-section h1 {
+    font-family: var(--font-outfit);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-navy);
+    margin-bottom: 6px;
+}
+
+.header-title-section p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
 
