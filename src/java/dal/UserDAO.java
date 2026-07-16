@@ -4,6 +4,7 @@ import context.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -157,12 +158,29 @@ public class UserDAO extends DBContext {
      */
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT UserID, Username, Password, FullName, Phone, Email, RoleID "
-                + "FROM Users ORDER BY RoleID, FullName";
+        String sql = "SELECT u.UserID, u.Username, u.Password, u.FullName, u.Phone, u.Email, u.RoleID, "
+                   + "di.Specialization, di.ExperienceYears, di.Biography, di.Education, di.CoreSkills "
+                   + "FROM Users u "
+                   + "LEFT JOIN DoctorInfo di ON u.UserID = di.DoctorID "
+                   + "ORDER BY u.RoleID, u.FullName";
         try (PreparedStatement ps = connection.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(mapUser(rs));
+                User u = new User(
+                        rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("Password"),
+                        rs.getString("FullName"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getInt("RoleID")
+                );
+                u.setSpecialization(rs.getString("Specialization"));
+                u.setExperienceYears(rs.getInt("ExperienceYears"));
+                u.setBiography(rs.getString("Biography"));
+                u.setEducation(rs.getString("Education"));
+                u.setCoreSkills(rs.getString("CoreSkills"));
+                list.add(u);
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,16 +228,42 @@ public class UserDAO extends DBContext {
      */
     public boolean createUser(String username, String password,
             String fullName, String phone, String email, int roleID) {
+        return createUser(username, password, fullName, phone, email, roleID, null, 0, null, null, null);
+    }
+
+    public boolean createUser(String username, String password,
+            String fullName, String phone, String email, int roleID,
+            String specialization, int experienceYears, String biography,
+            String education, String coreSkills) {
         String sql = "INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, username);
             ps.setString(2, password);
             ps.setString(3, fullName);
             ps.setString(4, phone);
             ps.setString(5, email);
             ps.setInt(6, roleID);
-            return ps.executeUpdate() > 0;
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0 && roleID == 2) {
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int doctorID = generatedKeys.getInt(1);
+                        String docSql = "INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography, Education, CoreSkills) "
+                                + "VALUES (?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement docPs = connection.prepareStatement(docSql)) {
+                            docPs.setInt(1, doctorID);
+                            docPs.setString(2, specialization);
+                            docPs.setInt(3, experienceYears);
+                            docPs.setString(4, biography);
+                            docPs.setString(5, education);
+                            docPs.setString(6, coreSkills);
+                            docPs.executeUpdate();
+                        }
+                    }
+                }
+            }
+            return affectedRows > 0;
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -238,15 +282,66 @@ public class UserDAO extends DBContext {
      */
     public boolean updateUser(int userID, String fullName,
             String phone, String email, int roleID) {
-        String sql = "UPDATE Users SET FullName = ?, Phone = ?, Email = ?, RoleID = ? "
-                + "WHERE UserID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, fullName);
-            ps.setString(2, phone);
-            ps.setString(3, email);
-            ps.setInt(4, roleID);
-            ps.setInt(5, userID);
-            return ps.executeUpdate() > 0;
+        return updateUser(userID, fullName, phone, email, roleID, null, 0, null, null, null);
+    }
+
+    public boolean updateUser(int userID, String fullName,
+            String phone, String email, int roleID,
+            String specialization, int experienceYears, String biography,
+            String education, String coreSkills) {
+        String sql = "UPDATE Users SET FullName = ?, Phone = ?, Email = ?, RoleID = ? WHERE UserID = ?";
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, fullName);
+                ps.setString(2, phone);
+                ps.setString(3, email);
+                ps.setInt(4, roleID);
+                ps.setInt(5, userID);
+                int affectedRows = ps.executeUpdate();
+                if (affectedRows > 0) {
+                    if (roleID == 2) {
+                        // Check if DoctorInfo already exists
+                        String checkSql = "SELECT 1 FROM DoctorInfo WHERE DoctorID = ?";
+                        boolean exists = false;
+                        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
+                            checkPs.setInt(1, userID);
+                            try (ResultSet rs = checkPs.executeQuery()) {
+                                exists = rs.next();
+                            }
+                        }
+                        String docSql;
+                        if (exists) {
+                            docSql = "UPDATE DoctorInfo SET Specialization = ?, ExperienceYears = ?, Biography = ?, Education = ?, CoreSkills = ? WHERE DoctorID = ?";
+                        } else {
+                            docSql = "INSERT INTO DoctorInfo (Specialization, ExperienceYears, Biography, Education, CoreSkills, DoctorID) VALUES (?, ?, ?, ?, ?, ?)";
+                        }
+                        try (PreparedStatement docPs = connection.prepareStatement(docSql)) {
+                            docPs.setString(1, specialization);
+                            docPs.setInt(2, experienceYears);
+                            docPs.setString(3, biography);
+                            docPs.setString(4, education);
+                            docPs.setString(5, coreSkills);
+                            docPs.setInt(6, userID);
+                            docPs.executeUpdate();
+                        }
+                    } else {
+                        // If changing role from Doctor to another role, delete DoctorInfo
+                        String deleteSql = "DELETE FROM DoctorInfo WHERE DoctorID = ?";
+                        try (PreparedStatement deletePs = connection.prepareStatement(deleteSql)) {
+                            deletePs.setInt(1, userID);
+                            deletePs.executeUpdate();
+                        }
+                    }
+                }
+                connection.commit();
+                return affectedRows > 0;
+            } catch (SQLException ex) {
+                connection.rollback();
+                throw ex;
+            } finally {
+                connection.setAutoCommit(true);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -319,7 +414,7 @@ public class UserDAO extends DBContext {
     public List<User> getDoctorsWithDetails() {
         List<User> list = new ArrayList<>();
         String sql = "SELECT u.UserID, u.Username, u.Password, u.FullName, u.Phone, u.Email, u.RoleID, "
-                   + "di.Specialization, di.ExperienceYears, di.Biography "
+                   + "di.Specialization, di.ExperienceYears, di.Biography, di.Education, di.CoreSkills "
                    + "FROM Users u "
                    + "LEFT JOIN DoctorInfo di ON u.UserID = di.DoctorID "
                    + "WHERE u.RoleID = 2 ORDER BY u.FullName";
@@ -338,6 +433,8 @@ public class UserDAO extends DBContext {
                 u.setSpecialization(rs.getString("Specialization"));
                 u.setExperienceYears(rs.getInt("ExperienceYears"));
                 u.setBiography(rs.getString("Biography"));
+                u.setEducation(rs.getString("Education"));
+                u.setCoreSkills(rs.getString("CoreSkills"));
                 list.add(u);
             }
         } catch (SQLException ex) {

@@ -425,9 +425,9 @@
                             <td>
                                 <div class="action-btns">
                                     <button class="btn-icon btn-edit" title="Chỉnh sửa"
-                                        onclick="openEditModal(<%= u.getUserID() %>, '<%= u.getUsername() %>', '<%= u.getFullName().replace("'", "\\'") %>', '<%= u.getPhone() != null ? u.getPhone() : "" %>', '<%= u.getEmail() != null ? u.getEmail() : "" %>', <%= u.getRoleID() %>)">
-                                        <i class="fas fa-pen"></i>
-                                    </button>
+                                         onclick="openEditModal(<%= u.getUserID() %>, '<%= u.getUsername() %>', '<%= u.getFullName().replace("'", "\\'") %>', '<%= u.getPhone() != null ? u.getPhone() : "" %>', '<%= u.getEmail() != null ? u.getEmail() : "" %>', <%= u.getRoleID() %>, '<%= u.getSpecialization() != null ? u.getSpecialization().replace("'", "\\'") : "" %>', <%= u.getExperienceYears() %>, '<%= u.getBiography() != null ? u.getBiography().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>', '<%= u.getEducation() != null ? u.getEducation().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>', '<%= u.getCoreSkills() != null ? u.getCoreSkills().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>')">
+                                         <i class="fas fa-pen"></i>
+                                     </button>
                                     <% if (loggedUser == null || u.getUserID() != loggedUser.getUserID()) { %>
                                     <button class="btn-icon btn-delete" title="Xoá"
                                         onclick="confirmDelete(<%= u.getUserID() %>, '<%= u.getUsername() %>')">
@@ -478,14 +478,38 @@
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Vai trò *</label>
-                <select name="roleID" class="modal-select" required>
+                <select name="roleID" id="createRoleID" class="modal-select" required onchange="toggleCreateDocFields()">
                     <option value="">-- Chọn vai trò --</option>
-                    <option value="1">Quản trị viên</option>
-                    <option value="2">Bác sĩ</option>
-                    <option value="3">Nhân viên tiếp đón</option>
-                    <option value="4">Khách hàng</option>
+                    <option value="2">Bác sĩ (Doctor)</option>
+                    <option value="3">Nhân viên tiếp đón (Staff)</option>
+                    <option value="4">Khách hàng (Customer)</option>
                 </select>
             </div>
+            
+            <!-- Doctor-specific details form section -->
+            <div id="createDocFields" style="display: none; border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+                <div class="modal-form-group">
+                    <label class="modal-label">Chuyên khoa *</label>
+                    <input type="text" name="specialization" id="createSpec" class="modal-input" placeholder="Ví dụ: Răng Hàm Mặt, Chỉnh Nha">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Số năm kinh nghiệm *</label>
+                    <input type="number" name="experienceYears" id="createExp" class="modal-input" min="0" placeholder="Ví dụ: 8">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Tiểu sử & Kinh nghiệm lâm sàng *</label>
+                    <textarea name="biography" id="createBio" class="modal-input" placeholder="Nhập tóm tắt tiểu sử của bác sĩ..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Học vấn & Đào tạo (Mỗi dòng một mục) *</label>
+                    <textarea name="education" id="createEdu" class="modal-input" placeholder="Tốt nghiệp Đại học Y Dược...&#10;Chứng chỉ chỉnh nha..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Chuyên môn thế mạnh (Mỗi dòng một mục) *</label>
+                    <textarea name="coreSkills" id="createSkills" class="modal-input" placeholder="Niềng răng Invisalign...&#10;Bọc răng sứ..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeModal('createModal')">Huỷ</button>
                 <button type="submit" class="btn-save"><i class="fas fa-plus" style="margin-right:6px"></i>Tạo tài khoản</button>
@@ -519,13 +543,38 @@
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Vai trò *</label>
-                <select name="roleID" id="editRoleID" class="modal-select" required>
+                <select name="roleID" id="editRoleID" class="modal-select" required onchange="toggleEditDocFields()">
                     <option value="1">Quản trị viên</option>
                     <option value="2">Bác sĩ</option>
                     <option value="3">Nhân viên tiếp đón</option>
                     <option value="4">Khách hàng</option>
                 </select>
             </div>
+
+            <!-- Doctor-specific details form section (edit) -->
+            <div id="editDocFields" style="display: none; border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+                <div class="modal-form-group">
+                    <label class="modal-label">Chuyên khoa *</label>
+                    <input type="text" name="specialization" id="editSpec" class="modal-input" placeholder="Ví dụ: Răng Hàm Mặt">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Số năm kinh nghiệm *</label>
+                    <input type="number" name="experienceYears" id="editExp" class="modal-input" min="0" placeholder="Ví dụ: 8">
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Tiểu sử & Kinh nghiệm lâm sàng *</label>
+                    <textarea name="biography" id="editBio" class="modal-input" placeholder="Nhập tóm tắt tiểu sử..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Học vấn & Đào tạo (Mỗi dòng một mục) *</label>
+                    <textarea name="education" id="editEdu" class="modal-input" placeholder="Học vị..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+                <div class="modal-form-group">
+                    <label class="modal-label">Chuyên môn thế mạnh (Mỗi dòng một mục) *</label>
+                    <textarea name="coreSkills" id="editSkills" class="modal-input" placeholder="Thế mạnh..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Huỷ</button>
                 <button type="submit" class="btn-save"><i class="fas fa-save" style="margin-right:6px"></i>Lưu thay đổi</button>
@@ -542,15 +591,26 @@
 
 <script>
     function openCreateModal() {
+        document.getElementById('createRoleID').value = '';
+        toggleCreateDocFields();
         document.getElementById('createModal').classList.add('show');
     }
-    function openEditModal(id, username, fullName, phone, email, roleID) {
+    function openEditModal(id, username, fullName, phone, email, roleID, specialization, experienceYears, biography, education, coreSkills) {
         document.getElementById('editUserID').value  = id;
         document.getElementById('editUsername').value = username;
         document.getElementById('editFullName').value = fullName;
         document.getElementById('editPhone').value   = phone;
         document.getElementById('editEmail').value   = email;
         document.getElementById('editRoleID').value  = roleID;
+        
+        // Populate doctor fields
+        document.getElementById('editSpec').value = specialization || '';
+        document.getElementById('editExp').value = experienceYears || '0';
+        document.getElementById('editBio').value = biography || '';
+        document.getElementById('editEdu').value = education || '';
+        document.getElementById('editSkills').value = coreSkills || '';
+        
+        toggleEditDocFields();
         document.getElementById('editModal').classList.add('show');
     }
     function closeModal(id) {
@@ -560,6 +620,33 @@
         if (confirm('Bạn có chắc muốn xoá tài khoản "' + username + '"?\nHành động này không thể hoàn tác.')) {
             document.getElementById('deleteUserID').value = id;
             document.getElementById('deleteForm').submit();
+        }
+    }
+
+    // Toggle fields based on role
+    function toggleCreateDocFields() {
+        const roleSelect = document.getElementById('createRoleID');
+        const docFields = document.getElementById('createDocFields');
+        const inputs = docFields.querySelectorAll('input, textarea');
+        if (roleSelect.value === '2') {
+            docFields.style.display = 'block';
+            inputs.forEach(input => input.setAttribute('required', 'true'));
+        } else {
+            docFields.style.display = 'none';
+            inputs.forEach(input => input.removeAttribute('required'));
+        }
+    }
+
+    function toggleEditDocFields() {
+        const roleSelect = document.getElementById('editRoleID');
+        const docFields = document.getElementById('editDocFields');
+        const inputs = docFields.querySelectorAll('input, textarea');
+        if (roleSelect.value === '2') {
+            docFields.style.display = 'block';
+            inputs.forEach(input => input.setAttribute('required', 'true'));
+        } else {
+            docFields.style.display = 'none';
+            inputs.forEach(input => input.removeAttribute('required'));
         }
     }
     // Close modal on overlay click

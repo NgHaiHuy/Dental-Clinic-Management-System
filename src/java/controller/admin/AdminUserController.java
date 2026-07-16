@@ -109,10 +109,32 @@ public class AdminUserController extends HttpServlet {
             return;
         }
 
-        boolean success = userDAO.createUser(
+        boolean success;
+        if (roleID == 2) {
+            String specialization = request.getParameter("specialization");
+            String expStr = request.getParameter("experienceYears");
+            String biography = request.getParameter("biography");
+            String education = request.getParameter("education");
+            String coreSkills = request.getParameter("coreSkills");
+            int experienceYears = 0;
+            if (expStr != null && !expStr.trim().isEmpty()) {
+                try {
+                    experienceYears = Integer.parseInt(expStr.trim());
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+            }
+            success = userDAO.createUser(
+                username.trim(), password.trim(), fullName.trim(),
+                phone.trim(), email != null ? email.trim() : "", roleID,
+                specialization, experienceYears, biography, education, coreSkills
+            );
+        } else {
+            success = userDAO.createUser(
                 username.trim(), password.trim(), fullName.trim(),
                 phone.trim(), email != null ? email.trim() : "", roleID
-        );
+            );
+        }
 
         if (success) {
             response.sendRedirect(request.getContextPath() + "/admin/manage-users?msg=created");
@@ -138,10 +160,32 @@ public class AdminUserController extends HttpServlet {
             int userID = Integer.parseInt(idStr);
             int roleID = Integer.parseInt(roleStr);
 
-            boolean success = userDAO.updateUser(
+            boolean success;
+            if (roleID == 2) {
+                String specialization = request.getParameter("specialization");
+                String expStr = request.getParameter("experienceYears");
+                String biography = request.getParameter("biography");
+                String education = request.getParameter("education");
+                String coreSkills = request.getParameter("coreSkills");
+                int experienceYears = 0;
+                if (expStr != null && !expStr.trim().isEmpty()) {
+                    try {
+                        experienceYears = Integer.parseInt(expStr.trim());
+                    } catch (NumberFormatException e) {
+                        // Ignore
+                    }
+                }
+                success = userDAO.updateUser(
+                    userID, fullName.trim(), phone.trim(),
+                    email != null ? email.trim() : "", roleID,
+                    specialization, experienceYears, biography, education, coreSkills
+                );
+            } else {
+                success = userDAO.updateUser(
                     userID, fullName.trim(), phone.trim(),
                     email != null ? email.trim() : "", roleID
-            );
+                );
+            }
 
             if (success) {
                 response.sendRedirect(request.getContextPath() + "/admin/manage-users?msg=updated");

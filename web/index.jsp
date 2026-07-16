@@ -159,7 +159,8 @@
                                 '<%= (doc.getBiography() != null ? doc.getBiography() : "Chuyên gia răng hàm mặt giàu kinh nghiệm của SmileCare.").replace("'", "\\'").replace("\n", " ").replace("\r", " ") %>',
                                 '<%= request.getContextPath() %>/img/<%= imgName %>',
                                 <%= doc.getUserID() %>,
-                                '<%= doc.getUsername() %>'
+                                '<%= doc.getEducation() != null ? doc.getEducation().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>',
+                                '<%= doc.getCoreSkills() != null ? doc.getCoreSkills().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>'
                             )" style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary); cursor: pointer;">
                                 <img src="<%= request.getContextPath() %>/img/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
                                 <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
@@ -374,88 +375,7 @@
         </div>
 
         <script>
-            const doctorDetails = {
-                'doctor01': {
-                    title: 'Bác sĩ Chuyên khoa I - Chỉnh nha chuyên sâu',
-                    education: [
-                        'Tốt nghiệp Đại học Y Dược Hà Nội',
-                        'Chứng chỉ Chỉnh nha tăng trưởng quốc tế',
-                        'Hội viên Hội Chỉnh nha Việt Nam (VOSA)'
-                    ],
-                    skills: [
-                        'Chỉnh nha mắc cài kim loại & sứ',
-                        'Niềng răng trong suốt Invisalign',
-                        'Cân chỉnh khớp cắn chuyên sâu'
-                    ]
-                },
-                'doctor02': {
-                    title: 'Bác sĩ Thẩm mỹ Nha khoa - Thành viên AACD',
-                    education: [
-                        'Tốt nghiệp Bác sĩ Răng Hàm Mặt - ĐH Y Dược TP.HCM',
-                        'Chứng chỉ Phục hình răng sứ thẩm mỹ chuyên sâu',
-                        'Hội viên Hiệp hội Nha khoa Thẩm mỹ Hoa Kỳ (AACD)'
-                    ],
-                    skills: [
-                        'Dán sứ Veneer siêu mỏng phục hình tối thiểu',
-                        'Bọc răng sứ toàn sứ cao cấp Cercon/Emax',
-                        'Tẩy trắng răng Laser Whitening không ê buốt'
-                    ]
-                },
-                'doctor03': {
-                    title: 'Bác sĩ Chuyên khoa II - Chuyên gia Implant',
-                    education: [
-                        'Bác sĩ Chuyên khoa II Răng Hàm Mặt',
-                        'Tu nghiệp chuyên sâu về cấy ghép Implant tại Hoa Kỳ',
-                        'Thành viên Hiệp hội Implant Quốc tế (ITI)'
-                    ],
-                    skills: [
-                        'Cấy ghép Implant tức thì sau nhổ răng',
-                        'Phẫu thuật nâng xoang, ghép xương hàm',
-                        'Tiểu phẫu răng khôn mọc ngầm, mọc lệch khó'
-                    ]
-                },
-                'doctor04': {
-                    title: 'Thạc sĩ Bác sĩ - Nội nha & Nha khoa Trẻ em',
-                    education: [
-                        'Thạc sĩ Răng Hàm Mặt - Đại học Y Hà Nội',
-                        'Chứng chỉ Nội nha lâm sàng nâng cao',
-                        'Chứng chỉ Nha khoa Trẻ em chuyên sâu'
-                    ],
-                    skills: [
-                        'Điều trị tủy răng bằng máy WaveOne hiện đại',
-                        'Nha khoa trẻ em không đau & tâm lý học trẻ em',
-                        'Trám răng sâu thẩm mỹ ngăn ngừa tái phát'
-                    ]
-                },
-                'doctor05': {
-                    title: 'Bác sĩ Nha khoa - Chuyên gia Nha chu',
-                    education: [
-                        'Tốt nghiệp loại Giỏi Bác sĩ Răng Hàm Mặt - ĐH Y Dược TP.HCM',
-                        'Chứng chỉ điều trị bệnh lý nha chu chuyên sâu',
-                        'Khóa đào tạo chuyên sâu về Laser trong Nha khoa'
-                    ],
-                    skills: [
-                        'Điều trị viêm nha chu toàn diện',
-                        'Phẫu thuật tạo hình nướu, ghép nướu rời',
-                        'Điều trị dứt điểm hôi miệng do bệnh lý'
-                    ]
-                },
-                'doctor06': {
-                    title: 'Bác sĩ Răng Hàm Mặt - Nha khoa Tổng quát',
-                    education: [
-                        'Tốt nghiệp Bác sĩ Răng Hàm Mặt chính quy',
-                        'Chứng chỉ nhổ răng khôn bằng sóng siêu âm Piezotome',
-                        'Chứng chỉ cấy ghép nha khoa cơ bản'
-                    ],
-                    skills: [
-                        'Nhổ răng khôn không đau công nghệ Piezotome',
-                        'Điều trị sâu răng, viêm tủy cấp tính',
-                        'Khám tổng quát & Lập phác đồ điều trị'
-                    ]
-                }
-            };
-
-            function openDoctorModal(name, spec, exp, email, phone, bio, imgUrl, docId, username) {
+            function openDoctorModal(name, spec, exp, email, phone, bio, imgUrl, docId, educationStr, coreSkillsStr) {
                 document.getElementById('modalDocName').innerText = name;
                 document.getElementById('modalDocSpec').innerText = spec;
                 document.getElementById('modalDocExp').innerText = exp + " năm";
@@ -466,30 +386,32 @@
                 document.getElementById('modalDocImg').alt = name;
                 document.getElementById('modalBookLink').href = "<%= request.getContextPath() %>/customer/booking?doctorID=" + docId;
                 
-                const details = doctorDetails[username] || {
-                    title: spec,
-                    education: ['Tốt nghiệp Bác sĩ Răng Hàm Mặt chuyên khoa', 'Thành viên các hiệp hội nha khoa uy tín'],
-                    skills: ['Điều trị nha khoa tổng quát', 'Chăm sóc sức khỏe răng miệng toàn diện']
-                };
-                
-                document.getElementById('modalDocTitle').innerText = details.title;
+                document.getElementById('modalDocTitle').innerText = spec + " chuyên sâu";
                 
                 // Populate education list
                 const eduList = document.getElementById('modalDocEdu');
                 eduList.innerHTML = '';
-                details.education.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerText = item;
-                    eduList.appendChild(li);
+                
+                // Split by either escaped newlines or real newlines
+                const edus = educationStr ? educationStr.split(/\\n|\n/) : ['Tốt nghiệp Bác sĩ Răng Hàm Mặt chuyên khoa', 'Thành viên các hiệp hội nha khoa uy tín'];
+                edus.forEach(item => {
+                    if (item.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = item.trim();
+                        eduList.appendChild(li);
+                    }
                 });
                 
                 // Populate skills list
                 const skillsList = document.getElementById('modalDocSkills');
                 skillsList.innerHTML = '';
-                details.skills.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerText = item;
-                    skillsList.appendChild(li);
+                const skills = coreSkillsStr ? coreSkillsStr.split(/\\n|\n/) : ['Điều trị nha khoa tổng quát', 'Chăm sóc sức khỏe răng miệng toàn diện'];
+                skills.forEach(item => {
+                    if (item.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = item.trim();
+                        skillsList.appendChild(li);
+                    }
                 });
                 
                 const modal = document.getElementById('doctorModal');

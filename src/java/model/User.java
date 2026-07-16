@@ -16,6 +16,8 @@ public class User {
     private String specialization;
     private int experienceYears;
     private String biography;
+    private String education;
+    private String coreSkills;
 
     // Constructors
     public User() {
@@ -112,6 +114,22 @@ public class User {
         this.biography = biography;
     }
 
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
+    public String getCoreSkills() {
+        return coreSkills;
+    }
+
+    public void setCoreSkills(String coreSkills) {
+        this.coreSkills = coreSkills;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -124,6 +142,8 @@ public class User {
                 ", specialization='" + specialization + '\'' +
                 ", experienceYears=" + experienceYears +
                 ", biography='" + biography + '\'' +
+                ", education='" + education + '\'' +
+                ", coreSkills='" + coreSkills + '\'' +
                 '}';
     }
 }
