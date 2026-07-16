@@ -252,6 +252,41 @@
             cursor: pointer; font-family: 'Inter', sans-serif;
         }
         .btn-save:hover { background: var(--primary-dark); }
+
+        /* Doctor-specific section styling */
+        .doctor-info-section {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+            animation: slideDown 0.25s ease-out forwards;
+        }
+        .doctor-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        .modal-input-textarea {
+            min-height: 80px;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -457,6 +492,15 @@
         <form action="${pageContext.request.contextPath}/admin/manage-users" method="POST">
             <input type="hidden" name="action" value="create">
             <div class="modal-form-group">
+                <label class="modal-label">Vai trò *</label>
+                <select name="roleID" id="createRoleID" class="modal-select" required onchange="toggleCreateDocFields()">
+                    <option value="">-- Chọn vai trò --</option>
+                    <option value="2">Bác sĩ (Doctor)</option>
+                    <option value="3">Nhân viên tiếp đón (Staff)</option>
+                    <option value="4">Khách hàng (Customer)</option>
+                </select>
+            </div>
+            <div class="modal-form-group">
                 <label class="modal-label">Tên đăng nhập *</label>
                 <input type="text" name="username" class="modal-input" placeholder="Nhập username" required>
             </div>
@@ -476,18 +520,12 @@
                 <label class="modal-label">Email</label>
                 <input type="email" name="email" class="modal-input" placeholder="email@dental.com">
             </div>
-            <div class="modal-form-group">
-                <label class="modal-label">Vai trò *</label>
-                <select name="roleID" id="createRoleID" class="modal-select" required onchange="toggleCreateDocFields()">
-                    <option value="">-- Chọn vai trò --</option>
-                    <option value="2">Bác sĩ (Doctor)</option>
-                    <option value="3">Nhân viên tiếp đón (Staff)</option>
-                    <option value="4">Khách hàng (Customer)</option>
-                </select>
-            </div>
             
             <!-- Doctor-specific details form section -->
-            <div id="createDocFields" style="display: none; border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+            <div id="createDocFields" class="doctor-info-section" style="display: none;">
+                <div class="doctor-section-title">
+                    <i class="fas fa-stethoscope"></i> Thông tin chuyên môn bác sĩ
+                </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Chuyên khoa *</label>
                     <input type="text" name="specialization" id="createSpec" class="modal-input" placeholder="Ví dụ: Răng Hàm Mặt, Chỉnh Nha">
@@ -498,15 +536,15 @@
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Tiểu sử & Kinh nghiệm lâm sàng *</label>
-                    <textarea name="biography" id="createBio" class="modal-input" placeholder="Nhập tóm tắt tiểu sử của bác sĩ..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="biography" id="createBio" class="modal-input modal-input-textarea" placeholder="Nhập tóm tắt tiểu sử của bác sĩ..."></textarea>
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Học vấn & Đào tạo (Mỗi dòng một mục) *</label>
-                    <textarea name="education" id="createEdu" class="modal-input" placeholder="Tốt nghiệp Đại học Y Dược...&#10;Chứng chỉ chỉnh nha..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="education" id="createEdu" class="modal-input modal-input-textarea" placeholder="Tốt nghiệp Đại học Y Dược...&#10;Chứng chỉ chỉnh nha..."></textarea>
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Chuyên môn thế mạnh (Mỗi dòng một mục) *</label>
-                    <textarea name="coreSkills" id="createSkills" class="modal-input" placeholder="Niềng răng Invisalign...&#10;Bọc răng sứ..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="coreSkills" id="createSkills" class="modal-input modal-input-textarea" placeholder="Niềng răng Invisalign...&#10;Bọc răng sứ..."></textarea>
                 </div>
             </div>
 
@@ -526,6 +564,15 @@
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="userID" id="editUserID">
             <div class="modal-form-group">
+                <label class="modal-label">Vai trò *</label>
+                <select name="roleID" id="editRoleID" class="modal-select" required onchange="toggleEditDocFields()">
+                    <option value="1">Quản trị viên (Admin)</option>
+                    <option value="2">Bác sĩ (Doctor)</option>
+                    <option value="3">Nhân viên tiếp đón (Staff)</option>
+                    <option value="4">Khách hàng (Customer)</option>
+                </select>
+            </div>
+            <div class="modal-form-group">
                 <label class="modal-label">Tên đăng nhập</label>
                 <input type="text" id="editUsername" class="modal-input" disabled style="background:#f1f5f9;color:var(--text-muted)">
             </div>
@@ -541,18 +588,12 @@
                 <label class="modal-label">Email</label>
                 <input type="email" name="email" id="editEmail" class="modal-input">
             </div>
-            <div class="modal-form-group">
-                <label class="modal-label">Vai trò *</label>
-                <select name="roleID" id="editRoleID" class="modal-select" required onchange="toggleEditDocFields()">
-                    <option value="1">Quản trị viên</option>
-                    <option value="2">Bác sĩ</option>
-                    <option value="3">Nhân viên tiếp đón</option>
-                    <option value="4">Khách hàng</option>
-                </select>
-            </div>
 
             <!-- Doctor-specific details form section (edit) -->
-            <div id="editDocFields" style="display: none; border-top: 1px dashed var(--border); padding-top: 15px; margin-top: 15px;">
+            <div id="editDocFields" class="doctor-info-section" style="display: none;">
+                <div class="doctor-section-title">
+                    <i class="fas fa-stethoscope"></i> Thông tin chuyên môn bác sĩ
+                </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Chuyên khoa *</label>
                     <input type="text" name="specialization" id="editSpec" class="modal-input" placeholder="Ví dụ: Răng Hàm Mặt">
@@ -563,15 +604,15 @@
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Tiểu sử & Kinh nghiệm lâm sàng *</label>
-                    <textarea name="biography" id="editBio" class="modal-input" placeholder="Nhập tóm tắt tiểu sử..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="biography" id="editBio" class="modal-input modal-input-textarea" placeholder="Nhập tóm tắt tiểu sử..."></textarea>
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Học vấn & Đào tạo (Mỗi dòng một mục) *</label>
-                    <textarea name="education" id="editEdu" class="modal-input" placeholder="Học vị..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="education" id="editEdu" class="modal-input modal-input-textarea" placeholder="Học vị..."></textarea>
                 </div>
                 <div class="modal-form-group">
                     <label class="modal-label">Chuyên môn thế mạnh (Mỗi dòng một mục) *</label>
-                    <textarea name="coreSkills" id="editSkills" class="modal-input" placeholder="Thế mạnh..." style="min-height:80px; font-family:inherit; resize:vertical; padding:8px 12px; border-radius:6px; border:1px solid var(--border); outline:none; width:100%;"></textarea>
+                    <textarea name="coreSkills" id="editSkills" class="modal-input modal-input-textarea" placeholder="Thế mạnh..."></textarea>
                 </div>
             </div>
 
