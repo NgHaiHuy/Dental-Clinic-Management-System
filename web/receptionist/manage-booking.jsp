@@ -14,6 +14,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Quản Lý Lịch Hẹn & Tiếp Đón - SmileCare</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
     </head>
     <body>
@@ -79,40 +80,44 @@
                                     <td>
                                         <% 
                                             String status = app.getStatus();
-                                            String badgeClass = "badge-inactive";
-                                            if (status.equalsIgnoreCase("Confirmed") || status.equalsIgnoreCase("Attended")) {
-                                                badgeClass = "badge-active";
+                                            String badgeClass = "badge-pending";
+                                            if (status.equalsIgnoreCase("Confirmed")) {
+                                                badgeClass = "badge-confirmed";
+                                            } else if (status.equalsIgnoreCase("Attended")) {
+                                                badgeClass = "badge-attended";
+                                            } else if (status.equalsIgnoreCase("Cancelled")) {
+                                                badgeClass = "badge-cancelled";
                                             }
                                         %>
                                         <span class="badge <%= badgeClass %>"><%= status %></span>
                                     </td>
                                     <td>
                                         <% if (app.getStatus().equalsIgnoreCase("Pending")) { %>
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
+                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline; margin-right: 5px;">
                                                 <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                 <input type="hidden" name="action" value="confirm">
-                                                <button type="submit" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">Xác nhận</button>
+                                                <button type="submit" class="action-btn-confirm"><i class="fas fa-check"></i> Xác nhận</button>
                                             </form>
                                             
                                             <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
                                                 <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                 <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');">Hủy</button>
+                                                <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
                                             </form>
                                         <% } else if (app.getStatus().equalsIgnoreCase("Confirmed")) { %>
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
+                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline; margin-right: 5px;">
                                                 <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                 <input type="hidden" name="action" value="checkin">
-                                                <button type="submit" class="btn btn-cta" style="padding: 6px 12px; font-size: 0.8rem;">Check-in (Đã đến)</button>
+                                                <button type="submit" class="action-btn-checkin"><i class="fas fa-user-check"></i> Check-in</button>
                                             </form>
                                             
                                             <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
                                                 <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                 <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');">Hủy</button>
+                                                <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
                                             </form>
                                         <% } else { %>
-                                            <span style="color: var(--text-muted); font-size: 0.85rem;">N/A</span>
+                                            <span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">Không có thao tác</span>
                                         <% } %>
                                     </td>
                                 </tr>
