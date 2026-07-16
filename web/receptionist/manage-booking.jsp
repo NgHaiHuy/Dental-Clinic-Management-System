@@ -91,34 +91,36 @@
                                         %>
                                         <span class="badge <%= badgeClass %>"><%= status %></span>
                                     </td>
-                                    <td>
-                                        <% if (app.getStatus().equalsIgnoreCase("Pending")) { %>
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline; margin-right: 5px;">
-                                                <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
-                                                <input type="hidden" name="action" value="confirm">
-                                                <button type="submit" class="action-btn-confirm"><i class="fas fa-check"></i> Xác nhận</button>
-                                            </form>
-                                            
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
-                                                <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
-                                                <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
-                                            </form>
-                                        <% } else if (app.getStatus().equalsIgnoreCase("Confirmed")) { %>
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline; margin-right: 5px;">
-                                                <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
-                                                <input type="hidden" name="action" value="checkin">
-                                                <button type="submit" class="action-btn-checkin"><i class="fas fa-user-check"></i> Check-in</button>
-                                            </form>
-                                            
-                                            <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="display:inline;">
-                                                <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
-                                                <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
-                                            </form>
-                                        <% } else { %>
-                                            <span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">Không có thao tác</span>
-                                        <% } %>
+                                    <td style="white-space: nowrap;">
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <% if (app.getStatus().equalsIgnoreCase("Pending")) { %>
+                                                <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                                                    <input type="hidden" name="action" value="confirm">
+                                                    <button type="submit" class="action-btn-confirm"><i class="fas fa-check"></i> Xác nhận</button>
+                                                </form>
+                                                
+                                                <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                                                    <input type="hidden" name="action" value="cancel">
+                                                    <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
+                                                </form>
+                                            <% } else if (app.getStatus().equalsIgnoreCase("Confirmed")) { %>
+                                                <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                                                    <input type="hidden" name="action" value="checkin">
+                                                    <button type="submit" class="action-btn-checkin"><i class="fas fa-user-check"></i> Check-in</button>
+                                                </form>
+                                                
+                                                <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                                                    <input type="hidden" name="action" value="cancel">
+                                                    <button type="submit" class="action-btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy lịch này?');"><i class="fas fa-times"></i> Hủy</button>
+                                                </form>
+                                            <% } else { %>
+                                                <span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">Không có thao tác</span>
+                                            <% } %>
+                                        </div>
                                     </td>
                                 </tr>
                             <% }
