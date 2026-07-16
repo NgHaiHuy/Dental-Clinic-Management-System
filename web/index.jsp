@@ -6,6 +6,7 @@
     
     // Fetch dental services list safely
     List<Service> services = null;
+    List<User> doctors = null;
     String dbError = null;
     try {
         ServiceDAO serviceDAO = new ServiceDAO();
@@ -13,6 +14,9 @@
             throw new Exception("Database connection is null");
         }
         services = serviceDAO.getAllServices();
+        
+        dal.UserDAO userDAO = new dal.UserDAO();
+        doctors = userDAO.getDoctorsWithDetails();
     } catch (Exception e) {
         dbError = "Không thể kết nối đến cơ sở dữ liệu. Lỗi: Dịch vụ SQL Server (MSSQLSERVER) có thể chưa khởi động hoặc cổng kết nối (Port 1433) đang bị chặn/sai cấu hình.";
     }
@@ -117,7 +121,7 @@
                 </div>
             </div>
 
-            <!-- DENTISTS INTRODUCTION SECTION -->
+            <!-- DENTISTS INTRODUCTION SECTION (DYNAMICS LOADED) -->
             <div id="doctors" style="margin-bottom: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 50px 40px;">
                 <div style="text-align: center; margin-bottom: 45px;">
                     <h2 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 8px;">
@@ -129,33 +133,31 @@
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-                    <!-- Doctor 1 -->
-                    <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
-                        <img src="<%= request.getContextPath() %>/assets/images/doctor_male.png" alt="Bác sĩ Nguyễn Văn Minh" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
-                        <h3 style="font-family: var(--font-outfit); font-size: 1.25rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
-                            ThS. BS. Nguyễn Văn Minh
-                        </h3>
-                        <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; text-transform: uppercase;">
-                            Trưởng Khoa Chỉnh Nha (Orthodontics)
-                        </p>
-                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
-                            Hơn 12 năm kinh nghiệm chỉnh nha và niềng răng Invisalign chuyên sâu. Tốt nghiệp Thạc sĩ Răng Hàm Mặt tại Đại học Y Hà Nội, tu nghiệp tại Đức.
-                        </p>
-                    </div>
-
-                    <!-- Doctor 2 -->
-                    <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
-                        <img src="<%= request.getContextPath() %>/assets/images/doctor_female.png" alt="Bác sĩ Trần Thị Lan" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
-                        <h3 style="font-family: var(--font-outfit); font-size: 1.25rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
-                            BS. Trần Thị Lan
-                        </h3>
-                        <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; text-transform: uppercase;">
-                            Chuyên Gia Phục Hình Răng Sứ Thẩm Mỹ
-                        </p>
-                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
-                            Chuyên sâu phục hình răng sứ Cercon, dán sứ veneer Veneer bảo tồn răng gốc tối đa. Luôn lắng nghe, tỉ mỉ đem lại nụ cười rạng rỡ nhất.
-                        </p>
-                    </div>
+                    <% if (dbError != null || doctors == null || doctors.isEmpty()) { %>
+                        <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 20px 0;">
+                            Hiện tại chưa thể hiển thị danh sách bác sĩ.
+                        </div>
+                    <% } else {
+                        int index = 0;
+                        for (User doc : doctors) {
+                            // Alternate placeholder avatar between male and female dentists
+                            String imgName = (index % 2 == 0) ? "doctor_male.png" : "doctor_female.png";
+                            index++;
+                    %>
+                            <div style="text-align: center; border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 30px; background-color: var(--bg-primary);">
+                                <img src="<%= request.getContextPath() %>/assets/images/<%= imgName %>" alt="<%= doc.getFullName() %>" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 18px;">
+                                <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); margin-bottom: 4px;">
+                                    <%= doc.getFullName() %>
+                                </h3>
+                                <p style="color: var(--accent-teal); font-weight: 600; font-size: 0.88rem; margin-bottom: 12px; text-transform: uppercase;">
+                                    <%= doc.getSpecialization() != null ? doc.getSpecialization() : "Bác sĩ Nha khoa" %>
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
+                                    <%= doc.getBiography() != null ? doc.getBiography() : "Chuyên gia răng hàm mặt tận tâm chăm sóc sức khỏe răng miệng của bạn." %>
+                                </p>
+                            </div>
+                    <% }
+                    } %>
                 </div>
             </div>
 

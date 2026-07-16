@@ -12,6 +12,11 @@ public class User {
     private String email;
     private int roleID;
 
+    // Doctor specific info fields (optional / populated on demand)
+    private String specialization;
+    private int experienceYears;
+    private String biography;
+
     // Constructors
     public User() {
     }
@@ -83,6 +88,30 @@ public class User {
         this.roleID = roleID;
     }
 
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public int getExperienceYears() {
+        return experienceYears;
+    }
+
+    public void setExperienceYears(int experienceYears) {
+        this.experienceYears = experienceYears;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -92,6 +121,9 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", roleID=" + roleID +
+                ", specialization='" + specialization + '\'' +
+                ", experienceYears=" + experienceYears +
+                ", biography='" + biography + '\'' +
                 '}';
     }
 }

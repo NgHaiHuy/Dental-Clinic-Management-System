@@ -311,4 +311,38 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+
+    /**
+     * Get all doctors along with their specialization and biography from DoctorInfo.
+     * @return List of Users (Doctors) with detailed information
+     */
+    public List<User> getDoctorsWithDetails() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.UserID, u.Username, u.Password, u.FullName, u.Phone, u.Email, u.RoleID, "
+                   + "di.Specialization, di.ExperienceYears, di.Biography "
+                   + "FROM Users u "
+                   + "LEFT JOIN DoctorInfo di ON u.UserID = di.DoctorID "
+                   + "WHERE u.RoleID = 2 ORDER BY u.FullName";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                User u = new User(
+                        rs.getInt("UserID"),
+                        rs.getString("Username"),
+                        rs.getString("Password"),
+                        rs.getString("FullName"),
+                        rs.getString("Phone"),
+                        rs.getString("Email"),
+                        rs.getInt("RoleID")
+                );
+                u.setSpecialization(rs.getString("Specialization"));
+                u.setExperienceYears(rs.getInt("ExperienceYears"));
+                u.setBiography(rs.getString("Biography"));
+                list.add(u);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
 }
