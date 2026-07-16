@@ -73,12 +73,7 @@
                     </div>
                     
                     <div style="position: relative; border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);">
-                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 380px;">
-                        
-                        <!-- Realistic 3D Acrylic Glass Logo Plaque covering OAKHAVEN on the wall perfectly -->
-                        <div style="position: absolute; top: 32.2%; left: 27.5%; width: 17%; height: 7%; background: #f2f1ed; border-radius: 1px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: var(--accent-navy); pointer-events: none; letter-spacing: 0.5px;">
-                            <span style="color: var(--accent-teal);">Smile</span><span>Care+</span>
-                        </div>
+                        <img src="<%= request.getContextPath() %>/assets/images/clinic_banner.png" alt="SmileCare Reception Lobby" style="width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover; max-height: 380px;">
                     </div>
                 </div>
             </div>
