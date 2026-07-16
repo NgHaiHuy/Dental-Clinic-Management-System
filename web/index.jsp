@@ -46,8 +46,8 @@
                     <a href="<%= request.getContextPath() %><%= Role.getDashboardUrl(loggedUser.getRoleID()) %>">Dashboard Menu</a>
                     <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
                 <% } else { %>
-                    <a href="<%= request.getContextPath() %>/auth/login" class="btn btn-primary" style="padding: 6px 14px;">Đăng nhập</a>
-                    <a href="<%= request.getContextPath() %>/auth/register" class="btn btn-secondary" style="padding: 6px 14px;">Đăng ký</a>
+                    <a href="<%= request.getContextPath() %>/auth/login" class="btn-login">Đăng nhập</a>
+                    <a href="<%= request.getContextPath() %>/auth/register" class="btn-register">Đăng ký</a>
                 <% } %>
             </div>
         </nav>

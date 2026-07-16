@@ -120,6 +120,45 @@ body {
     color: white !important;
 }
 
+.btn-login {
+    background-color: transparent !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    padding: 8px 20px !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s !important;
+    text-decoration: none !important;
+}
+
+.btn-login:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: white !important;
+    color: white !important;
+}
+
+.btn-register {
+    background-color: #3b82f6 !important; /* Premium brand blue */
+    color: white !important;
+    border: 1px solid #3b82f6 !important;
+    padding: 8px 20px !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
+    transition: all 0.2s !important;
+    text-decoration: none !important;
+}
+
+.btn-register:hover {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
+    transform: translateY(-1px) !important;
+    color: white !important;
+}
+
 /* ============================================================ */
 /*  CTA BUTTON DESIGN                                           */
 /* ============================================================ */
