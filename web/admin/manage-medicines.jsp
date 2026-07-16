@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.List, model.Medicine, model.MedicalSupply, java.text.SimpleDateFormat"%>
+<%@page import="java.util.List, model.Medicine, model.MedicalSupply, model.User, java.text.SimpleDateFormat"%>
 <%
     String activeTab = (String) request.getAttribute("activeTab");
     if (activeTab == null) {
@@ -25,6 +25,9 @@
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    
+    User loggedUser = (User) session.getAttribute("loggedInUser");
+    String initials = loggedUser != null ? String.valueOf(loggedUser.getFullName().charAt(0)) : "A";
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -32,6 +35,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Quản lý Kho & Thuốc - Dental Clinic</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
         <style>
             /* Custom Tab Styling */
@@ -80,22 +86,59 @@
         </style>
     </head>
     <body>
-        <div class="dashboard-container">
-            <!-- Header Banner -->
-            <header class="header-banner">
-                <div class="header-title-section">
-                    <h1>QUẢN LÝ KHO & THUỐC</h1>
-                    <p>Hệ thống nha khoa Dental Clinic - Bảng quản trị vật tư & dược phẩm</p>
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon"><i class="fas fa-tooth"></i></div>
+                <div>
+                    <div class="sidebar-brand-text">SmileCare</div>
+                    <div class="sidebar-brand-sub">Admin Panel</div>
                 </div>
-                <div class="header-actions">
-                    <a href="<%= request.getContextPath() %>/admin/dashboard.jsp" class="btn btn-secondary">
-                        <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
-                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                        </svg>
-                        Trang chủ Admin
-                    </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Tổng quan</div>
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-item">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </a>
+
+                <div class="nav-section-label" style="margin-top:12px">Quản lý</div>
+                <a href="${pageContext.request.contextPath}/admin/manage-users" class="nav-item">
+                    <i class="fas fa-users"></i> Người dùng
+                </a>
+                <a href="${pageContext.request.contextPath}/admin/manage-services" class="nav-item">
+                    <i class="fas fa-stethoscope"></i> Dịch vụ
+                </a>
+                <a href="${pageContext.request.contextPath}/admin/manage-medicines" class="nav-item active">
+                    <i class="fas fa-pills"></i> Thuốc
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar"><%= initials %></div>
+                    <div>
+                        <div class="user-name"><%= loggedUser != null ? loggedUser.getFullName() : "Admin" %></div>
+                        <div class="user-role">Quản trị viên</div>
+                    </div>
                 </div>
-            </header>
+                <a href="${pageContext.request.contextPath}/auth/logout" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <div class="topbar">
+                <div>
+                    <div class="page-title"><i class="fas fa-pills" style="margin-right:8px;color:var(--primary)"></i>Quản lý Kho & Thuốc</div>
+                    <div class="breadcrumb">Admin &rsaquo; Kho & Thuốc</div>
+                </div>
+            </div>
+            
+            <div class="content">
 
             <!-- Tabs Selection -->
             <div class="tabs-header">
@@ -520,6 +563,6 @@
                     <% } %>
                 </aside>
             </div>
-        </div>
+        </main>
     </body>
 </html>
