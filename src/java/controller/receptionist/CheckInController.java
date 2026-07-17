@@ -19,9 +19,17 @@ public class CheckInController extends HttpServlet {
             throws ServletException, IOException {
         
         AppointmentDAO appDAO = new AppointmentDAO();
+        dal.MedicalRecordDAO mrDAO = new dal.MedicalRecordDAO();
         List<Appointment> appointments = appDAO.getAllAppointments();
         for (Appointment app : appointments) {
             app.setChosenServices(appDAO.getServicesForAppointment(app.getAppointmentID()));
+            List<model.MedicalRecord> history = mrDAO.getMedicalRecordsByCustomerID(app.getCustomerID());
+            if (history != null) {
+                for (model.MedicalRecord mr : history) {
+                    mr.setMedicines(mrDAO.getMedicinesByRecordID(mr.getRecordID()));
+                }
+            }
+            app.setPatientHistory(history);
         }
         
         // Sort: Confirmed -> Pending -> Attended -> Cancelled/Others

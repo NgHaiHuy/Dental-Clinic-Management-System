@@ -133,4 +133,14 @@ public class Appointment {
     public void setChosenServices(List<Service> chosenServices) {
         this.chosenServices = chosenServices;
     }
+
+    private List<MedicalRecord> patientHistory;
+
+    public List<MedicalRecord> getPatientHistory() {
+        return patientHistory;
+    }
+
+    public void setPatientHistory(List<MedicalRecord> patientHistory) {
+        this.patientHistory = patientHistory;
+    }
 }

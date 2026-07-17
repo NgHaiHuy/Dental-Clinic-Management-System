@@ -102,6 +102,38 @@
                                 }
                                 sb.append("]");
                                 String servicesJson = sb.toString();
+
+                                // Construct JSON array of history records safely
+                                StringBuilder sbHistory = new StringBuilder("[");
+                                List<model.MedicalRecord> records = app.getPatientHistory();
+                                if (records != null) {
+                                    for (int i = 0; i < records.size(); i++) {
+                                        model.MedicalRecord mr = records.get(i);
+                                        sbHistory.append("{")
+                                          .append("\"date\":\"").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(mr.getCreatedAt())).append("\",")
+                                          .append("\"doctor\":\"").append(mr.getDoctorName().replace("\"", "\\\"")).append("\",")
+                                          .append("\"diagnosis\":\"").append(mr.getDiagnosis().replace("\"", "\\\"").replace("\n", " ").replace("\r", "")).append("\",")
+                                          .append("\"treatmentPlan\":\"").append(mr.getTreatmentPlan() != null ? mr.getTreatmentPlan().replace("\"", "\\\"").replace("\n", " ").replace("\r", "") : "").append("\",")
+                                          .append("\"medicines\":[");
+                                        
+                                        List<model.PrescriptionDetail> medList = mr.getMedicines();
+                                        if (medList != null) {
+                                            for (int j = 0; j < medList.size(); j++) {
+                                                model.PrescriptionDetail pd = medList.get(j);
+                                                sbHistory.append("{")
+                                                  .append("\"name\":\"").append(pd.getMedicineName().replace("\"", "\\\"")).append("\",")
+                                                  .append("\"qty\":").append(pd.getQuantity()).append(",")
+                                                  .append("\"dosage\":\"").append(pd.getDosage().replace("\"", "\\\"")).append("\"")
+                                                  .append("}");
+                                                if (j < medList.size() - 1) sbHistory.append(",");
+                                            }
+                                        }
+                                        sbHistory.append("]}");
+                                        if (i < records.size() - 1) sbHistory.append(",");
+                                    }
+                                }
+                                sbHistory.append("]");
+                                String historyJson = sbHistory.toString();
                         %>
                                 <tr class="appointment-row"
                                     data-id="<%= app.getAppointmentID() %>"
@@ -113,7 +145,8 @@
                                     data-doctor="<%= app.getDoctorName().replace("\"", "&quot;").replace("'", "&#39;") %>"
                                     data-notes="<%= app.getNotes() != null ? app.getNotes().replace("\"", "&quot;").replace("'", "&#39;").replace("\n", " ").replace("\r", "") : "" %>"
                                     data-status="<%= app.getStatus() %>"
-                                    data-services="<%= servicesJson.replace("\"", "&quot;").replace("'", "&#39;") %>">
+                                    data-services="<%= servicesJson.replace("\"", "&quot;").replace("'", "&#39;") %>"
+                                    data-history="<%= historyJson.replace("\"", "&quot;").replace("'", "&#39;") %>">
                                     <td>#<%= app.getAppointmentID() %></td>
                                     <td><strong><%= app.getCustomerName() %></strong></td>
                                     <td><%= app.getAppointmentDate() %></td>
@@ -232,6 +265,16 @@
                             ...
                         </div>
                     </div>
+
+                    <!-- Patient History Section inside Modal -->
+                    <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px;">
+                        <h4 style="font-family: var(--font-outfit); font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0 0 12px 0;">
+                            <i class="fas fa-history" style="color: #2563eb; margin-right: 6px;"></i> Lịch Sử Khám Bệnh Của Khách Hàng
+                        </h4>
+                        <div id="modalAppHistory" style="display: flex; flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                            <!-- Dynamic History List -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Footer -->
@@ -261,13 +304,14 @@
                         const notes = this.getAttribute('data-notes');
                         const status = this.getAttribute('data-status');
                         const servicesJson = this.getAttribute('data-services');
+                        const historyJson = this.getAttribute('data-history');
                         
-                        showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson);
+                        showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson, historyJson);
                     });
                 });
             });
 
-            function showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson) {
+            function showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson, historyJson) {
                 document.getElementById('modalAppTitle').innerText = 'Chi Tiết Lịch Hẹn #' + id;
                 document.getElementById('modalCustomerName').innerText = customerName;
                 document.getElementById('modalCustomerPhone').innerHTML = '<i class="fas fa-phone" style="width: 16px; color: var(--primary);"></i> ' + (phone ? phone : 'Chưa cập nhật');
@@ -318,6 +362,53 @@
                     });
                 } else {
                     servicesContainer.innerHTML = '<span style="font-size: 0.88rem; color: #64748b; font-style: italic;">Khám tổng quát (General Checkup)</span>';
+                }
+
+                // Render history
+                let historyList = [];
+                try {
+                    historyList = JSON.parse(historyJson);
+                } catch (e) {
+                    console.error("Error parsing historyJson:", e);
+                }
+                const historyContainer = document.getElementById('modalAppHistory');
+                historyContainer.innerHTML = '';
+
+                if (historyList && historyList.length > 0) {
+                    historyList.forEach(h => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.style.backgroundColor = '#f8fafc';
+                        itemDiv.style.border = '1px solid #e2e8f0';
+                        itemDiv.style.borderRadius = '8px';
+                        itemDiv.style.padding = '12px';
+                        itemDiv.style.fontSize = '0.85rem';
+                        
+                        let medsHtml = '';
+                        if (h.medicines && h.medicines.length > 0) {
+                            medsHtml = `
+                                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0; font-size: 0.8rem; color: #475569;">
+                                    <strong>Đơn thuốc:</strong>
+                                    <ul style="padding-left: 15px; margin: 2px 0 0 0; list-style-type: disc;">
+                                        ${h.medicines.map(m => `<li>${m.name} - SL: ${m.qty} (${m.dosage})</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        }
+
+                        itemDiv.innerHTML = `
+                            <div style="font-weight: 600; color: #0f172a; margin-bottom: 2px;">
+                                Chẩn đoán: ${h.diagnosis}
+                            </div>
+                            <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 4px;">
+                                Ngày khám: ${h.date} | BS. ${h.doctor}
+                            </div>
+                            ${h.treatmentPlan ? `<div style="color: #334155; margin-top: 2px;"><strong>Lời dặn:</strong> ${h.treatmentPlan}</div>` : ''}
+                            ${medsHtml}
+                        `;
+                        historyContainer.appendChild(itemDiv);
+                    });
+                } else {
+                    historyContainer.innerHTML = '<span style="font-size: 0.88rem; color: #64748b; font-style: italic;">Chưa có lịch sử khám bệnh trước đó.</span>';
                 }
 
                 document.getElementById('appointmentModal').style.display = 'flex';

@@ -1,10 +1,11 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.List, model.Appointment, model.Service, model.Medicine"%>
+<%@page import="java.util.List, model.Appointment, model.Service, model.Medicine, model.MedicalRecord, model.PrescriptionDetail"%>
 <%
     List<Appointment> queue = (List<Appointment>) request.getAttribute("queue");
     Appointment app = (Appointment) request.getAttribute("appointment");
     List<Service> selectedServices = (List<Service>) request.getAttribute("selectedServices");
     List<Medicine> medicines = (List<Medicine>) request.getAttribute("medicines");
+    List<MedicalRecord> history = (List<MedicalRecord>) request.getAttribute("history");
     
     String successMessage = (String) request.getSession().getAttribute("successMessage");
     String errorMessage = (String) request.getSession().getAttribute("errorMessage");
@@ -163,21 +164,61 @@
                         </form>
                     </div>
                     
-                    <!-- Right: Info Summary -->
+                    <!-- Right: Info Summary & Medical History -->
                     <div>
-                        <div class="glass-card" style="position: sticky; top: 100px;">
-                            <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;">
-                                Yêu cầu dịch vụ ban đầu
-                            </h3>
-                            <ul style="padding-left: 20px; font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8;">
-                                <% if (selectedServices == null || selectedServices.isEmpty()) { %>
-                                    <li>Khách không đăng ký dịch vụ trước. Khám tổng quát.</li>
-                                <% } else {
-                                    for (Service s : selectedServices) { %>
-                                        <li><%= s.getServiceName() %> (<code><%= String.format("%,.0f", s.getPrice()) %> đ</code>)</li>
-                                    <% }
-                                } %>
-                            </ul>
+                        <div class="glass-card" style="position: sticky; top: 100px; display: flex; flex-direction: column; gap: 20px;">
+                            <div>
+                                <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;">
+                                    Yêu cầu dịch vụ ban đầu
+                                </h3>
+                                <ul style="padding-left: 20px; font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8;">
+                                    <% if (selectedServices == null || selectedServices.isEmpty()) { %>
+                                        <li>Khách không đăng ký dịch vụ trước. Khám tổng quát.</li>
+                                    <% } else {
+                                        for (Service s : selectedServices) { %>
+                                            <li><%= s.getServiceName() %> (<code><%= String.format("%,.0f", s.getPrice()) %> đ</code>)</li>
+                                        <% }
+                                    } %>
+                                </ul>
+                            </div>
+                            
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+                                <h3 style="font-family: var(--font-outfit); font-size: 1.2rem; font-weight: 700; color: var(--accent-navy); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;">
+                                    📜 Lịch sử khám bệnh
+                                </h3>
+                                <div style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 5px;">
+                                    <% if (history == null || history.isEmpty()) { %>
+                                        <p style="font-size: 0.88rem; color: var(--text-muted); font-style: italic;">Chưa có lịch sử khám bệnh nào trước đó.</p>
+                                    <% } else {
+                                        for (MedicalRecord mr : history) { %>
+                                            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 0.88rem;">
+                                                <div style="font-weight: 600; color: var(--accent-navy); margin-bottom: 4px; line-height: 1.4;">
+                                                    Chẩn đoán: <%= mr.getDiagnosis() %>
+                                                </div>
+                                                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px;">
+                                                    <i class="far fa-calendar-alt"></i> <%= new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(mr.getCreatedAt()) %> 
+                                                    | <i class="fas fa-user-md"></i> BS. <%= mr.getDoctorName() %>
+                                                </div>
+                                                <% if (mr.getTreatmentPlan() != null && !mr.getTreatmentPlan().trim().isEmpty()) { %>
+                                                    <div style="margin-top: 4px; font-size: 0.85rem; color: var(--text-secondary);">
+                                                        <strong>Lời dặn:</strong> <%= mr.getTreatmentPlan() %>
+                                                    </div>
+                                                <% } %>
+                                                <% if (mr.getMedicines() != null && !mr.getMedicines().isEmpty()) { %>
+                                                    <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border-color); font-size: 0.8rem; color: var(--text-secondary);">
+                                                        <strong>Thuốc đã kê:</strong>
+                                                        <ul style="padding-left: 15px; margin: 2px 0 0 0; list-style-type: disc;">
+                                                            <% for (PrescriptionDetail pd : mr.getMedicines()) { %>
+                                                                <li><%= pd.getMedicineName() %> - SL: <%= pd.getQuantity() %> (<%= pd.getDosage() %>)</li>
+                                                            <% } %>
+                                                        </ul>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                        <% }
+                                    } %>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

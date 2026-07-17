@@ -52,9 +52,18 @@ public class MedicalRecordController extends HttpServlet {
                 MedicineDAO medDAO = new MedicineDAO();
                 List<Medicine> medicines = medDAO.getAllMedicines();
                 
+                MedicalRecordDAO mrDAO = new MedicalRecordDAO();
+                List<MedicalRecord> history = mrDAO.getMedicalRecordsByCustomerID(app.getCustomerID());
+                if (history != null) {
+                    for (MedicalRecord mr : history) {
+                        mr.setMedicines(mrDAO.getMedicinesByRecordID(mr.getRecordID()));
+                    }
+                }
+                
                 request.setAttribute("appointment", app);
                 request.setAttribute("selectedServices", selectedServices);
                 request.setAttribute("medicines", medicines);
+                request.setAttribute("history", history);
                 
                 request.getRequestDispatcher("/doctor/checkup.jsp").forward(request, response);
             } catch (Exception e) {

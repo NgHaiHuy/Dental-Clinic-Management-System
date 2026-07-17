@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Model class for MedicalRecords.
@@ -16,6 +17,7 @@ public class MedicalRecord {
     // Optional helper fields for billing / UI display
     private String patientName;
     private String doctorName;
+    private List<PrescriptionDetail> medicines;
 
     // Constructors
     public MedicalRecord() {
@@ -93,6 +95,14 @@ public class MedicalRecord {
 
     public void setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+    }
+
+    public List<PrescriptionDetail> getMedicines() {
+        return medicines;
+    }
+
+    public void setMedicines(List<PrescriptionDetail> medicines) {
+        this.medicines = medicines;
     }
 
     @Override
