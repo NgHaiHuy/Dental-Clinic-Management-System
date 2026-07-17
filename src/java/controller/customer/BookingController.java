@@ -25,14 +25,40 @@ public class BookingController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("loggedInUser");
+        if (loggedUser == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
+            return;
+        }
+
         UserDAO userDAO = new UserDAO();
         ServiceDAO serviceDAO = new ServiceDAO();
+        AppointmentDAO appDAO = new AppointmentDAO();
         
         List<User> doctors = userDAO.getUsersByRole(2); // 2 = Doctor
         List<Service> services = serviceDAO.getAllServices();
         
         request.setAttribute("doctors", doctors);
         request.setAttribute("services", services);
+
+        // Edit support
+        String editIDStr = request.getParameter("editID");
+        if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+            try {
+                int editID = Integer.parseInt(editIDStr);
+                Appointment app = appDAO.getAppointmentByID(editID);
+                if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
+                    if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                        List<Service> chosenServices = appDAO.getServicesForAppointment(editID);
+                        request.setAttribute("editApp", app);
+                        request.setAttribute("editServices", chosenServices);
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
         
         request.getRequestDispatcher("/customer/booking.jsp").forward(request, response);
     }
@@ -50,6 +76,7 @@ public class BookingController extends HttpServlet {
         }
         
         try {
+            String editIDStr = request.getParameter("editID");
             String doctorIDStr = request.getParameter("doctorID");
             Integer doctorID = null;
             if (doctorIDStr != null && !doctorIDStr.trim().isEmpty() && !doctorIDStr.equals("0")) {
@@ -68,31 +95,61 @@ public class BookingController extends HttpServlet {
                 }
             }
             
-            Appointment app = new Appointment();
-            app.setCustomerID(loggedUser.getUserID());
-            app.setDoctorID(doctorID);
-            app.setAppointmentDate(Date.valueOf(dateStr));
-            
-            // Ensure time format has seconds for Time.valueOf (HH:mm:ss)
-            if (timeStr.length() == 5) {
-                timeStr += ":00";
-            }
-            app.setAppointmentTime(Time.valueOf(timeStr));
-            app.setStatus("Pending");
-            app.setNotes(notes);
-            
             AppointmentDAO appDAO = new AppointmentDAO();
-            boolean success = appDAO.addAppointment(app, serviceIDs);
+            boolean success = false;
             
-            if (success) {
-                session.setAttribute("successMessage", "Đặt lịch hẹn thành công!");
+            if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                // Update mode
+                int editID = Integer.parseInt(editIDStr);
+                Appointment app = appDAO.getAppointmentByID(editID);
+                
+                if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
+                    if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                        app.setDoctorID(doctorID);
+                        app.setAppointmentDate(Date.valueOf(dateStr));
+                        if (timeStr.length() == 5) {
+                            timeStr += ":00";
+                        }
+                        app.setAppointmentTime(Time.valueOf(timeStr));
+                        app.setNotes(notes);
+                        
+                        success = appDAO.updateAppointmentDetails(app, serviceIDs);
+                        if (success) {
+                            session.setAttribute("successMessage", "Cập nhật lịch hẹn thành công!");
+                        } else {
+                            session.setAttribute("errorMessage", "Không thể cập nhật lịch hẹn.");
+                        }
+                    } else {
+                        session.setAttribute("errorMessage", "Không thể chỉnh sửa lịch hẹn ở trạng thái này.");
+                    }
+                } else {
+                    session.setAttribute("errorMessage", "Không tìm thấy lịch hẹn hoặc không có quyền.");
+                }
             } else {
-                session.setAttribute("errorMessage", "Không thể đặt lịch hẹn. Vui lòng thử lại.");
+                // New appointment mode
+                Appointment app = new Appointment();
+                app.setCustomerID(loggedUser.getUserID());
+                app.setDoctorID(doctorID);
+                app.setAppointmentDate(Date.valueOf(dateStr));
+                
+                if (timeStr.length() == 5) {
+                    timeStr += ":00";
+                }
+                app.setAppointmentTime(Time.valueOf(timeStr));
+                app.setStatus("Pending");
+                app.setNotes(notes);
+                
+                success = appDAO.addAppointment(app, serviceIDs);
+                if (success) {
+                    session.setAttribute("successMessage", "Đặt lịch hẹn thành công!");
+                } else {
+                    session.setAttribute("errorMessage", "Không thể đặt lịch hẹn. Vui lòng thử lại.");
+                }
             }
         } catch (Exception e) {
             session.setAttribute("errorMessage", "Dữ liệu nhập vào không hợp lệ: " + e.getMessage());
         }
         
-        response.sendRedirect(request.getContextPath() + "/customer/dashboard");
+        response.sendRedirect(request.getContextPath() + "/customer/history");
     }
 }

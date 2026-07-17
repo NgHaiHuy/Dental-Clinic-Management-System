@@ -164,24 +164,21 @@
         </style>
     </head>
     <body>
-        <!-- NAVBAR -->
         <nav class="navbar">
             <a href="<%= request.getContextPath() %>/" class="navbar-brand">
                 🦷 SmileCare<span>+</span>
             </a>
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
-                <a href="<%= request.getContextPath() %>/customer/dashboard">Dashboard</a>
                 <a href="<%= request.getContextPath() %>/customer/history">Lịch sử khám</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>
 
-        <!-- CONTAINER -->
         <div class="dashboard-container booking-container">
             <div class="booking-card">
                 <h2 style="font-family: var(--font-outfit); font-size: 2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 6px; text-align: center;">
-                    Đăng Ký Đặt Lịch Hẹn Khám
+                    <%= editApp != null ? "Chỉnh Sửa Lịch Hẹn Khám" : "Đăng Ký Đặt Lịch Hẹn Khám" %>
                 </h2>
                 <p style="color: var(--text-secondary); font-size: 0.95rem; text-align: center; margin-bottom: 10px;">
                     Vui lòng điền thông tin chi tiết để SmileCare sắp xếp bác sĩ và lịch hẹn phù hợp nhất với bạn.
@@ -194,20 +191,25 @@
                 <% } %>
                 
                 <form action="<%= request.getContextPath() %>/customer/booking" method="POST" style="margin-top: 15px;">
+                    <% if (editApp != null) { %>
+                        <input type="hidden" name="editID" value="<%= editApp.getAppointmentID() %>">
+                    <% } %>
                     
-                    <!-- Section 1: Thông tin khám -->
                     <div class="section-title">Thông tin lịch khám</div>
                     
                     <div class="form-group">
                         <label class="form-label">Chọn Bác sĩ chỉ định</label>
                         <% 
-                            String preSelectedDocStr = request.getParameter("doctorID");
                             int selectedDocID = 0;
-                            if (preSelectedDocStr != null) {
-                                try {
-                                    selectedDocID = Integer.parseInt(preSelectedDocStr);
-                                } catch (NumberFormatException e) {
-                                    // ignore invalid values
+                            if (editApp != null) {
+                                selectedDocID = editApp.getDoctorID() != null ? editApp.getDoctorID() : 0;
+                            } else {
+                                String preSelectedDocStr = request.getParameter("doctorID");
+                                if (preSelectedDocStr != null) {
+                                    try {
+                                        selectedDocID = Integer.parseInt(preSelectedDocStr);
+                                    } catch (NumberFormatException e) {
+                                    }
                                 }
                             }
                         %>
@@ -224,30 +226,55 @@
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label class="form-label">Ngày khám mong muốn</label>
-                            <input type="date" name="date" class="form-control" required>
+                            <input type="date" name="date" class="form-control" value="<%= editApp != null ? editApp.getAppointmentDate() : "" %>" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Giờ khám (08:00 - 17:00)</label>
-                            <input type="time" name="time" class="form-control" required>
+                            <label class="form-label">Giờ khám (8h - 17h, mỗi ca 1 tiếng)</label>
+                            <%
+                                String selectedTime = "";
+                                if (editApp != null && editApp.getAppointmentTime() != null) {
+                                    selectedTime = editApp.getAppointmentTime().toString().substring(0, 5);
+                                }
+                            %>
+                            <select name="time" class="form-select" required>
+                                <option value="" disabled <%= selectedTime.isEmpty() ? "selected" : "" %>>-- Chọn ca khám --</option>
+                                <option value="08:00" <%= "08:00".equals(selectedTime) ? "selected" : "" %>>08:00</option>
+                                <option value="09:00" <%= "09:00".equals(selectedTime) ? "selected" : "" %>>09:00</option>
+                                <option value="10:00" <%= "10:00".equals(selectedTime) ? "selected" : "" %>>10:00</option>
+                                <option value="11:00" <%= "11:00".equals(selectedTime) ? "selected" : "" %>>11:00</option>
+                                <option value="12:00" <%= "12:00".equals(selectedTime) ? "selected" : "" %>>12:00</option>
+                                <option value="13:00" <%= "13:00".equals(selectedTime) ? "selected" : "" %>>13:00</option>
+                                <option value="14:00" <%= "14:00".equals(selectedTime) ? "selected" : "" %>>14:00</option>
+                                <option value="15:00" <%= "15:00".equals(selectedTime) ? "selected" : "" %>>15:00</option>
+                                <option value="16:00" <%= "16:00".equals(selectedTime) ? "selected" : "" %>>16:00</option>
+                                <option value="17:00" <%= "17:00".equals(selectedTime) ? "selected" : "" %>>17:00</option>
+                            </select>
                         </div>
                     </div>
                     
-                    <!-- Section 2: Ghi chú triệu chứng -->
                     <div class="section-title">Triệu chứng & Nhu cầu khám</div>
                     <div class="form-group">
                         <label class="form-label">Mô tả tình trạng răng miệng</label>
-                        <textarea name="notes" class="form-control" placeholder="Mô tả ngắn triệu chứng ê buốt, đau nhức hoặc nhu cầu thẩm mỹ của bạn..."></textarea>
+                        <textarea name="notes" class="form-control" placeholder="Mô tả ngắn triệu chứng ê buốt, đau nhức hoặc nhu cầu thẩm mỹ của bạn..."><%= editApp != null && editApp.getNotes() != null ? editApp.getNotes() : "" %></textarea>
                     </div>
                     
-                    <!-- Section 3: Chọn dịch vụ -->
                     <div class="section-title">Dịch vụ quan tâm (Chọn trước)</div>
                     <div class="services-grid">
                         <% if (services != null) {
                             for (Service s : services) { 
+                                boolean isChecked = false;
+                                if (editServices != null) {
+                                    for (Service es : editServices) {
+                                        if (es.getServiceID() == s.getServiceID()) {
+                                            isChecked = true;
+                                            break;
+                                        }
+                                    }
+                                }
                         %>
-                                <div class="service-card" onclick="toggleServiceCard('s-<%= s.getServiceID() %>', this)">
-                                    <input type="checkbox" name="services" value="<%= s.getServiceID() %>" id="s-<%= s.getServiceID() %>" style="display: none;">
+                                <div class="service-card <%= isChecked ? "active" : "" %>" onclick="toggleServiceCard('s-<%= s.getServiceID() %>', this)">
+                                    <input type="checkbox" name="services" value="<%= s.getServiceID() %>" id="s-<%= s.getServiceID() %>" style="display: none;" <%= isChecked ? "checked" : "" %>>
                                     <div class="service-card-info">
                                         <div class="service-card-title"><%= s.getServiceName() %></div>
                                         <div class="service-card-price"><%= String.format("%,.0f", s.getPrice()) %> đ</div>
@@ -261,8 +288,10 @@
                     </div>
                     
                     <div style="display: flex; gap: 15px; margin-top: 45px;">
-                        <button type="submit" class="btn btn-cta" style="flex: 2; font-size: 1rem; font-weight: 700; padding: 14px;">Đặt Lịch Hẹn</button>
-                        <a href="<%= request.getContextPath() %>/customer/dashboard" class="btn btn-secondary" style="flex: 1; text-align: center; line-height: 2.2; font-size: 1rem; font-weight: 600;">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-cta" style="flex: 2; font-size: 1rem; font-weight: 700; padding: 14px;">
+                            <%= editApp != null ? "Cập Nhật Lịch Hẹn" : "Đặt Lịch Hẹn" %>
+                        </button>
+                        <a href="<%= request.getContextPath() %>/customer/history" class="btn btn-secondary" style="flex: 1; text-align: center; line-height: 2.2; font-size: 1rem; font-weight: 600;">Hủy bỏ</a>
                     </div>
                 </form>
             </div>

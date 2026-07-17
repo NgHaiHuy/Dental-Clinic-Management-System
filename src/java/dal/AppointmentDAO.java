@@ -177,6 +177,64 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
+     * Update appointment details and its chosen services.
+     */
+    public boolean updateAppointmentDetails(Appointment app, List<Integer> serviceIDs) {
+        String updateAppSql = "UPDATE Appointments SET DoctorID = ?, AppointmentDate = ?, AppointmentTime = ?, Notes = ? WHERE AppointmentID = ?";
+        String deleteServicesSql = "DELETE FROM AppointmentServices WHERE AppointmentID = ?";
+        String insertServiceSql = "INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (?, ?)";
+        
+        try {
+            connection.setAutoCommit(false);
+            
+            try (PreparedStatement psApp = connection.prepareStatement(updateAppSql)) {
+                if (app.getDoctorID() != null) {
+                    psApp.setInt(1, app.getDoctorID());
+                } else {
+                    psApp.setNull(1, java.sql.Types.INTEGER);
+                }
+                psApp.setDate(2, app.getAppointmentDate());
+                psApp.setTime(3, app.getAppointmentTime());
+                psApp.setString(4, app.getNotes());
+                psApp.setInt(5, app.getAppointmentID());
+                psApp.executeUpdate();
+            }
+            
+            try (PreparedStatement psDel = connection.prepareStatement(deleteServicesSql)) {
+                psDel.setInt(1, app.getAppointmentID());
+                psDel.executeUpdate();
+            }
+            
+            if (serviceIDs != null && !serviceIDs.isEmpty()) {
+                try (PreparedStatement psIns = connection.prepareStatement(insertServiceSql)) {
+                    for (int serviceID : serviceIDs) {
+                        psIns.setInt(1, app.getAppointmentID());
+                        psIns.setInt(2, serviceID);
+                        psIns.executeUpdate();
+                    }
+                }
+            }
+            
+            connection.commit();
+            return true;
+        } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get single appointment by ID.
      */
     public Appointment getAppointmentByID(int appointmentID) {

@@ -4,6 +4,11 @@
     List<Appointment> appointments = (List<Appointment>) request.getAttribute("appointments");
     List<MedicalRecord> records = (List<MedicalRecord>) request.getAttribute("records");
     Map<Integer, List<PrescriptionDetail>> recordMedicines = (Map<Integer, List<PrescriptionDetail>>) request.getAttribute("recordMedicines");
+    
+    String successMessage = (String) request.getSession().getAttribute("successMessage");
+    String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+    if (successMessage != null) request.getSession().removeAttribute("successMessage");
+    if (errorMessage != null) request.getSession().removeAttribute("errorMessage");
 %>
 <!DOCTYPE html>
 <html lang="vi">
@@ -12,6 +17,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Lịch Sử Khám Răng - SmileCare</title>
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     </head>
     <body>
         <!-- NAVBAR -->
@@ -21,7 +27,6 @@
             </a>
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
-                <a href="<%= request.getContextPath() %>/customer/dashboard">Dashboard</a>
                 <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-cta" style="padding: 6px 14px;">Đặt lịch ngay</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
@@ -32,6 +37,17 @@
             <h1 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 30px;">
                 📋 Lịch Sử Khám Bệnh & Đặt Lịch
             </h1>
+            
+            <% if (successMessage != null) { %>
+                <div class="alert alert-success" style="margin-bottom: 25px; padding: 12px 18px; border-radius: 8px;">
+                    <%= successMessage %>
+                </div>
+            <% } %>
+            <% if (errorMessage != null) { %>
+                <div class="alert alert-danger" style="margin-bottom: 25px; padding: 12px 18px; border-radius: 8px;">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
             
             <div class="dashboard-grid">
                 <!-- Left panel: Appointments list -->
@@ -49,12 +65,13 @@
                                     <th>Bác Sĩ</th>
                                     <th>Ghi Chú</th>
                                     <th>Trạng Thái</th>
+                                    <th style="text-align: center;">Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% if (appointments == null || appointments.isEmpty()) { %>
                                     <tr>
-                                        <td colspan="6" align="center" style="color: var(--text-muted); padding: 30px 0;">Bạn chưa đăng ký lịch hẹn nào.</td>
+                                        <td colspan="7" align="center" style="color: var(--text-muted); padding: 30px 0;">Bạn chưa đăng ký lịch hẹn nào.</td>
                                     </tr>
                                 <% } else {
                                     for (Appointment app : appointments) { %>
@@ -73,6 +90,29 @@
                                                     }
                                                 %>
                                                 <span class="badge <%= badgeClass %>"><%= status %></span>
+                                            </td>
+                                            <td align="center">
+                                                <% if (status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("Confirmed")) { %>
+                                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                                        <a href="<%= request.getContextPath() %>/customer/booking?editID=<%= app.getAppointmentID() %>" 
+                                                           style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 6px; font-weight: 600; transition: all 0.2s;" 
+                                                           title="Chỉnh sửa lịch hẹn">
+                                                            <i class="fas fa-edit"></i> Sửa
+                                                        </a>
+                                                        <form action="<%= request.getContextPath() %>/customer/history" method="POST" style="margin: 0; display: inline;">
+                                                            <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
+                                                            <input type="hidden" name="action" value="cancel">
+                                                            <button type="submit" 
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?');" 
+                                                                    style="padding: 6px 12px; font-size: 0.8rem; background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s;" 
+                                                                    title="Hủy lịch hẹn">
+                                                                <i class="fas fa-times-circle"></i> Hủy
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                <% } else { %>
+                                                    <span style="color: var(--text-muted); font-size: 0.8rem; font-style: italic;">Không thể thay đổi</span>
+                                                <% } %>
                                             </td>
                                         </tr>
                                     <% }

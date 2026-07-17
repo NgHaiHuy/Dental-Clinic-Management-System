@@ -53,4 +53,41 @@ public class HistoryController extends HttpServlet {
         
         request.getRequestDispatcher("/customer/history.jsp").forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("loggedInUser");
+        
+        if (loggedUser == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
+            return;
+        }
+        
+        String action = request.getParameter("action");
+        String appIDStr = request.getParameter("appointmentID");
+        
+        if (action != null && appIDStr != null) {
+            try {
+                int appointmentID = Integer.parseInt(appIDStr);
+                AppointmentDAO appDAO = new AppointmentDAO();
+                Appointment app = appDAO.getAppointmentByID(appointmentID);
+                
+                if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
+                    if ("cancel".equals(action)) {
+                        if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                            appDAO.updateAppointmentStatus(appointmentID, "Cancelled");
+                            session.setAttribute("successMessage", "Đã hủy lịch hẹn thành công!");
+                        } else {
+                            session.setAttribute("errorMessage", "Không thể hủy lịch hẹn ở trạng thái hiện tại.");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                session.setAttribute("errorMessage", "Lỗi: " + e.getMessage());
+            }
+        }
+        response.sendRedirect(request.getContextPath() + "/customer/history");
+    }
 }

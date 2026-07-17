@@ -51,7 +51,6 @@
                 <a href="#doctors">Đội Ngũ Bác Sĩ</a>
                 <a href="#contact">Liên Hệ</a>
                 <% if (loggedUser != null) { %>
-                    <a href="<%= request.getContextPath() %><%= Role.getDashboardUrl(loggedUser.getRoleID()) %>">Dashboard Menu</a>
                     <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
                 <% } else { %>
                     <a href="<%= request.getContextPath() %>/auth/login" class="btn-login">Đăng nhập</a>
