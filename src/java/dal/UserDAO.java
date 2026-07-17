@@ -437,6 +437,9 @@ public class UserDAO extends DBContext {
                 u.setCoreSkills(rs.getString("CoreSkills"));
                 list.add(u);
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return list;
     }
 
