@@ -62,6 +62,52 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
+                // Validate Full Name length
+                if (fullName.trim().length() > 100) {
+                    session.setAttribute("errorMessage", "Họ và tên không được vượt quá 100 ký tự.");
+                    response.sendRedirect(request.getContextPath() + "/customer/profile");
+                    return;
+                }
+
+                // Validate Phone Number (Vietnamese mobile format: 10 digits starting with 03, 05, 07, 08, 09)
+                if (!phone.trim().matches("^0[35789]\\d{8}$")) {
+                    session.setAttribute("errorMessage", "Số điện thoại không hợp lệ (Phải gồm 10 chữ số và bắt đầu bằng đầu số di động Việt Nam như 09, 03, 07, 08, 05).");
+                    response.sendRedirect(request.getContextPath() + "/customer/profile");
+                    return;
+                }
+
+                // Validate Email
+                if (email != null && !email.trim().isEmpty()) {
+                    if (!email.trim().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                        session.setAttribute("errorMessage", "Địa chỉ email không đúng định dạng.");
+                        response.sendRedirect(request.getContextPath() + "/customer/profile");
+                        return;
+                    }
+                }
+
+                // Validate Date of Birth
+                Date dob = null;
+                if (dobStr != null && !dobStr.trim().isEmpty()) {
+                    try {
+                        dob = Date.valueOf(dobStr);
+                        Date today = new Date(System.currentTimeMillis());
+                        if (dob.after(today)) {
+                            session.setAttribute("errorMessage", "Ngày sinh không thể ở trong tương lai.");
+                            response.sendRedirect(request.getContextPath() + "/customer/profile");
+                            return;
+                        }
+                        if (dob.before(Date.valueOf("1900-01-01"))) {
+                            session.setAttribute("errorMessage", "Ngày sinh không hợp lệ (phải sau năm 1900).");
+                            response.sendRedirect(request.getContextPath() + "/customer/profile");
+                            return;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        session.setAttribute("errorMessage", "Định dạng ngày sinh không hợp lệ.");
+                        response.sendRedirect(request.getContextPath() + "/customer/profile");
+                        return;
+                    }
+                }
+
                 // Update User model fields
                 loggedUser.setFullName(fullName);
                 loggedUser.setPhone(phone);
@@ -72,11 +118,7 @@ public class ProfileController extends HttpServlet {
                 custInfo.setCustomerID(loggedUser.getUserID());
                 custInfo.setAddress(address);
                 custInfo.setGender(gender);
-                if (dobStr != null && !dobStr.trim().isEmpty()) {
-                    custInfo.setDateOfBirth(Date.valueOf(dobStr));
-                } else {
-                    custInfo.setDateOfBirth(null);
-                }
+                custInfo.setDateOfBirth(dob);
 
                 boolean success = userDAO.updateCustomerProfile(loggedUser, custInfo);
                 if (success) {
@@ -107,6 +149,13 @@ public class ProfileController extends HttpServlet {
 
                 if (!newPassword.equals(confirmPassword)) {
                     session.setAttribute("errorMessage", "Mật khẩu mới và xác nhận mật khẩu không trùng khớp.");
+                    response.sendRedirect(request.getContextPath() + "/customer/profile");
+                    return;
+                }
+
+                // Validate Password length (minimum 6 characters)
+                if (newPassword.length() < 6) {
+                    session.setAttribute("errorMessage", "Mật khẩu mới phải có độ dài từ 6 ký tự trở lên.");
                     response.sendRedirect(request.getContextPath() + "/customer/profile");
                     return;
                 }

@@ -114,7 +114,7 @@
                         <div class="form-grid-2" style="margin-top: 15px;">
                             <div class="form-group">
                                 <label class="form-label">Số điện thoại <span style="color: red;">*</span></label>
-                                <input type="tel" name="phone" class="form-control" value="<%= loggedUser.getPhone() %>" required placeholder="Nhập số điện thoại liên hệ">
+                                <input type="tel" name="phone" class="form-control" value="<%= loggedUser.getPhone() %>" required pattern="0[35789]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09" placeholder="Nhập số điện thoại liên hệ">
                             </div>
                             
                             <div class="form-group">
@@ -142,7 +142,7 @@
                                 <%
                                     String dobStr = (custInfo != null && custInfo.getDateOfBirth() != null) ? custInfo.getDateOfBirth().toString() : "";
                                 %>
-                                <input type="date" name="dob" class="form-control" value="<%= dobStr %>">
+                                <input type="date" name="dob" class="form-control" value="<%= dobStr %>" max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>">
                             </div>
                         </div>
                         
@@ -171,12 +171,12 @@
                         
                         <div class="form-group" style="margin-top: 15px;">
                             <label class="form-label">Mật khẩu mới</label>
-                            <input type="password" name="newPassword" class="form-control" required placeholder="Nhập mật khẩu mới">
+                            <input type="password" name="newPassword" class="form-control" required minlength="6" placeholder="Nhập mật khẩu mới">
                         </div>
                         
                         <div class="form-group" style="margin-top: 15px;">
                             <label class="form-label">Xác nhận mật khẩu mới</label>
-                            <input type="password" name="confirmPassword" class="form-control" required placeholder="Xác nhận lại mật khẩu mới">
+                            <input type="password" name="confirmPassword" class="form-control" required minlength="6" placeholder="Xác nhận lại mật khẩu mới">
                         </div>
                         
                         <button type="submit" class="btn btn-secondary" style="margin-top: 30px; font-weight: 700; width: 100%; padding: 12px; color: #ef4444; border-color: #fecaca; background: #fee2e2;">Cập Nhật Mật Khẩu</button>
