@@ -110,6 +110,46 @@ public class BookingController extends HttpServlet {
                 }
             }
             
+            // Validation: Prevent booking collisions (Same customer or same doctor at the same day & time)
+            if (dateStr != null && timeStr != null) {
+                String fullTimeStr = timeStr;
+                if (fullTimeStr.length() == 5) {
+                    fullTimeStr += ":00";
+                }
+                java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
+                java.sql.Time sqlTime = java.sql.Time.valueOf(fullTimeStr);
+                Integer excludeID = null;
+                if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                    excludeID = Integer.parseInt(editIDStr);
+                }
+                
+                AppointmentDAO appDAO = new AppointmentDAO();
+                
+                // 1. Check if customer themselves already has an active appointment at this time
+                if (appDAO.isCustomerBooked(loggedUser.getUserID(), sqlDate, sqlTime, excludeID)) {
+                    session.setAttribute("errorMessage", "Bạn đã đăng ký một lịch hẹn khác vào khung giờ này rồi.");
+                    if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking");
+                    }
+                    return;
+                }
+                
+                // 2. Check if the specified doctor is already booked by another patient at this time
+                if (doctorID != null && doctorID > 0) {
+                    if (appDAO.isDoctorBooked(doctorID, sqlDate, sqlTime, excludeID)) {
+                        session.setAttribute("errorMessage", "Bác sĩ đã có lịch hẹn với bệnh nhân khác vào khung giờ này.");
+                        if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                            response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/customer/booking");
+                        }
+                        return;
+                    }
+                }
+            }
+            
             String[] serviceIDsArr = request.getParameterValues("services");
             List<Integer> serviceIDs = new ArrayList<>();
             if (serviceIDsArr != null) {

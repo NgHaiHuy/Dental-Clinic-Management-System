@@ -329,4 +329,50 @@ public class AppointmentDAO extends DBContext {
         }
         return list;
     }
+
+    public boolean isDoctorBooked(int doctorID, java.sql.Date date, java.sql.Time time, Integer excludeAppointmentID) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE DoctorID = ? AND AppointmentDate = ? AND AppointmentTime = ? AND Status IN ('Pending', 'Confirmed', 'Attended')";
+        if (excludeAppointmentID != null) {
+            sql += " AND AppointmentID <> ?";
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorID);
+            ps.setDate(2, date);
+            ps.setTime(3, time);
+            if (excludeAppointmentID != null) {
+                ps.setInt(4, excludeAppointmentID);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean isCustomerBooked(int customerID, java.sql.Date date, java.sql.Time time, Integer excludeAppointmentID) {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE CustomerID = ? AND AppointmentDate = ? AND AppointmentTime = ? AND Status IN ('Pending', 'Confirmed', 'Attended')";
+        if (excludeAppointmentID != null) {
+            sql += " AND AppointmentID <> ?";
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerID);
+            ps.setDate(2, date);
+            ps.setTime(3, time);
+            if (excludeAppointmentID != null) {
+                ps.setInt(4, excludeAppointmentID);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
