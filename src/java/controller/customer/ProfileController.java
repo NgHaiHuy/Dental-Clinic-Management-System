@@ -147,15 +147,21 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
+                if (currentPassword.equals(newPassword)) {
+                    session.setAttribute("errorMessage", "Mật khẩu mới không được trùng với mật khẩu cũ.");
+                    response.sendRedirect(request.getContextPath() + "/customer/profile");
+                    return;
+                }
+
                 if (!newPassword.equals(confirmPassword)) {
                     session.setAttribute("errorMessage", "Mật khẩu mới và xác nhận mật khẩu không trùng khớp.");
                     response.sendRedirect(request.getContextPath() + "/customer/profile");
                     return;
                 }
 
-                // Validate Password length (minimum 6 characters)
-                if (newPassword.length() < 6) {
-                    session.setAttribute("errorMessage", "Mật khẩu mới phải có độ dài từ 6 ký tự trở lên.");
+                // Validate Password length (minimum 3 characters)
+                if (newPassword.length() < 3) {
+                    session.setAttribute("errorMessage", "Mật khẩu mới phải có độ dài từ 3 ký tự trở lên.");
                     response.sendRedirect(request.getContextPath() + "/customer/profile");
                     return;
                 }

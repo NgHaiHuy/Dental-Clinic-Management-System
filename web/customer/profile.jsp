@@ -171,12 +171,12 @@
                         
                         <div class="form-group" style="margin-top: 15px;">
                             <label class="form-label">Mật khẩu mới</label>
-                            <input type="password" name="newPassword" class="form-control" required minlength="6" placeholder="Nhập mật khẩu mới">
+                            <input type="password" name="newPassword" class="form-control" required minlength="3" placeholder="Nhập mật khẩu mới">
                         </div>
                         
                         <div class="form-group" style="margin-top: 15px;">
                             <label class="form-label">Xác nhận mật khẩu mới</label>
-                            <input type="password" name="confirmPassword" class="form-control" required minlength="6" placeholder="Xác nhận lại mật khẩu mới">
+                            <input type="password" name="confirmPassword" class="form-control" required minlength="3" placeholder="Xác nhận lại mật khẩu mới">
                         </div>
                         
                         <button type="submit" class="btn btn-secondary" style="margin-top: 30px; font-weight: 700; width: 100%; padding: 12px; color: #ef4444; border-color: #fecaca; background: #fee2e2;">Cập Nhật Mật Khẩu</button>
