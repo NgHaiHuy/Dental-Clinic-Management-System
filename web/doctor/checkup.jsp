@@ -230,7 +230,7 @@
         </div>
 
         <script>
-            // Populate list of all medicines from server database
+            // Populate list of all medicines from server database safely
             const allMedicines = [
                 <% if (medicines != null) {
                     for (int i = 0; i < medicines.size(); i++) {
@@ -240,7 +240,7 @@
                             name: "<%= m.getMedicineName().replace("\"", "\\\"") %>",
                             unit: "<%= m.getUnit() %>",
                             price: <%= m.getPrice() %>,
-                            image: "${pageContext.request.contextPath}<%= m.getImagePath() %>"
+                            image: "<%= m.getImagePath() != null ? request.getContextPath() + m.getImagePath() : "" %>"
                         }<%= i < medicines.size() - 1 ? "," : "" %>
                     <% }
                 } %>
@@ -274,14 +274,20 @@
                     item.style.borderBottom = '1px solid #f1f5f9';
                     item.className = 'suggestion-item';
                     
-                    item.innerHTML = `
-                        <img src="${m.image}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff; padding: 2px;">
-                        <div style="flex-grow: 1;">
-                            <div style="font-weight: 600; font-size: 0.92rem; color: var(--accent-navy);">${m.name}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">${m.unit} | ${m.price.toLocaleString('vi-VN')} đ</div>
-                        </div>
-                        <span style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 12px; font-weight: 600;">Chọn</span>
-                    `;
+                    let imgHtml = '';
+                    if (m.image) {
+                        imgHtml = '<img src="' + m.image + '" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff; padding: 2px;">';
+                    } else {
+                        imgHtml = '<div style="width: 32px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1rem;">💊</div>';
+                    }
+
+                    item.innerHTML = 
+                        imgHtml +
+                        '<div style="flex-grow: 1;">' +
+                        '    <div style="font-weight: 600; font-size: 0.92rem; color: var(--accent-navy);">' + m.name + '</div>' +
+                        '    <div style="font-size: 0.8rem; color: var(--text-muted);">' + m.unit + ' | ' + m.price.toLocaleString('vi-VN') + ' đ</div>' +
+                        '</div>' +
+                        '<span style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 12px; font-weight: 600;">Chọn</span>';
                     
                     item.onclick = function() {
                         addMedicineToTable(m);
@@ -322,26 +328,36 @@
                 
                 const tr = document.createElement('tr');
                 tr.id = 'med-row-' + m.id;
-                tr.innerHTML = `
-                    <td style="display: flex; align-items: center; gap: 10px;">
-                        <img src="${m.image}" alt="${m.name}" style="width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 2px; background: white;">
-                        <div>
-                            <strong>${m.name}</strong>
-                            <input type="hidden" name="medicineIDs" value="${m.id}">
-                        </div>
-                    </td>
-                    <td>${m.unit}</td>
-                    <td>${m.price.toLocaleString('vi-VN')} đ</td>
-                    <td>
-                        <input type="number" name="quantities" min="1" value="1" class="form-control" style="padding: 6px 10px; width: 80px;" required>
-                    </td>
-                    <td>
-                        <input type="text" name="dosages" class="form-control" placeholder="VD: Ngày uống 2 lần sau ăn" style="padding: 6px 10px;" required>
-                    </td>
-                    <td align="center">
-                        <button type="button" class="btn" onclick="removeMedicineRow(${m.id})" style="padding: 6px 10px; color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2; border-radius: 6px; cursor: pointer; transition: all 0.2s;"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                `;
+                
+                let imgHtml = '';
+                if (m.image) {
+                    imgHtml = '<img src="' + m.image + '" alt="' + m.name + '" style="width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 2px; background: white; margin-right: 10px;">';
+                } else {
+                    imgHtml = '<div style="width: 40px; height: 40px; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 10px;">💊</div>';
+                }
+
+                tr.innerHTML = 
+                    '<td>' +
+                    '    <div style="display: flex; align-items: center;">' +
+                             imgHtml +
+                    '        <div>' +
+                    '            <strong>' + m.name + '</strong>' +
+                    '            <input type="hidden" name="medicineIDs" value="' + m.id + '">' +
+                    '        </div>' +
+                    '    </div>' +
+                    '</td>' +
+                    '<td>' + m.unit + '</td>' +
+                    '<td>' + m.price.toLocaleString('vi-VN') + ' đ</td>' +
+                    '<td>' +
+                    '    <input type="number" name="quantities" min="1" value="1" class="form-control" style="padding: 6px 10px; width: 80px;" required>' +
+                    '</td>' +
+                    '<td>' +
+                    '    <input type="text" name="dosages" class="form-control" placeholder="VD: Ngày uống 2 lần sau ăn" style="padding: 6px 10px;" required>' +
+                    '</td>' +
+                    '<td align="center">' +
+                    '    <button type="button" class="btn" onclick="removeMedicineRow(' + m.id + ')" style="padding: 6px 10px; color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2; border-radius: 6px; cursor: pointer; transition: all 0.2s;"><i class="fas fa-trash-alt"></i></button>' +
+                    '</td>';
+
                 tbody.appendChild(tr);
             }
 
@@ -354,14 +370,13 @@
                 
                 const tbody = document.getElementById('prescriptionTbody');
                 if (tbody.children.length === 0) {
-                    tbody.innerHTML = `
-                        <tr id="emptyPrescriptionRow">
-                            <td colspan="6" align="center" style="color: var(--text-muted); padding: 35px 0; font-style: italic;">
-                                <i class="fas fa-pills" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>
-                                Chưa có thuốc nào được chọn. Nhập tên thuốc để tìm kiếm và thêm vào đơn.
-                            </td>
-                        </tr>
-                    `;
+                    tbody.innerHTML = 
+                        '<tr id="emptyPrescriptionRow">' +
+                        '    <td colspan="6" align="center" style="color: var(--text-muted); padding: 35px 0; font-style: italic;">' +
+                        '        <i class="fas fa-pills" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>' +
+                        '        Chưa có thuốc nào được chọn. Nhập tên thuốc để tìm kiếm và thêm vào đơn.' +
+                        '    </td>' +
+                        '</tr>';
                 }
             }
         </script>
