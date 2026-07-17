@@ -385,26 +385,33 @@
                         
                         let medsHtml = '';
                         if (h.medicines && h.medicines.length > 0) {
-                            medsHtml = `
-                                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0; font-size: 0.8rem; color: #475569;">
-                                    <strong>Đơn thuốc:</strong>
-                                    <ul style="padding-left: 15px; margin: 2px 0 0 0; list-style-type: disc;">
-                                        ${h.medicines.map(m => `<li>${m.name} - SL: ${m.qty} (${m.dosage})</li>`).join('')}
-                                    </ul>
-                                </div>
-                            `;
+                            let listItems = '';
+                            h.medicines.forEach(m => {
+                                listItems += '<li>' + m.name + ' - SL: ' + m.qty + ' (' + m.dosage + ')</li>';
+                            });
+                            medsHtml = 
+                                '<div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #e2e8f0; font-size: 0.8rem; color: #475569;">' +
+                                '    <strong>Đơn thuốc:</strong>' +
+                                '    <ul style="padding-left: 15px; margin: 2px 0 0 0; list-style-type: disc;">' +
+                                         listItems +
+                                '    </ul>' +
+                                '</div>';
                         }
 
-                        itemDiv.innerHTML = `
-                            <div style="font-weight: 600; color: #0f172a; margin-bottom: 2px;">
-                                Chẩn đoán: ${h.diagnosis}
-                            </div>
-                            <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 4px;">
-                                Ngày khám: ${h.date} | BS. ${h.doctor}
-                            </div>
-                            ${h.treatmentPlan ? `<div style="color: #334155; margin-top: 2px;"><strong>Lời dặn:</strong> ${h.treatmentPlan}</div>` : ''}
-                            ${medsHtml}
-                        `;
+                        let treatmentPlanHtml = '';
+                        if (h.treatmentPlan) {
+                            treatmentPlanHtml = '<div style="color: #334155; margin-top: 2px;"><strong>Lời dặn:</strong> ' + h.treatmentPlan + '</div>';
+                        }
+
+                        itemDiv.innerHTML = 
+                            '<div style="font-weight: 600; color: #0f172a; margin-bottom: 2px;">' +
+                            '    Chẩn đoán: ' + h.diagnosis +
+                            '</div>' +
+                            '<div style="font-size: 0.78rem; color: #64748b; margin-bottom: 4px;">' +
+                            '    Ngày khám: ' + h.date + ' | BS. ' + h.doctor +
+                            '</div>' +
+                            treatmentPlanHtml +
+                            medsHtml;
                         historyContainer.appendChild(itemDiv);
                     });
                 } else {
