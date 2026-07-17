@@ -20,6 +20,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Bác Sĩ - Khám Bệnh & Kê Đơn - SmileCare</title>
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <style>
+            .suggestion-item {
+                transition: background-color 0.2s ease;
+            }
+            .suggestion-item:hover {
+                background-color: #f1f5f9 !important;
+            }
+        </style>
     </head>
     <body>
         <!-- NAVBAR -->
@@ -117,45 +126,40 @@
                             </div>
                             
                             <h3 style="font-family: var(--font-outfit); font-size: 1.15rem; font-weight: 700; color: var(--accent-navy); margin: 25px 0 12px 0;">
-                                💊 Kê đơn thuốc ngoại trú (Nhập số lượng > 0)
+                                💊 Kê đơn thuốc ngoại trú
                             </h3>
-                            
-                            <div class="table-responsive" style="margin-bottom: 25px;">
-                                <table class="custom-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Tên Thuốc</th>
-                                            <th>Đơn vị</th>
-                                            <th>Đơn giá</th>
-                                            <th style="width: 100px;">Số Lượng</th>
-                                            <th>Hướng Dẫn Sử Dụng</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (medicines != null) {
-                                            for (Medicine m : medicines) { %>
-                                                <tr>
-                                                    <td style="display: flex; align-items: center; gap: 10px;">
-                                                        <img src="${pageContext.request.contextPath}<%= m.getImagePath() %>" alt="<%= m.getMedicineName() %>" style="width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 2px; background: white;">
-                                                        <div>
-                                                            <strong><%= m.getMedicineName() %></strong>
-                                                            <input type="hidden" name="medicineIDs" value="<%= m.getMedicineID() %>">
-                                                        </div>
-                                                    </td>
-                                                    <td><%= m.getUnit() %></td>
-                                                    <td><%= String.format("%,.0f", m.getPrice()) %> đ</td>
-                                                    <td>
-                                                        <input type="number" name="quantities" min="0" value="0" class="form-control" style="padding: 6px 10px;">
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="dosages" class="form-control" placeholder="VD: Uống ngày 2 lần sau ăn" style="padding: 6px 10px;">
-                                                    </td>
-                                                </tr>
-                                            <% }
-                                        } %>
-                                    </tbody>
-                                </table>
-                            </div>
+
+                             <!-- Search Input with Dropdown Suggestions -->
+                             <div style="position: relative; margin-bottom: 20px;">
+                                 <input type="text" id="medSearchInput" class="form-control" placeholder="🔍 Nhập tên thuốc để tìm kiếm và thêm vào đơn..." style="padding: 12px 16px; font-size: 0.95rem; border-radius: 8px; border: 1px solid var(--border-color); width: 100%;" oninput="filterMedicines()">
+                                 <div id="medSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; max-height: 250px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-top: 5px;">
+                                     <!-- Suggestions filled dynamically by JS -->
+                                 </div>
+                             </div>
+                             
+                             <!-- Dynamic Selected Medicines Table -->
+                             <div class="table-responsive" style="margin-bottom: 25px;">
+                                 <table class="custom-table">
+                                     <thead>
+                                         <tr>
+                                             <th>Tên Thuốc</th>
+                                             <th>Đơn vị</th>
+                                             <th>Đơn giá</th>
+                                             <th style="width: 110px;">Số Lượng</th>
+                                             <th>Hướng Dẫn Sử Dụng</th>
+                                             <th style="width: 70px; text-align: center;">Xoá</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="prescriptionTbody">
+                                         <tr id="emptyPrescriptionRow">
+                                             <td colspan="6" align="center" style="color: var(--text-muted); padding: 35px 0; font-style: italic;">
+                                                 <i class="fas fa-pills" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>
+                                                 Chưa có thuốc nào được chọn. Nhập tên thuốc để tìm kiếm và thêm vào đơn.
+                                             </td>
+                                         </tr>
+                                     </tbody>
+                                 </table>
+                             </div>
                             
                             <div style="display: flex; gap: 15px;">
                                 <button type="submit" class="btn btn-cta">💾 Lưu Hồ Sơ Khám & Gửi Thanh Toán</button>
@@ -224,5 +228,142 @@
                 </div>
             <% } %>
         </div>
+
+        <script>
+            // Populate list of all medicines from server database
+            const allMedicines = [
+                <% if (medicines != null) {
+                    for (int i = 0; i < medicines.size(); i++) {
+                        Medicine m = medicines.get(i); %>
+                        {
+                            id: <%= m.getMedicineID() %>,
+                            name: "<%= m.getMedicineName().replace("\"", "\\\"") %>",
+                            unit: "<%= m.getUnit() %>",
+                            price: <%= m.getPrice() %>,
+                            image: "${pageContext.request.contextPath}<%= m.getImagePath() %>"
+                        }<%= i < medicines.size() - 1 ? "," : "" %>
+                    <% }
+                } %>
+            ];
+
+            function filterMedicines() {
+                const query = document.getElementById('medSearchInput').value.toLowerCase().trim();
+                const suggestions = document.getElementById('medSuggestions');
+                suggestions.innerHTML = '';
+                
+                if (!query) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                
+                const matches = allMedicines.filter(m => m.name.toLowerCase().includes(query));
+                
+                if (matches.length === 0) {
+                    suggestions.innerHTML = '<div style="padding: 12px; color: var(--text-muted); font-style: italic; font-size: 0.9rem;">Không tìm thấy thuốc nào</div>';
+                    suggestions.style.display = 'block';
+                    return;
+                }
+                
+                matches.forEach(m => {
+                    const item = document.createElement('div');
+                    item.style.padding = '10px 16px';
+                    item.style.cursor = 'pointer';
+                    item.style.display = 'flex';
+                    item.style.alignItems = 'center';
+                    item.style.gap = '12px';
+                    item.style.borderBottom = '1px solid #f1f5f9';
+                    item.className = 'suggestion-item';
+                    
+                    item.innerHTML = `
+                        <img src="${m.image}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff; padding: 2px;">
+                        <div style="flex-grow: 1;">
+                            <div style="font-weight: 600; font-size: 0.92rem; color: var(--accent-navy);">${m.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${m.unit} | ${m.price.toLocaleString('vi-VN')} đ</div>
+                        </div>
+                        <span style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 12px; font-weight: 600;">Chọn</span>
+                    `;
+                    
+                    item.onclick = function() {
+                        addMedicineToTable(m);
+                        document.getElementById('medSearchInput').value = '';
+                        suggestions.style.display = 'none';
+                    };
+                    
+                    suggestions.appendChild(item);
+                });
+                
+                suggestions.style.display = 'block';
+            }
+
+            // Close suggestions dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const searchInput = document.getElementById('medSearchInput');
+                const suggestions = document.getElementById('medSuggestions');
+                if (searchInput && suggestions && e.target !== searchInput && !suggestions.contains(e.target)) {
+                    suggestions.style.display = 'none';
+                }
+            });
+
+            const addedMedicineIds = new Set();
+
+            function addMedicineToTable(m) {
+                if (addedMedicineIds.has(m.id)) {
+                    alert("Thuốc này đã được chọn trong đơn!");
+                    return;
+                }
+                
+                const tbody = document.getElementById('prescriptionTbody');
+                const placeholder = document.getElementById('emptyPrescriptionRow');
+                if (placeholder) {
+                    placeholder.remove();
+                }
+                
+                addedMedicineIds.add(m.id);
+                
+                const tr = document.createElement('tr');
+                tr.id = 'med-row-' + m.id;
+                tr.innerHTML = `
+                    <td style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${m.image}" alt="${m.name}" style="width: 40px; height: 40px; object-fit: contain; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 2px; background: white;">
+                        <div>
+                            <strong>${m.name}</strong>
+                            <input type="hidden" name="medicineIDs" value="${m.id}">
+                        </div>
+                    </td>
+                    <td>${m.unit}</td>
+                    <td>${m.price.toLocaleString('vi-VN')} đ</td>
+                    <td>
+                        <input type="number" name="quantities" min="1" value="1" class="form-control" style="padding: 6px 10px; width: 80px;" required>
+                    </td>
+                    <td>
+                        <input type="text" name="dosages" class="form-control" placeholder="VD: Ngày uống 2 lần sau ăn" style="padding: 6px 10px;" required>
+                    </td>
+                    <td align="center">
+                        <button type="button" class="btn" onclick="removeMedicineRow(${m.id})" style="padding: 6px 10px; color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2; border-radius: 6px; cursor: pointer; transition: all 0.2s;"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function removeMedicineRow(medId) {
+                const tr = document.getElementById('med-row-' + medId);
+                if (tr) {
+                    tr.remove();
+                    addedMedicineIds.delete(medId);
+                }
+                
+                const tbody = document.getElementById('prescriptionTbody');
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = `
+                        <tr id="emptyPrescriptionRow">
+                            <td colspan="6" align="center" style="color: var(--text-muted); padding: 35px 0; font-style: italic;">
+                                <i class="fas fa-pills" style="font-size: 1.5rem; margin-bottom: 8px; display: block; color: #cbd5e1;"></i>
+                                Chưa có thuốc nào được chọn. Nhập tên thuốc để tìm kiếm và thêm vào đơn.
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        </script>
     </body>
 </html>
