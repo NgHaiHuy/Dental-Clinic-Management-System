@@ -1,12 +1,3 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Other/SQLTemplate.sql to edit this template
- */
-/**
- * Author:  Nguye
- * Created: May 14, 2026
- */
-
 -- KHỞI TẠO CƠ SỞ DỮ LIỆU
 CREATE DATABASE DentalClinicDB;
 GO
@@ -119,7 +110,7 @@ CREATE TABLE InvoiceDetails (
     InvoiceDetailID INT IDENTITY(1,1) PRIMARY KEY,
     InvoiceID INT FOREIGN KEY REFERENCES Invoices(InvoiceID),
     ItemType VARCHAR(20) NOT NULL, -- 'SERVICE' hoặc 'MEDICINE'
-    ItemID INT NOT NULL, -- Cột này không dùng khóa ngoại trực tiếp vì có thể trỏ tới cả Services hoặc Medicines
+    ItemID INT NOT NULL,
     Quantity INT NOT NULL,
     Price DECIMAL(18,2) NOT NULL
 );
@@ -209,8 +200,6 @@ GO
 
 -- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
 
--- THÊM DỮ LIỆU KHỞI TẠO MẪU (DATA SEEDING)
-
 -- 1. Thêm Roles mẫu
 INSERT INTO Roles (RoleName) VALUES 
 ('Admin'), 
@@ -219,7 +208,7 @@ INSERT INTO Roles (RoleName) VALUES
 ('Customer');
 GO
 
--- 2. Thêm Users mẫu (Admin, Doctors, Staff)
+-- 2. Thêm Users gốc (Admin, Doctors, Staff)
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
 ('admin', '123', N'Quản trị viên', '0900000001', 'admin@dental.com', 1),
 ('doctor01', '123', N'Bác sĩ Nguyễn Văn Minh', '0900000002', 'minh.nv@dental.com', 2),
@@ -228,7 +217,18 @@ INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
 ('staff02', '123', N'Lễ tân Lê Quang Hải', '0900000005', 'hai.lq@dental.com', 3);
 GO
 
--- 3. Thêm 20 Khách hàng (Customers) mẫu (RoleID = 4)
+-- 3. Thêm DoctorInfo mẫu cho Doctors gốc
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(2, N'Răng Hàm Mặt', 8, N'Bác sĩ chuyên khoa I, 8 năm kinh nghiệm trong lĩnh vực Chỉnh nha & Niềng răng.'),
+(3, N'Nha khoa Thẩm mỹ', 5, N'Tốt nghiệp Đại học Y Dược, chuyên gia phục hình sứ và tẩy trắng răng thẩm mỹ.');
+
+-- 4. Thêm StaffInfo mẫu cho Staff gốc
+INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
+(4, N'Bộ phận Tiếp đón', N'Trưởng nhóm Lễ tân'),
+(5, N'Bộ phận Thu ngân & Kế toán', N'Nhân viên Thu ngân chính');
+GO
+
+-- 5. Thêm 20 Khách hàng (Customers) mẫu (RoleID = 4, các ID tự tăng sẽ từ 6 đến 25)
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
 ('customer01', '123', N'Nguyễn Hoàng Nam', '0912345678', 'nam.nh@gmail.com', 4),
 ('customer02', '123', N'Trần Tuyết Mai', '0987654321', 'mai.tt@gmail.com', 4),
@@ -252,45 +252,56 @@ INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
 ('customer20', '123', N'Đoàn Thu Trang', '0933557799', 'trang.dt@gmail.com', 4);
 GO
 
--- 4. Thêm Services mẫu
+-- 6. Thêm CustomerInfo mẫu
+INSERT INTO CustomerInfo (CustomerID, Address, Gender, DateOfBirth) VALUES
+(6, N'123 Cầu Giấy, Hà Nội', N'Nam', '1995-04-12'),
+(7, N'456 Lạch Tray, Hải Phòng', N'Nữ', '1998-09-23'),
+(8, N'789 Nguyễn Văn Linh, Đà Nẵng', N'Nam', '1990-11-05');
+GO
+
+-- 7. Thêm 12 Services mẫu (Gồm 6 dịch vụ cũ và 6 dịch vụ nha khoa mới)
 INSERT INTO Services (ServiceName, Price, Description, Status) VALUES
 (N'Răng sứ Cercon', 5000000, N'Răng sứ không kim loại cao cấp Cercon CAD/CAM', 1),
 (N'Tẩy trắng răng LumaCool', 1500000, N'Tẩy trắng răng công nghệ ánh sáng xanh LumaCool', 1),
 (N'Trám răng Composite', 300000, N'Trám thẩm mỹ bằng vật liệu Composite', 1),
 (N'Nhổ răng khôn (Răng số 8)', 1000000, N'Nhổ răng khôn mọc lệch/ngầm sử dụng thuốc tê', 1),
 (N'Niềng răng kim loại chuẩn', 30000000, N'Chỉnh nha mắc cài kim loại không tự buộc', 1),
-(N'Trồng răng Implant', 12500000, N'Phục hình răng đã mất bằng công nghệ Implant hiện đại, giúp ăn nhai như răng thật.', 1);
+(N'Trồng răng Implant', 12500000, N'Phục hình răng đã mất bằng công nghệ Implant hiện đại, giúp ăn nhai như răng thật.', 1),
+(N'Lấy cao răng & Đánh bóng', 200000, N'Vệ sinh răng miệng sạch sẽ, lấy sạch mảng bám tích tụ dưới nướu.', 1),
+(N'Điều trị tủy răng (Nội nha)', 1500000, N'Điều trị tủy răng bằng công nghệ WaveOne hiện đại, không đau đớn.', 1),
+(N'Mặt dán sứ Veneer siêu mỏng', 8000000, N'Dán sứ Veneer thẩm mỹ cao cấp, phục hình răng tối thiểu bảo tồn răng thật.', 1),
+(N'Niềng răng trong suốt Invisalign', 80000000, N'Chỉnh nha thẩm mỹ khay trong suốt công nghệ Hoa Kỳ, thẩm mỹ tối đa.', 1),
+(N'Điều trị viêm nha chu toàn diện', 2000000, N'Điều trị sâu túi nha chu, phẫu thuật tái tạo nướu thẩm mỹ lành thương nhanh.', 1),
+(N'Nha khoa Trẻ em chuyên sâu', 150000, N'Nhổ răng sữa, trám răng sâu và tư vấn chăm sóc răng miệng tâm lý cho trẻ.', 1);
 GO
 
--- 5. Thêm Medicines mẫu
+-- 8. Thêm 21 Medicines mẫu (Gồm 6 thuốc cũ và 15 thuốc nha khoa mới với đường dẫn hình ảnh chuẩn)
 INSERT INTO Medicines (MedicineName, Unit, Price, StockQuantity, Status, ImagePath) VALUES
 (N'Amoxicillin 500mg', N'Viên', 5000, 500, 1, '/img/amoxicillin.png'),
 (N'Paracetamol 500mg', N'Viên', 2000, 1000, 1, '/img/paracetamol.png'),
 (N'Ibuprofen 400mg', N'Viên', 3000, 300, 1, '/img/ibuprofen.png'),
-(N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1, '/img/mouthwash.png'),
-(N'Kem đánh răng chuyên dụng Sensodyne', N'Hộp', 85000, 120, 1, '/img/mouthwash.png'),
-(N'Chỉ nha khoa bảo vệ nướu Oral-B', N'Hộp', 55000, 200, 1, '/img/mouthwash.png'),
--- 15 thuốc nha khoa mới
-(N'Nước súc miệng trị viêm nướu Chlorhexidine 0.12%', N'Chai', 150000, 80, 1, '/img/mouthwash.png'),
-(N'Kháng sinh răng miệng Clindamycin 300mg', N'Hộp', 120000, 100, 1, '/img/box_medicine.png'),
-(N'Kháng sinh viêm nha chu Metronidazole 250mg', N'Hộp', 45000, 200, 1, '/img/box_medicine.png'),
-(N'Kem đánh răng Sensodyne Repair & Protect', N'Tuýp', 95000, 150, 1, '/img/toothpaste.png'),
-(N'Kem đánh răng cho răng niềng Colgate Ortho', N'Tuýp', 75000, 100, 1, '/img/toothpaste.png'),
-(N'Nước súc miệng ngừa viêm nướu Kin Gingival', N'Chai', 135000, 90, 1, '/img/mouthwash.png'),
-(N'Nước súc miệng diệt khuẩn Listerine Cool Mint', N'Chai', 80000, 300, 1, '/img/mouthwash.png'),
-(N'Gel bôi trị nhiệt miệng loét nướu Aloclair Plus', N'Tuýp', 165000, 50, 1, '/img/gel_tube.png'),
-(N'Gel gây tê giảm đau miệng Kamistad Gel N', N'Tuýp', 90000, 120, 1, '/img/gel_tube.png'),
-(N'Gel đặc trị ê buốt cổ chân răng Emofluor', N'Tuýp', 220000, 40, 1, '/img/gel_tube.png'),
-(N'Chỉ tơ nha khoa làm sạch kẽ răng Dentana', N'Cuộn', 35000, 250, 1, '/img/mouthwash.png'),
-(N'Đầu phun máy tăm nước Waterpik Jet Tip', N'Cái', 150000, 60, 1, '/img/toothbrush.png'),
-(N'Bàn chải chuyên dụng răng niềng TePe Ortho', N'Cái', 75000, 110, 1, '/img/toothbrush.png'),
-(N'Bàn chải siêu mềm bảo vệ nướu Curaprox CS 5460', N'Cái', 115000, 180, 1, '/img/toothbrush.png'),
-(N'Kem bôi tái khoáng ngừa sâu răng GC Tooth Mousse', N'Tuýp', 320000, 30, 1, '/img/gel_tube.png');
+(N'Nước súc miệng sát khuẩn Kin', N'Chai', 120000, 50, 1, '/img/listerine_regular.png'),
+(N'Kem đánh răng chuyên dụng Sensodyne', N'Hộp', 85000, 120, 1, '/img/sensodyne_regular.png'),
+(N'Chỉ nha khoa bảo vệ nướu Oral-B', N'Hộp', 55000, 200, 1, '/img/oralb_floss.png'),
+(N'Nước súc miệng trị viêm nướu Chlorhexidine 0.12%', N'Chai', 150000, 80, 1, '/img/chlorhexidine.png'),
+(N'Kháng sinh răng miệng Clindamycin 300mg', N'Hộp', 120000, 100, 1, '/img/clindamycin.png'),
+(N'Kháng sinh viêm nha chu Metronidazole 250mg', N'Hộp', 45000, 200, 1, '/img/metronidazole.png'),
+(N'Kem đánh răng Sensodyne Repair & Protect', N'Tuýp', 95000, 150, 1, '/img/sensodyne_repair.png'),
+(N'Kem đánh răng cho răng niềng Colgate Ortho', N'Tuýp', 75000, 100, 1, '/img/colgate_ortho.png'),
+(N'Nước súc miệng ngừa viêm nướu Kin Gingival', N'Chai', 135000, 90, 1, '/img/kin_gingival.png'),
+(N'Nước súc miệng diệt khuẩn Listerine Cool Mint', N'Chai', 80000, 300, 1, '/img/listerine_coolmint.png'),
+(N'Gel bôi trị nhiệt miệng loét nướu Aloclair Plus', N'Tuýp', 165000, 50, 1, '/img/aloclair_plus.png'),
+(N'Gel gây tê giảm đau miệng Kamistad Gel N', N'Tuýp', 90000, 120, 1, '/img/kamistad_gel.png'),
+(N'Gel đặc trị ê buốt cổ chân răng Emofluor', N'Tuýp', 220000, 40, 1, '/img/emofluor.png'),
+(N'Chỉ tơ nha khoa làm sạch kẽ răng Dentana', N'Cuộn', 35000, 250, 1, '/img/dentana_floss.png'),
+(N'Đầu phun máy tăm nước Waterpik Jet Tip', N'Cái', 150000, 60, 1, '/img/waterpik_jettip.png'),
+(N'Bàn chải chuyên dụng răng niềng TePe Ortho', N'Cái', 75000, 110, 1, '/img/tepe_ortho.png'),
+(N'Bàn chải siêu mềm bảo vệ nướu Curaprox CS 5460', N'Cái', 115000, 180, 1, '/img/curaprox.png'),
+(N'Kem bôi tái khoáng ngừa sâu răng GC Tooth Mousse', N'Tuýp', 320000, 30, 1, '/img/tooth_mousse.png');
 GO
 
--- 6. Thêm Appointments mẫu (Lịch hẹn khám)
--- Note: UserID từ 6-25 tương ứng với customer01 đến customer20. 
--- UserID 2 và 3 là doctor01 và doctor02.
+-- 9. Thêm Appointments mẫu (Lịch hẹn khám)
+-- Khách hàng ID từ 6-25, Bác sĩ ID 2 và 3
 INSERT INTO Appointments (CustomerID, DoctorID, AppointmentDate, AppointmentTime, Status, Notes) VALUES
 (6, 2, '2026-07-01', '09:00:00', 'Attended', N'Khám định kỳ tẩy trắng răng'),
 (7, 3, '2026-07-02', '10:30:00', 'Attended', N'Đau nhức răng số 6'),
@@ -299,52 +310,33 @@ INSERT INTO Appointments (CustomerID, DoctorID, AppointmentDate, AppointmentTime
 (10, 2, '2026-07-01', '16:00:00', 'Attended', N'Khám răng sâu số 7');
 GO
 
--- 7. Chi tiết dịch vụ hẹn trước (AppointmentServices)
+-- 10. Chi tiết dịch vụ hẹn trước (AppointmentServices)
 INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES
 (1, 2), -- Hẹn Tẩy trắng răng
 (2, 1), -- Hẹn làm Răng sứ Cercon
 (5, 3); -- Hẹn Trám răng Composite
 GO
 
--- 8. Hồ sơ bệnh án / Kết quả khám (MedicalRecords)
+-- 11. Hồ sơ bệnh án / Kết quả khám (MedicalRecords)
 INSERT INTO MedicalRecords (AppointmentID, DoctorID, Diagnosis, TreatmentPlan) VALUES
 (1, 2, N'Răng ố vàng nhẹ do mảng bám thức ăn', N'Thực hiện tẩy trắng răng LumaCool tại phòng khám'),
 (2, 3, N'Răng sâu nặng hỏng tủy răng số 6', N'Điều trị tủy và bọc răng sứ Cercon bảo vệ răng'),
 (5, 2, N'Sâu men răng số 7', N'Trám thẩm mỹ bằng Composite răng số 7');
 GO
 
--- 9. Đơn thuốc mẫu (Prescriptions)
+-- 12. Đơn thuốc mẫu (Prescriptions)
 INSERT INTO Prescriptions (RecordID) VALUES
-(1), -- Đơn thuốc cho bệnh án 1 (thường chỉ khuyên dùng nước súc miệng)
-(2), -- Đơn thuốc cho bệnh án 2 (kháng sinh và giảm đau sau khi điều trị tủy)
-(3); -- Đơn thuốc cho bệnh án 3 (giảm đau sau trám răng)
+(1), -- Đơn thuốc cho bệnh án 1
+(2), -- Đơn thuốc cho bệnh án 2
+(3); -- Đơn thuốc cho bệnh án 3
 GO
 
--- 10. Chi tiết đơn thuốc (PrescriptionDetails)
+-- 13. Chi tiết đơn thuốc (PrescriptionDetails)
 INSERT INTO PrescriptionDetails (PrescriptionID, MedicineID, Quantity, Dosage) VALUES
 (1, 4, 1, N'Súc miệng 2 lần/ngày sau khi đánh răng'),
 (2, 1, 10, N'Uống 2 viên/ngày chia 2 lần sau ăn sáng/tối'),
 (2, 2, 10, N'Uống 1 viên khi đau nhức nhiều, cách nhau ít nhất 6 tiếng'),
 (3, 3, 5, N'Uống 1 viên khi đau nhức sau ăn');
-GO
-
--- 11. Thêm DoctorInfo mẫu
-INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
-(2, N'Răng Hàm Mặt', 8, N'Bác sĩ chuyên khoa I, 8 năm kinh nghiệm trong lĩnh vực Chỉnh nha & Niềng răng.'),
-(3, N'Nha khoa Thẩm mỹ', 5, N'Tốt nghiệp Đại học Y Dược, chuyên gia phục hình sứ và tẩy trắng răng thẩm mỹ.');
-GO
-
--- 12. Thêm StaffInfo mẫu
-INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
-(4, N'Bộ phận Tiếp đón', N'Trưởng nhóm Lễ tân'),
-(5, N'Bộ phận Thu ngân & Kế toán', N'Nhân viên Thu ngân chính');
-GO
-
--- 13. Thêm CustomerInfo mẫu
-INSERT INTO CustomerInfo (CustomerID, Address, Gender, DateOfBirth) VALUES
-(6, N'123 Cầu Giấy, Hà Nội', N'Nam', '1995-04-12'),
-(7, N'456 Lạch Tray, Hải Phòng', N'Nữ', '1998-09-23'),
-(8, N'789 Nguyễn Văn Linh, Đà Nẵng', N'Nam', '1990-11-05');
 GO
 
 -- 14. Thêm DoctorSchedules mẫu (Lịch làm việc bác sĩ)
@@ -368,4 +360,56 @@ INSERT INTO MedicalSupplies (SupplyName, Unit, Quantity, MinQuantity, UnitPrice,
 (N'Khẩu trang y tế 4 lớp', N'Hộp', 150, 15, 50000, N'Công ty Thiết bị Y tế Phú An'),
 (N'Thuốc tê Septodont (Pháp)', N'Hộp', 20, 5, 850000, N'Nha khoa Medent'),
 (N'Chỉ nha khoa Oral-B', N'Cuộn', 200, 20, 45000, N'Nha khoa Medent');
+GO
+
+-- 17. Thêm Bác sĩ và Nhân viên tiếp đón bổ sung (từ add_more_users.sql)
+
+-- Doctor 03
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('doctor03', '123', N'BS. CKII. Lê Hoàng Nam', '0911222333', 'nam.lh@dental.com', 2);
+DECLARE @doc3_id INT = @@IDENTITY;
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(@doc3_id, N'Phẫu thuật & Cấy ghép Implant', 15, N'Bác sĩ Chuyên khoa II, hơn 15 năm kinh nghiệm phục hình răng mất bằng công nghệ Implant.');
+
+-- Doctor 04
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('doctor04', '123', N'ThS. BS. Phạm Thủy Tiên', '0922333444', 'tien.pt@dental.com', 2);
+DECLARE @doc4_id INT = @@IDENTITY;
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(@doc4_id, N'Nha khoa Trẻ em & Nội nha', 7, N'Thạc sĩ Răng Hàm Mặt, chuyên sâu điều trị tủy răng và nha khoa thẩm mỹ trẻ em.');
+
+-- Doctor 05
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('doctor05', '123', N'BS. Nguyễn Minh Đức', '0933444555', 'duc.nm@dental.com', 2);
+DECLARE @doc5_id INT = @@IDENTITY;
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(@doc5_id, N'Nha chu & Điều trị Hôi miệng', 6, N'Bác sĩ Răng Hàm Mặt, tốt nghiệp loại Giỏi Đại học Y Dược TP.HCM, chuyên điều trị viêm nha chu.');
+
+-- Doctor 06
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('doctor06', '123', N'BS. Hoàng Anh Tuấn', '0944555666', 'tuan.ha@dental.com', 2);
+DECLARE @doc6_id INT = @@IDENTITY;
+INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
+(@doc6_id, N'Nha khoa Tổng quát & Tiểu phẫu', 8, N'Chuyên khoa Răng Hàm Mặt, thế mạnh tiểu phẫu răng khôn mọc lệch bằng công nghệ Piezotome không đau.');
+
+-- Staff 03
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('staff03', '123', N'Lễ tân Bùi Phương Thảo', '0955666777', 'thao.bp@dental.com', 3);
+DECLARE @staff3_id INT = @@IDENTITY;
+INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
+(@staff3_id, N'Bộ phận CSKH & Tiếp đón', N'Nhân viên CSKH');
+
+-- Staff 04
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('staff04', '123', N'Lễ tân Vũ Minh Hoàng', '0966777888', 'hoang.vm@dental.com', 3);
+DECLARE @staff4_id INT = @@IDENTITY;
+INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
+(@staff4_id, N'Bộ phận Tiếp đón', N'Nhân viên Tiếp đón');
+
+-- Staff 05
+INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
+('staff05', '123', N'Lễ tân Đỗ Thùy Trang', '0977888999', 'trang.dt@dental.com', 3);
+DECLARE @staff5_id INT = @@IDENTITY;
+INSERT INTO StaffInfo (StaffID, Department, Position) VALUES
+(@staff5_id, N'Bộ phận Tiếp đón & Thu ngân', N'Nhân viên Thu ngân');
 GO
