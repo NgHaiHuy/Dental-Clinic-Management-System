@@ -87,6 +87,29 @@ public class BookingController extends HttpServlet {
             String timeStr = request.getParameter("time"); // Expected: HH:mm
             String notes = request.getParameter("notes");
             
+            // Validation: Prevent booking in the past
+            if (dateStr != null && timeStr != null) {
+                String fullTimeStr = timeStr;
+                if (fullTimeStr.length() == 5) {
+                    fullTimeStr += ":00";
+                }
+                java.sql.Date sqlDate = java.sql.Date.valueOf(dateStr);
+                java.sql.Time sqlTime = java.sql.Time.valueOf(fullTimeStr);
+                java.time.LocalDateTime selectedDateTime = java.time.LocalDateTime.of(
+                    sqlDate.toLocalDate(), 
+                    sqlTime.toLocalTime()
+                );
+                if (selectedDateTime.isBefore(java.time.LocalDateTime.now())) {
+                    session.setAttribute("errorMessage", "Không thể đặt lịch hẹn ở thời gian trong quá khứ.");
+                    if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking");
+                    }
+                    return;
+                }
+            }
+            
             String[] serviceIDsArr = request.getParameterValues("services");
             List<Integer> serviceIDs = new ArrayList<>();
             if (serviceIDsArr != null) {

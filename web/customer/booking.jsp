@@ -226,7 +226,7 @@
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label class="form-label">Ngày khám mong muốn</label>
-                            <input type="date" name="date" class="form-control" value="<%= editApp != null ? editApp.getAppointmentDate() : "" %>" required>
+                            <input type="date" name="date" class="form-control" value="<%= editApp != null ? editApp.getAppointmentDate() : "" %>" min="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" required>
                         </div>
                         
                         <div class="form-group">
