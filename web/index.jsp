@@ -109,8 +109,13 @@
                             Hiện tại chưa có dịch vụ nào trong hệ thống.
                         </div>
                     <% } else {
-                        for (Service s : services) { %>
-                            <div class="glass-card">
+                        int index = 0;
+                        for (Service s : services) {
+                            index++;
+                            String displayStyle = index > 6 ? "display: none;" : "";
+                            String extraClass = index > 6 ? "extra-service" : "";
+                    %>
+                            <div class="glass-card <%= extraClass %>" style="<%= displayStyle %>">
                                 <div class="card-title">
                                     🩺 <%= s.getServiceName() %>
                                 </div>
@@ -127,6 +132,14 @@
                         <% }
                     } %>
                 </div>
+
+                <% if (services != null && services.size() > 6) { %>
+                    <div style="text-align: center; margin-top: 35px;">
+                        <button id="btnToggleServices" onclick="toggleServicesVisibility()" class="btn btn-primary" style="padding: 12px 28px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;">
+                            Xem thêm tất cả dịch vụ <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                <% } %>
             </div>
 
             <!-- DENTISTS INTRODUCTION SECTION (DYNAMICS LOADED) -->
@@ -429,6 +442,30 @@
                     closeDoctorModal();
                 }
             });
+
+            // Toggle services visibility logic
+            let servicesExpanded = false;
+            function toggleServicesVisibility() {
+                const extraServices = document.querySelectorAll('.extra-service');
+                const btn = document.getElementById('btnToggleServices');
+                servicesExpanded = !servicesExpanded;
+                
+                extraServices.forEach(el => {
+                    if (servicesExpanded) {
+                        el.style.display = 'block';
+                        el.style.animation = 'slideDown 0.3s ease-out forwards';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                if (servicesExpanded) {
+                    btn.innerHTML = 'Ẩn bớt dịch vụ <i class="fas fa-chevron-up"></i>';
+                } else {
+                    btn.innerHTML = 'Xem thêm tất cả dịch vụ <i class="fas fa-chevron-down"></i>';
+                    document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
         </script>
     </body>
 </html>
