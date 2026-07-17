@@ -132,7 +132,7 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getAllAppointments() {
         List<Appointment> list = new ArrayList<>();
         String sql = "SELECT a.AppointmentID, a.CustomerID, a.DoctorID, a.AppointmentDate, a.AppointmentTime, a.Status, a.Notes, "
-                   + "c.FullName AS CustomerName, d.FullName AS DoctorName "
+                   + "c.FullName AS CustomerName, c.Phone AS CustomerPhone, c.Email AS CustomerEmail, d.FullName AS DoctorName "
                    + "FROM Appointments a "
                    + "INNER JOIN Users c ON a.CustomerID = c.UserID "
                    + "LEFT JOIN Users d ON a.DoctorID = d.UserID "
@@ -150,7 +150,9 @@ public class AppointmentDAO extends DBContext {
                 app.setStatus(rs.getString("Status"));
                 app.setNotes(rs.getString("Notes"));
                 app.setCustomerName(rs.getString("CustomerName"));
-                app.setDoctorName(rs.getString("DoctorName") != null ? rs.getString("DoctorName") : "General Doctor");
+                app.setCustomerPhone(rs.getString("CustomerPhone"));
+                app.setCustomerEmail(rs.getString("CustomerEmail"));
+                app.setDoctorName(rs.getString("DoctorName") != null ? rs.getString("DoctorName") : "Khám tổng quát (General)");
                 list.add(app);
             }
         } catch (SQLException ex) {

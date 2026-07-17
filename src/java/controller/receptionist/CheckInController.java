@@ -20,6 +20,9 @@ public class CheckInController extends HttpServlet {
         
         AppointmentDAO appDAO = new AppointmentDAO();
         List<Appointment> appointments = appDAO.getAllAppointments();
+        for (Appointment app : appointments) {
+            app.setChosenServices(appDAO.getServicesForAppointment(app.getAppointmentID()));
+        }
         
         // Sort: Confirmed -> Pending -> Attended -> Cancelled/Others
         appointments.sort((a1, a2) -> {

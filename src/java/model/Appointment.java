@@ -2,6 +2,7 @@ package model;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 /**
  * Model class for Appointments.
@@ -18,6 +19,9 @@ public class Appointment {
     // Additional properties for convenient rendering (not in DB column)
     private String customerName;
     private String doctorName;
+    private String customerPhone;
+    private String customerEmail;
+    private List<Service> chosenServices;
 
     // Constructors
     public Appointment() {
@@ -104,5 +108,29 @@ public class Appointment {
 
     public void setDoctorName(String doctorName) {
         this.doctorName = doctorName;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public List<Service> getChosenServices() {
+        return chosenServices;
+    }
+
+    public void setChosenServices(List<Service> chosenServices) {
+        this.chosenServices = chosenServices;
     }
 }
