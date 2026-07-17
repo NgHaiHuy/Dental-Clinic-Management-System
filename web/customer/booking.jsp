@@ -4,6 +4,8 @@
     List<User> doctors = (List<User>) request.getAttribute("doctors");
     List<Service> services = (List<Service>) request.getAttribute("services");
     String errorMessage = (String) request.getAttribute("errorMessage");
+    model.Appointment editApp = (model.Appointment) request.getAttribute("editApp");
+    List<Service> editServices = (List<Service>) request.getAttribute("editServices");
 %>
 <!DOCTYPE html>
 <html lang="vi">
