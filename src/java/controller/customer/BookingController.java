@@ -49,7 +49,7 @@ public class BookingController extends HttpServlet {
                 int editID = Integer.parseInt(editIDStr);
                 Appointment app = appDAO.getAppointmentByID(editID);
                 if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
-                    if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                    if ("Pending".equalsIgnoreCase(app.getStatus())) {
                         List<Service> chosenServices = appDAO.getServicesForAppointment(editID);
                         request.setAttribute("editApp", app);
                         request.setAttribute("editServices", chosenServices);
@@ -167,7 +167,7 @@ public class BookingController extends HttpServlet {
                 Appointment app = appDAO.getAppointmentByID(editID);
                 
                 if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
-                    if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                    if ("Pending".equalsIgnoreCase(app.getStatus())) {
                         app.setDoctorID(doctorID);
                         app.setAppointmentDate(Date.valueOf(dateStr));
                         if (timeStr.length() == 5) {

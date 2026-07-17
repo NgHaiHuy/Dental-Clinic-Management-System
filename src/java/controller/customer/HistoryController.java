@@ -76,7 +76,7 @@ public class HistoryController extends HttpServlet {
                 
                 if (app != null && app.getCustomerID() == loggedUser.getUserID()) {
                     if ("cancel".equals(action)) {
-                        if ("Pending".equalsIgnoreCase(app.getStatus()) || "Confirmed".equalsIgnoreCase(app.getStatus())) {
+                        if ("Pending".equalsIgnoreCase(app.getStatus())) {
                             appDAO.updateAppointmentStatus(appointmentID, "Cancelled");
                             session.setAttribute("successMessage", "Đã hủy lịch hẹn thành công!");
                         } else {

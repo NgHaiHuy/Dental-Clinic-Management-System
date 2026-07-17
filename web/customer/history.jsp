@@ -93,7 +93,7 @@
                                                 <span class="badge <%= badgeClass %>"><%= status %></span>
                                             </td>
                                             <td align="center">
-                                                <% if (status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("Confirmed")) { %>
+                                                <% if (status.equalsIgnoreCase("Pending")) { %>
                                                     <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
                                                         <a href="<%= request.getContextPath() %>/customer/booking?editID=<%= app.getAppointmentID() %>" 
                                                            style="text-decoration: none; padding: 6px 12px; font-size: 0.8rem; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 6px; font-weight: 600; transition: all 0.2s;" 
