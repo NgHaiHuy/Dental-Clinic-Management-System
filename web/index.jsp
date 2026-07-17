@@ -29,6 +29,14 @@
         <title>Nha Khoa SmileCare - Dịch Vụ Nha Khoa Chuyên Nghiệp</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+            #services, #doctors, #contact, #booking-section {
+                scroll-margin-top: 110px; /* Offset for sticky/fixed navbar */
+            }
+        </style>
     </head>
     <body>
         <!-- FIXED NAVBAR -->
