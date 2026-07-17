@@ -437,9 +437,103 @@ public class UserDAO extends DBContext {
                 u.setCoreSkills(rs.getString("CoreSkills"));
                 list.add(u);
             }
+        return list;
+    }
+
+    public model.CustomerInfo getCustomerInfo(int customerID) {
+        String sql = "SELECT CustomerID, Address, Gender, DateOfBirth FROM CustomerInfo WHERE CustomerID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new model.CustomerInfo(
+                        rs.getInt("CustomerID"),
+                        rs.getString("Address"),
+                        rs.getString("Gender"),
+                        rs.getDate("DateOfBirth")
+                    );
+                }
+            }
         } catch (SQLException ex) {
             Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return list;
+        // Return default empty info if not exists
+        return new model.CustomerInfo(customerID, "", "", null);
+    }
+
+    public boolean updateCustomerProfile(User user, model.CustomerInfo customer) {
+        String updateUsersSql = "UPDATE Users SET FullName = ?, Phone = ?, Email = ? WHERE UserID = ?";
+        String upsertCustomerInfoSql = "IF EXISTS (SELECT 1 FROM CustomerInfo WHERE CustomerID = ?)\n"
+                                     + "BEGIN\n"
+                                     + "    UPDATE CustomerInfo SET Address = ?, Gender = ?, DateOfBirth = ? WHERE CustomerID = ?\n"
+                                     + "END\n"
+                                     + "ELSE\n"
+                                     + "BEGIN\n"
+                                     + "    INSERT INTO CustomerInfo (CustomerID, Address, Gender, DateOfBirth) VALUES (?, ?, ?, ?)\n"
+                                     + "END";
+        Connection conn = null;
+        try {
+            conn = connection;
+            conn.setAutoCommit(false);
+            
+            // 1. Update Users table
+            try (PreparedStatement ps = conn.prepareStatement(updateUsersSql)) {
+                ps.setString(1, user.getFullName());
+                ps.setString(2, user.getPhone());
+                ps.setString(3, user.getEmail());
+                ps.setInt(4, user.getUserID());
+                ps.executeUpdate();
+            }
+            
+            // 2. Upsert CustomerInfo table
+            try (PreparedStatement ps = conn.prepareStatement(upsertCustomerInfoSql)) {
+                ps.setInt(1, customer.getCustomerID());
+                
+                ps.setString(2, customer.getAddress());
+                ps.setString(3, customer.getGender());
+                ps.setDate(4, customer.getDateOfBirth());
+                ps.setInt(5, customer.getCustomerID());
+                
+                ps.setInt(6, customer.getCustomerID());
+                ps.setString(7, customer.getAddress());
+                ps.setString(8, customer.getGender());
+                ps.setDate(9, customer.getDateOfBirth());
+                
+                ps.executeUpdate();
+            }
+            
+            conn.commit();
+            return true;
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException e) {
+                    Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean updatePassword(int userID, String newPassword) {
+        String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setInt(2, userID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 }

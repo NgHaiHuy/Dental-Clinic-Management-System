@@ -54,6 +54,7 @@
                     <% if (loggedUser.getRoleID() == 4) { %>
                         <a href="<%= request.getContextPath() %>/customer/booking">Đặt lịch hẹn</a>
                         <a href="<%= request.getContextPath() %>/customer/history">Xem lịch đã đặt</a>
+                        <a href="<%= request.getContextPath() %>/customer/profile">Hồ sơ cá nhân</a>
                     <% } else { %>
                         <a href="<%= request.getContextPath() %><%= Role.getDashboardUrl(loggedUser.getRoleID()) %>">Trang quản trị</a>
                     <% } %>

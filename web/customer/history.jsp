@@ -28,6 +28,7 @@
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
                 <a href="<%= request.getContextPath() %>/customer/booking" class="btn btn-cta" style="padding: 6px 14px;">Đặt lịch ngay</a>
+                <a href="<%= request.getContextPath() %>/customer/profile">Hồ sơ cá nhân</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>
