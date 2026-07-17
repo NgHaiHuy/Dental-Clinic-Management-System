@@ -103,7 +103,17 @@
                                 sb.append("]");
                                 String servicesJson = sb.toString();
                         %>
-                                <tr onclick="showAppointmentDetail(event, '<%= app.getAppointmentID() %>', '<%= app.getCustomerName().replace("'", "\\'") %>', '<%= app.getCustomerPhone() != null ? app.getCustomerPhone() : "" %>', '<%= app.getCustomerEmail() != null ? app.getCustomerEmail() : "" %>', '<%= app.getAppointmentDate() %>', '<%= app.getAppointmentTime() %>', '<%= app.getDoctorName().replace("'", "\\'") %>', '<%= app.getNotes() != null ? app.getNotes().replace("'", "\\'").replace("\n", "\\n").replace("\r", "") : "" %>', '<%= app.getStatus() %>', '<%= servicesJson.replace("'", "\\'") %>')">
+                                <tr class="appointment-row"
+                                    data-id="<%= app.getAppointmentID() %>"
+                                    data-customer-name="<%= app.getCustomerName().replace("\"", "&quot;").replace("'", "&#39;") %>"
+                                    data-customer-phone="<%= app.getCustomerPhone() != null ? app.getCustomerPhone() : "" %>"
+                                    data-customer-email="<%= app.getCustomerEmail() != null ? app.getCustomerEmail() : "" %>"
+                                    data-date="<%= app.getAppointmentDate() %>"
+                                    data-time="<%= app.getAppointmentTime() %>"
+                                    data-doctor="<%= app.getDoctorName().replace("\"", "&quot;").replace("'", "&#39;") %>"
+                                    data-notes="<%= app.getNotes() != null ? app.getNotes().replace("\"", "&quot;").replace("'", "&#39;").replace("\n", " ").replace("\r", "") : "" %>"
+                                    data-status="<%= app.getStatus() %>"
+                                    data-services="<%= servicesJson.replace("\"", "&quot;").replace("'", "&#39;") %>">
                                     <td>#<%= app.getAppointmentID() %></td>
                                     <td><strong><%= app.getCustomerName() %></strong></td>
                                     <td><%= app.getAppointmentDate() %></td>
@@ -232,13 +242,32 @@
         </div>
 
         <script>
-            function showAppointmentDetail(event, id, customerName, phone, email, date, time, doctor, notes, status, servicesJson) {
-                // If the user clicked on standard action buttons/forms in the last column, don't show the modal
-                const actionsCell = event.target.closest('td');
-                if (actionsCell && actionsCell.cellIndex === 7) {
-                    return;
-                }
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll('.appointment-row').forEach(row => {
+                    row.addEventListener('click', function(e) {
+                        // If the user clicked on standard action buttons/forms in the last column, don't show the modal
+                        const actionsCell = e.target.closest('td');
+                        if (actionsCell && actionsCell.cellIndex === 7) {
+                            return;
+                        }
+                        
+                        const id = this.getAttribute('data-id');
+                        const customerName = this.getAttribute('data-customer-name');
+                        const phone = this.getAttribute('data-customer-phone');
+                        const email = this.getAttribute('data-customer-email');
+                        const date = this.getAttribute('data-date');
+                        const time = this.getAttribute('data-time');
+                        const doctor = this.getAttribute('data-doctor');
+                        const notes = this.getAttribute('data-notes');
+                        const status = this.getAttribute('data-status');
+                        const servicesJson = this.getAttribute('data-services');
+                        
+                        showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson);
+                    });
+                });
+            });
 
+            function showAppointmentDetail(id, customerName, phone, email, date, time, doctor, notes, status, servicesJson) {
                 document.getElementById('modalAppTitle').innerText = 'Chi Tiết Lịch Hẹn #' + id;
                 document.getElementById('modalCustomerName').innerText = customerName;
                 document.getElementById('modalCustomerPhone').innerHTML = '<i class="fas fa-phone" style="width: 16px; color: var(--primary);"></i> ' + (phone ? phone : 'Chưa cập nhật');
@@ -264,7 +293,12 @@
                 }
 
                 // Render selected services badges
-                const servicesList = JSON.parse(servicesJson);
+                let servicesList = [];
+                try {
+                    servicesList = JSON.parse(servicesJson);
+                } catch (e) {
+                    console.error("Error parsing servicesJson:", e);
+                }
                 const servicesContainer = document.getElementById('modalAppServices');
                 servicesContainer.innerHTML = '';
 
