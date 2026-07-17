@@ -123,7 +123,9 @@ CREATE TABLE DoctorInfo (
     DoctorID INT PRIMARY KEY FOREIGN KEY REFERENCES Users(UserID) ON DELETE CASCADE,
     Specialization NVARCHAR(100) NULL,
     ExperienceYears INT NULL,
-    Biography NVARCHAR(MAX) NULL
+    Biography NVARCHAR(MAX) NULL,
+    Education NVARCHAR(MAX) NULL,
+    CoreSkills NVARCHAR(MAX) NULL
 );
 
 -- Bảng StaffInfo (Thông tin chi tiết Nhân viên)
