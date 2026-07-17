@@ -1,6 +1,7 @@
 package dal;
 
 import context.DBContext;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -524,18 +525,6 @@ public class UserDAO extends DBContext {
                     Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
-        }
-        return false;
-    }
-
-    public boolean updatePassword(int userID, String newPassword) {
-        String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, newPassword);
-            ps.setInt(2, userID);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
