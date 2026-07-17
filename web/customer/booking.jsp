@@ -4,6 +4,10 @@
     List<User> doctors = (List<User>) request.getAttribute("doctors");
     List<Service> services = (List<Service>) request.getAttribute("services");
     String errorMessage = (String) request.getAttribute("errorMessage");
+    if (errorMessage == null) {
+        errorMessage = (String) session.getAttribute("errorMessage");
+        if (errorMessage != null) session.removeAttribute("errorMessage");
+    }
     model.Appointment editApp = (model.Appointment) request.getAttribute("editApp");
     List<Service> editServices = (List<Service>) request.getAttribute("editServices");
 %>
@@ -172,7 +176,7 @@
             </a>
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
-                <a href="<%= request.getContextPath() %>/customer/history">Lịch sử khám</a>
+                <a href="<%= request.getContextPath() %>/customer/history">Xem lịch đã đặt</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>

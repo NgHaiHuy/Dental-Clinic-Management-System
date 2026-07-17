@@ -51,6 +51,12 @@
                 <a href="#doctors">Đội Ngũ Bác Sĩ</a>
                 <a href="#contact">Liên Hệ</a>
                 <% if (loggedUser != null) { %>
+                    <% if (loggedUser.getRoleID() == 4) { %>
+                        <a href="<%= request.getContextPath() %>/customer/booking">Đặt lịch hẹn</a>
+                        <a href="<%= request.getContextPath() %>/customer/history">Xem lịch đã đặt</a>
+                    <% } else { %>
+                        <a href="<%= request.getContextPath() %><%= Role.getDashboardUrl(loggedUser.getRoleID()) %>">Trang quản trị</a>
+                    <% } %>
                     <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
                 <% } else { %>
                     <a href="<%= request.getContextPath() %>/auth/login" class="btn-login">Đăng nhập</a>
