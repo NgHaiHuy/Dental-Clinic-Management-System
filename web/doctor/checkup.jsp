@@ -38,7 +38,8 @@
             </a>
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
-                <a href="<%= request.getContextPath() %>/doctor/dashboard">Dashboard</a>
+                <a href="<%= request.getContextPath() %>/doctor/checkup" style="color: var(--primary); font-weight: 700;">Khám bệnh</a>
+                <a href="<%= request.getContextPath() %>/doctor/history">Lịch sử khám</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>

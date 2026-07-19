@@ -173,4 +173,37 @@ public class MedicalRecordDAO extends DBContext {
         }
         return list;
     }
+
+    /**
+     * Get complete medical record history created by a specific doctor.
+     */
+    public List<MedicalRecord> getMedicalRecordsByDoctorID(int doctorID) {
+        List<MedicalRecord> list = new ArrayList<>();
+        String sql = "SELECT mr.RecordID, mr.AppointmentID, mr.DoctorID, mr.Diagnosis, mr.TreatmentPlan, mr.CreatedAt, "
+                   + "uc.FullName AS CustomerName "
+                   + "FROM MedicalRecords mr "
+                   + "INNER JOIN Appointments a ON mr.AppointmentID = a.AppointmentID "
+                   + "INNER JOIN Users uc ON a.CustomerID = uc.UserID "
+                   + "WHERE mr.DoctorID = ? "
+                   + "ORDER BY mr.CreatedAt DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    MedicalRecord mr = new MedicalRecord();
+                    mr.setRecordID(rs.getInt("RecordID"));
+                    mr.setAppointmentID(rs.getInt("AppointmentID"));
+                    mr.setDoctorID(rs.getInt("DoctorID"));
+                    mr.setDiagnosis(rs.getString("Diagnosis"));
+                    mr.setTreatmentPlan(rs.getString("TreatmentPlan"));
+                    mr.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    mr.setPatientName(rs.getString("CustomerName"));
+                    list.add(mr);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicalRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
 }

@@ -62,9 +62,9 @@ public class Role {
     public static String getDashboardUrl(int roleID) {
         switch (roleID) {
             case ADMIN:    return "/admin/dashboard";
-            case DOCTOR:   return "/doctor/dashboard";
+            case DOCTOR:   return "/doctor/checkup";
             case STAFF:    return "/receptionist/dashboard";
-            case CUSTOMER: return "/customer/dashboard";
+            case CUSTOMER: return "/";
             default:       return "/auth/login";
         }
     }
