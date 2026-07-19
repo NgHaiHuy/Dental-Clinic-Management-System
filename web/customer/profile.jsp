@@ -114,7 +114,7 @@
                         <div class="form-grid-2" style="margin-top: 15px;">
                             <div class="form-group">
                                 <label class="form-label">Số điện thoại <span style="color: red;">*</span></label>
-                                <input type="tel" name="phone" class="form-control" value="<%= loggedUser.getPhone() %>" required pattern="0[389]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09" placeholder="Nhập số điện thoại liên hệ">
+                                <input type="tel" name="phone" class="form-control" value="<%= loggedUser.getPhone() %>" required pattern="0[389]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09" placeholder="Nhập số điện thoại liên hệ" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             
                             <div class="form-group">

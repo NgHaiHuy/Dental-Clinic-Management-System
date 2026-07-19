@@ -253,10 +253,10 @@
                             <input type="text" name="walkInName" id="walkInName" class="form-control" value="<%= request.getParameter("walkInName") != null ? request.getParameter("walkInName") : "" %>" placeholder="Nhập họ và tên bệnh nhân...">
                         </div>
                         <div class="form-grid-2">
-                            <div class="form-group">
-                                <label class="form-label">Số điện thoại <span style="color: red;">*</span></label>
-                                <input type="text" name="walkInPhone" id="walkInPhone" class="form-control" value="<%= request.getParameter("walkInPhone") != null ? request.getParameter("walkInPhone") : "" %>" placeholder="Nhập số điện thoại...">
-                            </div>
+                             <div class="form-group">
+                                 <label class="form-label">Số điện thoại <span style="color: red;">*</span></label>
+                                 <input type="text" name="walkInPhone" id="walkInPhone" class="form-control" value="<%= request.getParameter("walkInPhone") != null ? request.getParameter("walkInPhone") : "" %>" placeholder="Nhập số điện thoại..." oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                             </div>
                             <div class="form-group">
                                 <label class="form-label">Email (Không bắt buộc)</label>
                                 <input type="email" name="walkInEmail" class="form-control" value="<%= request.getParameter("walkInEmail") != null ? request.getParameter("walkInEmail") : "" %>" placeholder="Nhập địa chỉ email nếu có...">

@@ -248,7 +248,7 @@
                     <input type="tel" id="phone" name="phone" class="form-control"
                            placeholder="0912345678"
                            value="${not empty regPhone ? regPhone : ''}"
-                           required pattern="0[389]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09">
+                           required pattern="0[389]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
             </div>
 
