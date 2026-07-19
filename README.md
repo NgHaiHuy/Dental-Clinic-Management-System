@@ -5,7 +5,7 @@ Hệ thống Quản lý Phòng khám Nha khoa (Dental Clinic Management System) 
 
 ### Src về cấu trúc của dự án: https://docs.google.com/document/d/1VBnGDa7wVKZrxGTidcdUxVMiHAKXYf_hhtsGvLIbNR0/edit?usp=sharing
 
-### Link diagram của database: https://app.eraser.io/workspace/h6ckwbxyD6EXwJK70JIv?origin=share
+### Link diagram của database: https://app.eraser.io/workspace/WFEyCLkfA9iEsAlN7buj?origin=share
 
 ### HƯỚNG DẪN TẠO NHÁNH (BRANCH) & ĐẨY CODE (PUSH) BẰNG GIT DESKTOP
 
