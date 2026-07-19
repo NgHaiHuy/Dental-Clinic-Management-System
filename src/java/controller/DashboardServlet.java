@@ -10,8 +10,7 @@ import java.io.IOException;
 @WebServlet(name = "DashboardServlet", urlPatterns = {
     "/admin/dashboard",
     "/doctor/dashboard",
-    "/receptionist/dashboard",
-    "/customer/dashboard"
+    "/receptionist/dashboard"
 })
 public class DashboardServlet extends HttpServlet {
 

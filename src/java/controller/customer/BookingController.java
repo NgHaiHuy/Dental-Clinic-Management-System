@@ -136,8 +136,9 @@ public class BookingController extends HttpServlet {
                     return;
                 }
                 
-                // 1b. Check if there is another appointment with the same FullName and Phone at this time
-                if (appDAO.isDuplicateAppointment(loggedUser.getFullName(), loggedUser.getPhone(), dateStr, timeStr)) {
+                // Only new bookings need the name/phone duplicate check; edits already exclude themselves by ID.
+                if (excludeID == null
+                        && appDAO.isDuplicateAppointment(loggedUser.getFullName(), loggedUser.getPhone(), dateStr, timeStr)) {
                     session.setAttribute("errorMessage", "Đã có một lịch hẹn trùng khớp Họ tên và SĐT vào khung giờ này trong hệ thống.");
                     if (editIDStr != null && !editIDStr.trim().isEmpty()) {
                         response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);

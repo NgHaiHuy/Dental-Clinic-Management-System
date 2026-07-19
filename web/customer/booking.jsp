@@ -220,7 +220,7 @@
                             }
                         %>
                         <select name="doctorID" class="form-select">
-                            <option value="0" <%= selectedDocID == 0 ? "selected" : "" %>>Khám tổng quát (Hệ thống tự động phân công bác sĩ)</option>
+                            <option value="0" <%= selectedDocID == 0 ? "selected" : "" %>>Khám tổng quát (Chưa chỉ định bác sĩ)</option>
                             <% if (doctors != null) {
                                 for (User doc : doctors) { %>
                                     <option value="<%= doc.getUserID() %>" <%= selectedDocID == doc.getUserID() ? "selected" : "" %>><%= doc.getFullName() %></option>
@@ -255,7 +255,6 @@
                                 <option value="15:00" <%= "15:00".equals(selectedTime) ? "selected" : "" %>>15:00</option>
                                 <option value="16:00" <%= "16:00".equals(selectedTime) ? "selected" : "" %>>16:00</option>
                                 <option value="17:00" <%= "17:00".equals(selectedTime) ? "selected" : "" %>>17:00</option>
-                                <option value="18:00" <%= "18:00".equals(selectedTime) ? "selected" : "" %>>18:00</option>
                             </select>
                         </div>
                     </div>
