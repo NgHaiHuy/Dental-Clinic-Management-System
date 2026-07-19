@@ -236,7 +236,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">Giờ khám (8h - 17h, mỗi ca 1 tiếng)</label>
+                            <label class="form-label">Giờ khám (8h - 18h, mỗi ca 1 tiếng)</label>
                             <%
                                 String selectedTime = "";
                                 if (editApp != null && editApp.getAppointmentTime() != null) {
@@ -255,6 +255,7 @@
                                 <option value="15:00" <%= "15:00".equals(selectedTime) ? "selected" : "" %>>15:00</option>
                                 <option value="16:00" <%= "16:00".equals(selectedTime) ? "selected" : "" %>>16:00</option>
                                 <option value="17:00" <%= "17:00".equals(selectedTime) ? "selected" : "" %>>17:00</option>
+                                <option value="18:00" <%= "18:00".equals(selectedTime) ? "selected" : "" %>>18:00</option>
                             </select>
                         </div>
                     </div>

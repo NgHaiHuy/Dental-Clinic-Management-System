@@ -315,7 +315,7 @@
                     </h4>
                     <p style="font-size: 0.9rem; line-height: 1.6; color: #94a3b8; margin-bottom: 10px;">
                         Thứ 2 - Chủ Nhật:<br>
-                        <strong style="color: #cbd5e1;">08:00 - 17:00</strong>
+                        <strong style="color: #cbd5e1;">08:00 - 18:00</strong>
                     </p>
                 </div>
 
