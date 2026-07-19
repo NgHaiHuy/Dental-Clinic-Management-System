@@ -214,7 +214,7 @@ GO
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
 ('admin', '123', N'Quản trị viên', '0900000001', 'admin@dental.com', 1),
 ('doctor01', '123', N'Bác sĩ Triệu Xuân Bắc', '0900000002', 'minh.nv@dental.com', 2),
-('doctor02', '123', N'Bác sĩ Trần Thị Lan', '0900000003', 'lan.tt@dental.com', 2),
+('doctor02', '123', N'Bác sĩ Nguyễn Văn Hùng', '0900000003', 'hung.nv@dental.com', 2),
 ('staff01', '123', N'Lễ tân Nguyễn Ngọc Ánh', '0900000004', 'anh.nn@dental.com', 3),
 ('staff02', '123', N'Lễ tân Lê Quang Hải', '0900000005', 'hai.lq@dental.com', 3);
 GO
@@ -375,7 +375,7 @@ INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VA
 
 -- Doctor 04
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
-('doctor04', '123', N'ThS. BS. Phạm Thủy Tiên', '0922333444', 'tien.pt@dental.com', 2);
+('doctor04', '123', N'ThS. BS. Lê Hoàng Long', '0922333444', 'long.lh@dental.com', 2);
 DECLARE @doc4_id INT = @@IDENTITY;
 INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
 (@doc4_id, N'Nha khoa Trẻ em & Nội nha', 7, N'Thạc sĩ Răng Hàm Mặt, chuyên sâu điều trị tủy răng và nha khoa thẩm mỹ trẻ em.');
