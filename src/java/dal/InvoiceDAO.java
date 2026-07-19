@@ -116,6 +116,30 @@ public class InvoiceDAO extends DBContext {
     }
 
     /**
+     * Get Customer Full Name and Phone number for a Medical Record.
+     */
+    public String[] getCustomerDetailsByRecordID(int recordID) {
+        String[] details = new String[2]; // [CustomerName, Phone]
+        String sql = "SELECT c.FullName AS CustomerName, c.Phone AS CustomerPhone " +
+                     "FROM MedicalRecords r " +
+                     "INNER JOIN Appointments a ON r.AppointmentID = a.AppointmentID " +
+                     "INNER JOIN Users c ON a.CustomerID = c.UserID " +
+                     "WHERE r.RecordID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, recordID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    details[0] = rs.getString("CustomerName");
+                    details[1] = rs.getString("CustomerPhone");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return details;
+    }
+
+    /**
      * Get services chosen during the appointment.
      */
     public List<Service> getServicesByAppointment(int appointmentID) {
@@ -149,7 +173,7 @@ public class InvoiceDAO extends DBContext {
      */
     public List<InvoiceDetail> getPrescribedMedicines(int recordID) {
         List<InvoiceDetail> list = new ArrayList<>();
-        String sql = "SELECT m.MedicineID, m.MedicineName, m.Price, m.Unit, pd.Quantity " +
+        String sql = "SELECT m.MedicineID, m.MedicineName, m.Price, m.Unit, m.StockQuantity, pd.Quantity " +
                      "FROM PrescriptionDetails pd " +
                      "INNER JOIN Medicines m ON pd.MedicineID = m.MedicineID " +
                      "INNER JOIN Prescriptions p ON pd.PrescriptionID = p.PrescriptionID " +
@@ -164,6 +188,7 @@ public class InvoiceDAO extends DBContext {
                     detail.setItemName(rs.getString("MedicineName") + " (" + rs.getString("Unit") + ")");
                     detail.setQuantity(rs.getInt("Quantity"));
                     detail.setPrice(rs.getDouble("Price"));
+                    detail.setStockQuantity(rs.getInt("StockQuantity"));
                     list.add(detail);
                 }
             }
@@ -299,5 +324,45 @@ public class InvoiceDAO extends DBContext {
             Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
+    }
+    public double getTodayRevenue() {
+        String sql = "SELECT SUM(TotalAmount) FROM Invoices WHERE Status = 'Paid' AND CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public int getUnpaidCount() {
+        String sql = "SELECT COUNT(*) FROM MedicalRecords WHERE RecordID NOT IN (SELECT RecordID FROM Invoices WHERE Status = 'Paid')";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public String getPaymentMethodByInvoiceID(int invoiceID) {
+        String sql = "SELECT PaymentMethod FROM Payments WHERE InvoiceID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, invoiceID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("PaymentMethod");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(InvoiceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "N/A";
     }
 }

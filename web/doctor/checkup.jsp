@@ -246,8 +246,16 @@
                 } %>
             ];
 
+            function removeDiacritics(str) {
+                if (!str) return '';
+                return str.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .replace(/đ/g, "d")
+                          .replace(/Đ/g, "D");
+            }
+
             function filterMedicines() {
-                const query = document.getElementById('medSearchInput').value.toLowerCase().trim();
+                const query = removeDiacritics(document.getElementById('medSearchInput').value.toLowerCase().trim());
                 const suggestions = document.getElementById('medSuggestions');
                 suggestions.innerHTML = '';
                 
@@ -256,7 +264,7 @@
                     return;
                 }
                 
-                const matches = allMedicines.filter(m => m.name.toLowerCase().includes(query));
+                const matches = allMedicines.filter(m => removeDiacritics(m.name.toLowerCase()).includes(query));
                 
                 if (matches.length === 0) {
                     suggestions.innerHTML = '<div style="padding: 12px; color: var(--text-muted); font-style: italic; font-size: 0.9rem;">Không tìm thấy thuốc nào</div>';

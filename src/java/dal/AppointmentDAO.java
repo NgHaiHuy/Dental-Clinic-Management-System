@@ -331,6 +331,9 @@ public class AppointmentDAO extends DBContext {
     }
 
     public boolean isDoctorBooked(int doctorID, java.sql.Date date, java.sql.Time time, Integer excludeAppointmentID) {
+        if (doctorID <= 0) {
+            return false;
+        }
         String sql = "SELECT COUNT(*) FROM Appointments WHERE DoctorID = ? AND AppointmentDate = ? AND AppointmentTime = ? AND Status IN ('Pending', 'Confirmed', 'Attended')";
         if (excludeAppointmentID != null) {
             sql += " AND AppointmentID <> ?";
@@ -339,6 +342,73 @@ public class AppointmentDAO extends DBContext {
             ps.setInt(1, doctorID);
             ps.setDate(2, date);
             ps.setTime(3, time);
+            if (excludeAppointmentID != null) {
+                ps.setInt(4, excludeAppointmentID);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Overloaded method using String parameters to prevent timezone and formatting mismatch in DB.
+     */
+    public boolean isDoctorBooked(int doctorID, String dateStr, String timeStr, Integer excludeAppointmentID) {
+        if (doctorID <= 0) {
+            return false;
+        }
+        if (timeStr != null && timeStr.length() > 5) {
+            timeStr = timeStr.substring(0, 5);
+        }
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE DoctorID = ? " +
+                     "AND CONVERT(VARCHAR, AppointmentDate, 23) = ? " +
+                     "AND LEFT(CONVERT(VARCHAR, AppointmentTime, 108), 5) = ? " +
+                     "AND Status IN ('Pending', 'Confirmed', 'Attended')";
+        if (excludeAppointmentID != null) {
+            sql += " AND AppointmentID <> ?";
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, doctorID);
+            ps.setString(2, dateStr);
+            ps.setString(3, timeStr);
+            if (excludeAppointmentID != null) {
+                ps.setInt(4, excludeAppointmentID);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Overloaded method using String parameters to prevent timezone and formatting mismatch in DB.
+     */
+    public boolean isCustomerBooked(int customerID, String dateStr, String timeStr, Integer excludeAppointmentID) {
+        if (timeStr != null && timeStr.length() > 5) {
+            timeStr = timeStr.substring(0, 5);
+        }
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE CustomerID = ? " +
+                     "AND CONVERT(VARCHAR, AppointmentDate, 23) = ? " +
+                     "AND LEFT(CONVERT(VARCHAR, AppointmentTime, 108), 5) = ? " +
+                     "AND Status IN ('Pending', 'Confirmed', 'Attended')";
+        if (excludeAppointmentID != null) {
+            sql += " AND AppointmentID <> ?";
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, customerID);
+            ps.setString(2, dateStr);
+            ps.setString(3, timeStr);
             if (excludeAppointmentID != null) {
                 ps.setInt(4, excludeAppointmentID);
             }
@@ -365,6 +435,154 @@ public class AppointmentDAO extends DBContext {
             if (excludeAppointmentID != null) {
                 ps.setInt(4, excludeAppointmentID);
             }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    public int getTodayAppointmentsCount() {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE AppointmentDate = CAST(GETDATE() AS DATE)";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public int getTodayCheckedInCount() {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE AppointmentDate = CAST(GETDATE() AS DATE) AND Status = 'Attended'";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public int getPendingCheckInCount() {
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE AppointmentDate = CAST(GETDATE() AS DATE) AND Status IN ('Pending', 'Confirmed')";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    public List<Appointment> getTodayAppointments() {
+        List<Appointment> list = new ArrayList<>();
+        String sql = "SELECT a.AppointmentID, a.CustomerID, a.DoctorID, a.AppointmentDate, a.AppointmentTime, a.Status, a.Notes, "
+                   + "c.FullName AS CustomerName, c.Phone AS CustomerPhone, d.FullName AS DoctorName "
+                   + "FROM Appointments a "
+                   + "INNER JOIN Users c ON a.CustomerID = c.UserID "
+                   + "LEFT JOIN Users d ON a.DoctorID = d.UserID "
+                   + "WHERE a.AppointmentDate = CAST(GETDATE() AS DATE) "
+                   + "ORDER BY a.AppointmentTime ASC";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Appointment app = new Appointment();
+                app.setAppointmentID(rs.getInt("AppointmentID"));
+                app.setCustomerID(rs.getInt("CustomerID"));
+                int docId = rs.getInt("DoctorID");
+                app.setDoctorID(rs.wasNull() ? null : docId);
+                app.setAppointmentDate(rs.getDate("AppointmentDate"));
+                app.setAppointmentTime(rs.getTime("AppointmentTime"));
+                app.setStatus(rs.getString("Status"));
+                app.setNotes(rs.getString("Notes"));
+                app.setCustomerName(rs.getString("CustomerName"));
+                app.setCustomerPhone(rs.getString("CustomerPhone"));
+                app.setDoctorName(rs.getString("DoctorName") != null ? rs.getString("DoctorName") : "Khám tổng quát (General)");
+                list.add(app);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    /**
+     * Reschedule appointment (update date and time).
+     */
+    public boolean rescheduleAppointment(int appointmentID, java.sql.Date date, java.sql.Time time) {
+        String sql = "UPDATE Appointments SET AppointmentDate = ?, AppointmentTime = ? WHERE AppointmentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDate(1, date);
+            ps.setTime(2, time);
+            ps.setInt(3, appointmentID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Check if a time slot is already booked by any active appointment.
+     * Overloaded string-based method to prevent timezone conversion mismatches.
+     */
+    public boolean isSlotBooked(String dateStr, String timeStr, Integer excludeAppointmentID) {
+        if (timeStr != null && timeStr.length() > 5) {
+            timeStr = timeStr.substring(0, 5);
+        }
+        String sql = "SELECT COUNT(*) FROM Appointments WHERE " +
+                     "CONVERT(VARCHAR, AppointmentDate, 23) = ? " +
+                     "AND LEFT(CONVERT(VARCHAR, AppointmentTime, 108), 5) = ? " +
+                     "AND Status IN ('Pending', 'Confirmed', 'Attended')";
+        if (excludeAppointmentID != null) {
+            sql += " AND AppointmentID <> ?";
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, dateStr);
+            ps.setString(2, timeStr);
+            if (excludeAppointmentID != null) {
+                ps.setInt(3, excludeAppointmentID);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Check if there is an active appointment with the same customer name, phone, date, and time.
+     * Overloaded string-based method to prevent timezone conversion mismatches.
+     */
+    public boolean isDuplicateAppointment(String fullName, String phone, String dateStr, String timeStr) {
+        if (timeStr != null && timeStr.length() > 5) {
+            timeStr = timeStr.substring(0, 5);
+        }
+        String sql = "SELECT COUNT(*) FROM Appointments a " +
+                     "INNER JOIN Users u ON a.CustomerID = u.UserID " +
+                     "WHERE u.FullName = ? AND u.Phone = ? " +
+                     "AND CONVERT(VARCHAR, a.AppointmentDate, 23) = ? " +
+                     "AND LEFT(CONVERT(VARCHAR, a.AppointmentTime, 108), 5) = ? " +
+                     "AND a.Status IN ('Pending', 'Confirmed', 'Attended')";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fullName);
+            ps.setString(2, phone);
+            ps.setString(3, dateStr);
+            ps.setString(4, timeStr);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

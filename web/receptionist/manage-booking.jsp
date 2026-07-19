@@ -32,6 +32,28 @@
                 from { opacity: 0; transform: scale(0.95); }
                 to { opacity: 1; transform: scale(1); }
             }
+            .status-pill {
+                padding: 6px 14px;
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                background-color: #ffffff;
+                color: var(--text-secondary);
+                font-size: 0.88rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            .status-pill:hover {
+                background-color: #f1f5f9;
+                color: var(--accent-teal);
+                border-color: var(--accent-teal);
+            }
+            .status-pill.active {
+                background-color: var(--accent-teal);
+                color: #ffffff;
+                border-color: var(--accent-teal);
+                box-shadow: 0 4px 6px -1px rgba(20, 184, 166, 0.2);
+            }
         </style>
     </head>
     <body>
@@ -50,9 +72,14 @@
 
         <!-- CONTAINER -->
         <div class="dashboard-container">
-            <h1 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin-bottom: 30px;">
-                📋 Danh Sách Lịch Hẹn Đặt (Lễ Tân Tiếp Đón)
-            </h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+                <h1 style="font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 800; color: var(--accent-navy); margin: 0;">
+                    📋 Danh Sách Lịch Hẹn Đặt (Lễ Tân Tiếp Đón)
+                </h1>
+                <a href="<%= request.getContextPath() %>/receptionist/manage-booking?action=new" class="btn btn-primary" style="padding: 10px 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-plus"></i> Đặt lịch tại quầy
+                </a>
+            </div>
             
             <% if (successMessage != null) { %>
                 <div class="alert alert-success">
@@ -65,6 +92,32 @@
                     <%= errorMessage %>
                 </div>
             <% } %>
+
+            <!-- BỘ LỌC VÀ TÌM KIẾM -->
+            <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 20px; margin-bottom: 25px;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: end; margin-bottom: 15px;">
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label" style="margin-bottom: 6px;"><i class="fas fa-search" style="color: var(--accent-teal);"></i> Tìm kiếm bệnh nhân</label>
+                        <input type="text" id="searchQuery" class="form-control" placeholder="Nhập tên khách hàng hoặc số điện thoại để tìm kiếm..." oninput="filterAppointments()">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label" style="margin-bottom: 6px;"><i class="fas fa-calendar-alt" style="color: var(--accent-teal);"></i> Lọc theo ngày hẹn</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="date" id="filterDate" class="form-control" onchange="filterAppointments()">
+                            <button class="btn btn-secondary" onclick="clearFilters()" style="padding: 10px 15px; font-size: 0.9rem;" title="Xóa lọc"><i class="fas fa-undo"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px dashed var(--border-color); padding-top: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-secondary); margin-right: 10px;">Trạng thái lịch hẹn:</span>
+                    <button type="button" class="status-pill active" onclick="setStatusFilter('All', this)">Tất cả</button>
+                    <button type="button" class="status-pill" onclick="setStatusFilter('Pending', this)">Chờ duyệt</button>
+                    <button type="button" class="status-pill" onclick="setStatusFilter('Confirmed', this)">Đã xác nhận</button>
+                    <button type="button" class="status-pill" onclick="setStatusFilter('Attended', this)">Đã đến khám</button>
+                    <button type="button" class="status-pill" onclick="setStatusFilter('Cancelled', this)">Đã hủy</button>
+                </div>
+            </div>
             
             <div class="table-responsive">
                 <table class="custom-table">
@@ -176,6 +229,8 @@
                                                     <button type="submit" class="action-btn-confirm"><i class="fas fa-check"></i> Xác nhận</button>
                                                 </form>
                                                 
+                                                <button type="button" class="action-btn-reschedule" onclick="openRescheduleModal('<%= app.getAppointmentID() %>', '<%= app.getAppointmentDate() %>', '<%= app.getAppointmentTime() %>')"><i class="fas fa-calendar-alt"></i> Đổi lịch</button>
+                                                
                                                 <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
                                                     <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                     <input type="hidden" name="action" value="cancel">
@@ -185,8 +240,10 @@
                                                 <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
                                                     <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
                                                     <input type="hidden" name="action" value="checkin">
-                                                    <button type="submit" class="action-btn-checkin"><i class="fas fa-user-check"></i> Check-in</button>
+                                                    <button type="submit" class="action-btn-checkin" onclick="return confirm('Bạn có chắc muốn check-in lịch này?');"><i class="fas fa-user-check"></i> Check-in</button>
                                                 </form>
+                                                
+                                                <button type="button" class="action-btn-reschedule" onclick="openRescheduleModal('<%= app.getAppointmentID() %>', '<%= app.getAppointmentDate() %>', '<%= app.getAppointmentTime() %>')"><i class="fas fa-calendar-alt"></i> Đổi lịch</button>
                                                 
                                                 <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" style="margin: 0;">
                                                     <input type="hidden" name="appointmentID" value="<%= app.getAppointmentID() %>">
@@ -281,6 +338,58 @@
                 <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background-color: #f8fafc;">
                     <button onclick="closeAppointmentModal()" class="btn btn-secondary" style="padding: 8px 20px; font-weight: 600;">Đóng</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- RESCHEDULE APPOINTMENT MODAL -->
+        <div id="rescheduleModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background-color: #ffffff; border-radius: 16px; max-width: 450px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #e2e8f0; animation: modalFadeIn 0.3s ease-out;">
+                <!-- Close Button -->
+                <button onclick="closeRescheduleModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; transition: color 0.2s;"><i class="fas fa-times"></i></button>
+                
+                <!-- Modal Header -->
+                <div style="padding: 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 16px; background-color: #f8fafc;">
+                    <span style="font-size: 2.2rem;">🔄</span>
+                    <div>
+                        <h2 style="font-family: var(--font-outfit); font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">Đổi Lịch Hẹn</h2>
+                        <span id="rescheduleAppIdLabel" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Lịch hẹn #...</span>
+                    </div>
+                </div>
+
+                <form action="<%= request.getContextPath() %>/receptionist/manage-booking" method="POST" onsubmit="return validateRescheduleForm()" style="margin: 0;">
+                    <input type="hidden" name="action" value="reschedule">
+                    <input type="hidden" name="appointmentID" id="rescheduleAppId">
+                    
+                    <!-- Modal Body -->
+                    <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Chọn ngày khám mới <span style="color: red;">*</span></label>
+                            <input type="date" name="newDate" id="rescheduleDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Chọn giờ khám mới <span style="color: red;">*</span></label>
+                            <select name="newTime" id="rescheduleTime" class="form-select" required>
+                                <option value="">-- Chọn giờ hẹn --</option>
+                                <option value="08:00">08:00</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="13:00">13:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background-color: #f8fafc;">
+                        <button type="button" onclick="closeRescheduleModal()" class="btn btn-secondary" style="padding: 8px 16px; font-weight: 600;">Hủy</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-weight: 600;">Xác Nhận</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -427,11 +536,121 @@
 
             // Close modal when clicking outside content
             window.addEventListener('click', function(e) {
-                const modal = document.getElementById('appointmentModal');
-                if (e.target === modal) {
+                const detailsModal = document.getElementById('appointmentModal');
+                const rescheduleModal = document.getElementById('rescheduleModal');
+                if (e.target === detailsModal) {
                     closeAppointmentModal();
                 }
+                if (e.target === rescheduleModal) {
+                    closeRescheduleModal();
+                }
             });
+
+            function openRescheduleModal(appointmentID, currentDate, currentTime) {
+                document.getElementById('rescheduleAppId').value = appointmentID;
+                document.getElementById('rescheduleAppIdLabel').innerText = 'Lịch hẹn #' + appointmentID;
+                
+                document.getElementById('rescheduleDate').value = currentDate;
+                document.getElementById('rescheduleTime').value = currentTime.substring(0, 5);
+                
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('rescheduleDate').min = todayStr;
+                
+                document.getElementById('rescheduleModal').style.display = 'flex';
+            }
+            
+            function closeRescheduleModal() {
+                document.getElementById('rescheduleModal').style.display = 'none';
+            }
+
+            function validateRescheduleForm() {
+                const dateStr = document.getElementById('rescheduleDate').value;
+                const timeStr = document.getElementById('rescheduleTime').value;
+                
+                if (!dateStr || !timeStr) {
+                    alert('Vui lòng chọn đầy đủ ngày và giờ!');
+                    return false;
+                }
+                
+                const selectedDateTime = new Date(dateStr + 'T' + timeStr);
+                const now = new Date();
+                
+                if (selectedDateTime < now) {
+                    alert('Thời gian hẹn khám mới không được ở trong quá khứ!');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            function removeDiacritics(str) {
+                if (!str) return '';
+                return str.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .replace(/đ/g, "d")
+                          .replace(/Đ/g, "D");
+            }
+
+            // Realtime search, date, and status filtering logic
+            let currentStatusFilter = 'All';
+
+            function setStatusFilter(status, btnElement) {
+                currentStatusFilter = status;
+                
+                // Toggle active class on pills
+                const pills = document.querySelectorAll('.status-pill');
+                pills.forEach(pill => pill.classList.remove('active'));
+                
+                if (btnElement) {
+                    btnElement.classList.add('active');
+                } else {
+                    // Fallback to highlight 'All' pill if no button passed (e.g. on clear)
+                    const allPill = Array.from(pills).find(p => p.textContent.trim() === 'Tất cả');
+                    if (allPill) allPill.classList.add('active');
+                }
+                
+                filterAppointments();
+            }
+
+            function filterAppointments() {
+                const searchVal = removeDiacritics(document.getElementById('searchQuery').value.toLowerCase());
+                const dateVal = document.getElementById('filterDate').value;
+                const rows = document.querySelectorAll('.appointment-row');
+                
+                rows.forEach(row => {
+                    const name = removeDiacritics((row.getAttribute('data-customer-name') || '').toLowerCase());
+                    const phone = row.getAttribute('data-customer-phone') || '';
+                    const date = row.getAttribute('data-date'); // yyyy-MM-dd
+                    const status = row.getAttribute('data-status') || '';
+                    
+                    let matchesSearch = true;
+                    if (searchVal) {
+                        matchesSearch = name.indexOf(searchVal) > -1 || phone.indexOf(searchVal) > -1;
+                    }
+                    
+                    let matchesDate = true;
+                    if (dateVal) {
+                        matchesDate = (date === dateVal);
+                    }
+                    
+                    let matchesStatus = true;
+                    if (currentStatusFilter !== 'All') {
+                        matchesStatus = (status.toLowerCase() === currentStatusFilter.toLowerCase());
+                    }
+                    
+                    if (matchesSearch && matchesDate && matchesStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            function clearFilters() {
+                document.getElementById('searchQuery').value = '';
+                document.getElementById('filterDate').value = '';
+                setStatusFilter('All');
+            }
         </script>
     </body>
 </html>

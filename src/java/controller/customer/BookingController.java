@@ -126,8 +126,19 @@ public class BookingController extends HttpServlet {
                 AppointmentDAO appDAO = new AppointmentDAO();
                 
                 // 1. Check if customer themselves already has an active appointment at this time
-                if (appDAO.isCustomerBooked(loggedUser.getUserID(), sqlDate, sqlTime, excludeID)) {
+                if (appDAO.isCustomerBooked(loggedUser.getUserID(), dateStr, timeStr, excludeID)) {
                     session.setAttribute("errorMessage", "Bạn đã đăng ký một lịch hẹn khác vào khung giờ này rồi.");
+                    if (editIDStr != null && !editIDStr.trim().isEmpty()) {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/customer/booking");
+                    }
+                    return;
+                }
+                
+                // 1b. Check if there is another appointment with the same FullName and Phone at this time
+                if (appDAO.isDuplicateAppointment(loggedUser.getFullName(), loggedUser.getPhone(), dateStr, timeStr)) {
+                    session.setAttribute("errorMessage", "Đã có một lịch hẹn trùng khớp Họ tên và SĐT vào khung giờ này trong hệ thống.");
                     if (editIDStr != null && !editIDStr.trim().isEmpty()) {
                         response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);
                     } else {
@@ -138,7 +149,7 @@ public class BookingController extends HttpServlet {
                 
                 // 2. Check if the specified doctor is already booked by another patient at this time
                 if (doctorID != null && doctorID > 0) {
-                    if (appDAO.isDoctorBooked(doctorID, sqlDate, sqlTime, excludeID)) {
+                    if (appDAO.isDoctorBooked(doctorID, dateStr, timeStr, excludeID)) {
                         session.setAttribute("errorMessage", "Bác sĩ đã có lịch hẹn với bệnh nhân khác vào khung giờ này.");
                         if (editIDStr != null && !editIDStr.trim().isEmpty()) {
                             response.sendRedirect(request.getContextPath() + "/customer/booking?editID=" + editIDStr);

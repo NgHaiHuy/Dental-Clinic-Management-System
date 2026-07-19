@@ -13,6 +13,7 @@ public class InvoiceDetail {
     
     // Optional helper fields for rendering in UI
     private String itemName; 
+    private int stockQuantity;
 
     // Constructors
     public InvoiceDetail() {
@@ -25,6 +26,14 @@ public class InvoiceDetail {
         this.itemID = itemID;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public int getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(int stockQuantity) {
+        this.stockQuantity = stockQuantity;
     }
 
     // Getters and Setters

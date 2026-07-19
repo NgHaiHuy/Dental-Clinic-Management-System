@@ -5,6 +5,7 @@
     List<InvoiceDetail> details = (List<InvoiceDetail>) request.getAttribute("invoiceDetails");
     String doctorName = (String) request.getAttribute("doctorName");
     String customerName = (String) request.getAttribute("customerName");
+    String paymentMethod = (String) request.getAttribute("paymentMethod");
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 %>
@@ -281,6 +282,7 @@
                     <h3>Thông tin ca khám</h3>
                     <p>Bác sĩ điều trị: <strong><%= doctorName %></strong></p>
                     <p>Mã hồ sơ khám: #<%= invoice.getRecordID() %></p>
+                    <p>Hình thức: <strong><%= "Cash".equals(paymentMethod) ? "💵 Tiền mặt" : ("Bank Transfer".equals(paymentMethod) ? "🏦 Chuyển khoản" : ("Credit Card".equals(paymentMethod) ? "💳 Thẻ tín dụng" : paymentMethod)) %></strong></p>
                 </div>
             </div>
 

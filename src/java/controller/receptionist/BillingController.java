@@ -130,7 +130,7 @@ public class BillingController extends HttpServlet {
 
         // Fetch staffID from session if logged in, or default to 1 (Admin/Staff)
         int staffID = 1; 
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) request.getSession().getAttribute("loggedInUser");
         if (user != null) {
             staffID = user.getUserID();
         }
@@ -202,7 +202,23 @@ public class BillingController extends HttpServlet {
 
             boolean success = invoiceDAO.processBilling(invoice, details, payment);
             if (success) {
-                request.getSession().setAttribute("successMessage", "Thanh toán thành công!");
+                // Get customer phone and name to send confirmation SMS
+                String[] customerDetails = invoiceDAO.getCustomerDetailsByRecordID(recordID);
+                String customerName = customerDetails[0];
+                String customerPhone = customerDetails[1];
+                
+                System.out.println("==================================================");
+                System.out.println("[BILLING SUCCESS] Record ID: " + recordID + ", Customer: " + customerName + ", Phone: " + customerPhone);
+                
+                if (customerPhone != null && !customerPhone.trim().isEmpty()) {
+                    String smsContent = "Cam on Quy khach " + customerName + " da tin tuong va su dung dich vu tai Nha Khoa SmileCare. Hoa don cua Quy khach da thanh toan thanh cong voi tong so tien: " + String.format("%,.0f", totalAmount) + " VND. Kinh chuc Quy khach luon co nu cuoi toa sang va khoe manh!";
+                    service.SMSService.sendSMS(customerPhone, smsContent);
+                } else {
+                    System.out.println("[SMS WARNING] Khach hang khong co so dien thoai. Khong the gui SMS.");
+                }
+                System.out.println("==================================================");
+                
+                request.getSession().setAttribute("successMessage", "Thanh toán thành công và đã gửi tin nhắn xác nhận cảm ơn đến khách hàng!");
                 response.sendRedirect(request.getContextPath() + "/receptionist/billing?action=invoice&recordID=" + recordID);
             } else {
                 request.getSession().setAttribute("errorMessage", "Thanh toán thất bại. Vui lòng thử lại.");
@@ -255,6 +271,9 @@ public class BillingController extends HttpServlet {
             request.setAttribute("invoiceDetails", detailsWithNames);
             request.setAttribute("doctorName", names[0]);
             request.setAttribute("customerName", names[1]);
+            
+            String paymentMethod = invoiceDAO.getPaymentMethodByInvoiceID(invoice.getInvoiceID());
+            request.setAttribute("paymentMethod", paymentMethod);
 
             request.getRequestDispatcher("/receptionist/invoice-print.jsp").forward(request, response);
         } catch (NumberFormatException e) {

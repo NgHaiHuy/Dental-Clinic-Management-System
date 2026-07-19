@@ -528,4 +528,46 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
+    /**
+     * Tìm khách hàng (RoleID = 4) theo số điện thoại.
+     */
+    public User getCustomerByPhone(String phone) {
+        String sql = "SELECT UserID, Username, Password, FullName, Phone, Email, RoleID FROM Users WHERE Phone = ? AND RoleID = 4";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    /**
+     * Tạo tài khoản mới cho khách vãng lai và trả về UserID vừa tạo.
+     */
+    public int createWalkInCustomer(String fullName, String phone, String email) {
+        String sql = "INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES (?, '123', ?, ?, ?, 4)";
+        String username = "walkin_" + (phone != null && !phone.trim().isEmpty() ? phone.trim() : String.valueOf(System.currentTimeMillis()));
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, username);
+            ps.setString(2, fullName);
+            ps.setString(3, phone);
+            ps.setString(4, email);
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
 }

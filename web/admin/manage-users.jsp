@@ -697,13 +697,21 @@
         });
     });
 
+    function removeDiacritics(str) {
+        if (!str) return '';
+        return str.normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .replace(/Đ/g, "D");
+    }
+
     // Filter table
     function filterTable() {
-        const search = document.getElementById('searchInput').value.toLowerCase();
+        const search = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
         const role   = document.getElementById('roleFilter').value.toLowerCase();
         const rows   = document.querySelectorAll('#userTable tbody tr');
         rows.forEach(function(row) {
-            const text     = row.textContent.toLowerCase();
+            const text     = removeDiacritics(row.textContent.toLowerCase());
             const badgeEl  = row.querySelector('.badge');
             const roleName = badgeEl ? badgeEl.dataset.role.toLowerCase() : '';
             const matchSearch = text.includes(search);

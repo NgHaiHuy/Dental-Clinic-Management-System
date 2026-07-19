@@ -101,9 +101,14 @@
                 </div>
             </div>
 
-            <div class="dashboard-grid">
-                <!-- Left Pane: Services and Medicines lists -->
-                <main class="glass-card">
+            <form action="<%= request.getContextPath() %>/receptionist/billing" method="POST">
+                <input type="hidden" name="action" value="pay">
+                <input type="hidden" name="recordID" value="<%= record.getRecordID() %>">
+                <input type="hidden" name="totalAmount" id="formTotalAmount" value="<%= totalAmount %>">
+
+                <div class="dashboard-grid">
+                    <!-- Left Pane: Services and Medicines lists -->
+                    <main class="glass-card">
                     <!-- Services Sub-Table -->
                     <div class="card-title" style="font-size: 1.25rem; margin-bottom: 15px; color: var(--accent-blue);">
                         1. Dịch vụ nha khoa thực hiện
@@ -168,6 +173,15 @@
                                             <td class="service-name-cell">
                                                 <%= m.getItemName() %>
                                                 <input type="hidden" name="price_<%= m.getItemID() %>" value="<%= m.getPrice() %>">
+                                                <% if (m.getStockQuantity() < m.getQuantity()) { %>
+                                                    <span style="display: block; font-size: 0.75rem; color: #ef4444; font-weight: 600; margin-top: 3px;">
+                                                        ⚠️ Thiếu hàng (Kho còn: <%= m.getStockQuantity() %>)
+                                                    </span>
+                                                <% } else { %>
+                                                    <span style="display: block; font-size: 0.75rem; color: #10b981; font-weight: 500; margin-top: 3px;">
+                                                        ✓ Đủ hàng (Kho còn: <%= m.getStockQuantity() %>)
+                                                    </span>
+                                                <% } %>
                                             </td>
                                             <td style="text-align: center;">
                                                 <input type="number" name="qty_<%= m.getItemID() %>" id="qty_<%= m.getItemID() %>" value="<%= m.getQuantity() %>" min="1" max="<%= m.getQuantity() %>" oninput="calculateTotal()" onchange="calculateTotal()" class="form-control" style="width: 75px; display: inline-block; padding: 4px 8px; text-align: center;">
@@ -197,18 +211,24 @@
                         </div>
                     </div>
 
-                    <form action="<%= request.getContextPath() %>/receptionist/billing" method="POST">
-                        <input type="hidden" name="action" value="pay">
-                        <input type="hidden" name="recordID" value="<%= record.getRecordID() %>">
-                        <input type="hidden" name="totalAmount" id="formTotalAmount" value="<%= totalAmount %>">
-
                         <div class="form-group">
                             <label class="form-label">Phương Thức Thanh Toán</label>
-                            <select name="paymentMethod" class="form-select" required>
+                            <select name="paymentMethod" id="paymentMethodSelect" class="form-select" required onchange="togglePaymentQR()">
                                 <option value="Cash" selected>💵 Tiền mặt (Cash)</option>
                                 <option value="Bank Transfer">🏦 Chuyển khoản ngân hàng (Bank Transfer)</option>
                                 <option value="Credit Card">💳 Thẻ tín dụng (Credit Card)</option>
                             </select>
+                        </div>
+
+                        <!-- QR Code box for Bank Transfer -->
+                        <div id="bankTransferQRBox" style="display: none; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; background-color: #fafafa; margin-top: 15px; text-align: center;">
+                            <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;">Quét mã QR để chuyển khoản</div>
+                            <img id="qrCodeImg" src="" style="max-width: 160px; height: auto; border: 1px solid #ddd; background: white; padding: 5px; border-radius: 4px; display: inline-block;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+                                Techcombank - VU QUANG HUY<br>
+                                Số TK: <strong>882668686688</strong><br>
+                                Tổng tiền: <strong id="qrTotalAmount">0</strong> đ
+                            </div>
                         </div>
 
                         <div class="form-group" style="margin-top: 25px;">
@@ -222,9 +242,9 @@
                             </svg>
                             Xác nhận Thanh toán & In hóa đơn
                         </button>
-                    </form>
                 </aside>
             </div>
+        </form>
         </div>
 
         <script>
@@ -264,6 +284,27 @@
                 // Update text display and form input
                 document.getElementById('displayTotalAmount').innerText = formatNumber(total) + " đ";
                 document.getElementById('formTotalAmount').value = total;
+                
+                // Keep bank transfer QR updated if active
+                togglePaymentQR();
+            }
+
+            function togglePaymentQR() {
+                const methodSelect = document.getElementById('paymentMethodSelect');
+                if (!methodSelect) return;
+                const method = methodSelect.value;
+                const qrBox = document.getElementById('bankTransferQRBox');
+                const total = document.getElementById('formTotalAmount').value;
+                
+                if (method === 'Bank Transfer') {
+                    const qrImg = document.getElementById('qrCodeImg');
+                    const recordID = '<%= record.getRecordID() %>';
+                    qrImg.src = "https://img.vietqr.io/image/TCB-882668686688-compact.png?amount=" + total + "&addInfo=Thanh%20Toan%20Record%20" + recordID;
+                    document.getElementById('qrTotalAmount').innerText = formatNumber(parseFloat(total));
+                    qrBox.style.display = 'block';
+                } else {
+                    qrBox.style.display = 'none';
+                }
             }
 
             function formatNumber(num) {
