@@ -67,7 +67,7 @@
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
                 <a href="<%= request.getContextPath() %>/customer/booking">Đặt lịch hẹn</a>
                 <a href="<%= request.getContextPath() %>/customer/history">Xem lịch đã đặt</a>
-                <a href="<%= request.getContextPath() %>/customer/profile" style="color: var(--primary); font-weight: 700;">Hồ sơ cá nhân</a>
+                <a href="<%= request.getContextPath() %>/customer/profile" style="color: #60a5fa; font-weight: 700;">Hồ sơ cá nhân</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>

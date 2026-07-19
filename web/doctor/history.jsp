@@ -59,7 +59,7 @@
             <div class="navbar-menu">
                 <a href="<%= request.getContextPath() %>/">Trang Chủ</a>
                 <a href="<%= request.getContextPath() %>/doctor/checkup">Khám bệnh</a>
-                <a href="<%= request.getContextPath() %>/doctor/history" style="color: var(--primary); font-weight: 700;">Lịch sử khám</a>
+                <a href="<%= request.getContextPath() %>/doctor/history" style="color: #60a5fa; font-weight: 700;">Lịch sử khám</a>
                 <a href="<%= request.getContextPath() %>/auth/logout" class="btn btn-secondary" style="padding: 6px 14px;">Đăng xuất</a>
             </div>
         </nav>
