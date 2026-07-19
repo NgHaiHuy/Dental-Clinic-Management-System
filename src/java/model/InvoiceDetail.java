@@ -1,18 +1,19 @@
 package model;
 
 /**
- * Model class for InvoiceDetails.
+ * Model đại diện từng dòng chi tiết hóa đơn (bảng InvoiceDetails).
+ * Mỗi dòng là 1 dịch vụ hoặc 1 loại thuốc được chọn.
  */
 public class InvoiceDetail {
     private int invoiceDetailID;
     private int invoiceID;
-    private String itemType; // 'SERVICE' or 'MEDICINE'
-    private int itemID; // ServiceID or MedicineID
-    private int quantity;
-    private double price;
+    private String itemType;    // "SERVICE" hoặc "MEDICINE"
+    private int itemID;         // ServiceID hoặc MedicineID tương ứng
+    private int quantity;       // Số lượng
+    private double price;       // Đơn giá tại thời điểm thanh toán
     
-    // Optional helper fields for rendering in UI
-    private String itemName; 
+    // Field hỗ trợ hiển thị trên UI, không lưu vào DB
+    private String itemName;
     private int stockQuantity;
 
     // Constructors

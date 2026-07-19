@@ -18,7 +18,13 @@ import model.Service;
 import model.User;
 
 /**
- * Controller for receptionist/billing staff to process payments and invoicing.
+ * Thu ngân xử lý thanh toán và xuất hóa đơn cho bệnh nhân.
+ * URL: /receptionist/billing
+ *
+ * GET  action=list     → danh sách ca khám chờ thanh toán
+ * GET  action=checkout → trang thanh toán chi tiết
+ * GET  action=invoice  → xem/in hóa đơn
+ * POST action=pay      → xác nhận thanh toán
  */
 @WebServlet(name = "BillingController", urlPatterns = {"/receptionist/billing"})
 public class BillingController extends HttpServlet {
@@ -64,6 +70,7 @@ public class BillingController extends HttpServlet {
         }
     }
 
+    /** Hiển thị danh sách ca khám đã hoàn thành nhưng chưa thanh toán. */
     private void showBillingQueue(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<MedicalRecord> billingQueue = invoiceDAO.getBillingQueue();
@@ -81,9 +88,10 @@ public class BillingController extends HttpServlet {
         }
 
         request.setAttribute("billingQueue", items);
-        request.getRequestDispatcher("/receptionist/billing.jsp").forward(request, response);
+        request.getRequestDispatcher("/receptionist/billing.jsp").forward(request, response);       // Đưa danh sách ca khám chưa thanh toán về billing.jsp
     }
 
+    /** Load trang thanh toán chi tiết: dịch vụ, thuốc kê đơn, tổng tiền tạm tính. */
     private void showCheckoutPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -122,6 +130,7 @@ public class BillingController extends HttpServlet {
         }
     }
 
+    /** Xử lý thanh toán: tính tổng tiền an toàn ở Java, lưu Invoice + InvoiceDetails + Payment vào DB. */
     private void processPayment(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String recordIDStr = request.getParameter("recordID");
@@ -151,7 +160,7 @@ public class BillingController extends HttpServlet {
                 return;
             }
 
-            // Re-fetch services and medicines to insert details and calculate total securely
+            // Tính tổng tiền hoàn toàn ở server, không tin tưởng giá trị từ client gửi lên
             List<Service> services = invoiceDAO.getServicesByAppointment(record.getAppointmentID());
 
             List<InvoiceDetail> details = new ArrayList<>();
@@ -235,6 +244,7 @@ public class BillingController extends HttpServlet {
         }
     }
 
+    /** Hiển thị trang xem và in hóa đơn sau khi thanh toán thành công. */
     private void showInvoicePrintPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -286,9 +296,7 @@ public class BillingController extends HttpServlet {
         }
     }
 
-    /**
-     * Inner helper class to represent billing queue items with names.
-     */
+    /** Lớp helper gom thông tin ca khám + tên bác sĩ + tên bệnh nhân để truyền sang JSP. */
     public static class BillingQueueItem {
         private final MedicalRecord record;
         private final String doctorName;

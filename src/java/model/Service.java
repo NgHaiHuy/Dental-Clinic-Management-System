@@ -1,14 +1,14 @@
 package model;
 
 /**
- * Model class for Services (Dental Clinic Services).
+ * Model đại diện dịch vụ nha khoa (bảng Services trong DB).
  */
 public class Service {
     private int serviceID;
-    private String serviceName;
-    private double price;
-    private String description;
-    private boolean status; // 1: Active, 0: Inactive
+    private String serviceName;     // Tên dịch vụ
+    private double price;           // Đơn giá
+    private String description;     // Mô tả chi tiết
+    private boolean status;         // true = đang hoạt động, false = đã ngưng
 
     // Constructors
     public Service() {

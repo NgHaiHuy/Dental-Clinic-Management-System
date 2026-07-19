@@ -13,7 +13,17 @@ import model.Medicine;
 import model.MedicalSupply;
 
 /**
- * Controller for Managing Medicines and Medical Supplies (Inventory).
+ * Admin quản lý kho thuốc và vật tư y tế (CRUD).
+ * URL: /admin/manage-medicines
+ *
+ * Tham số tab=medicine → quản lý thuốc
+ * Tham số tab=supply   → quản lý vật tư y tế
+ *
+ * GET  action=list   → hiển thị danh sách
+ * GET  action=edit   → form sửa
+ * GET  action=delete → xóa
+ * POST action=add    → thêm mới
+ * POST action=update → cập nhật
  */
 @WebServlet(name = "ManageMedicineController", urlPatterns = {"/admin/manage-medicines"})
 public class ManageMedicineController extends HttpServlet {
@@ -80,6 +90,7 @@ public class ManageMedicineController extends HttpServlet {
         }
     }
 
+    /** Hiển thị danh sách thuốc hoặc vật tư tùy tab, hỗ trợ tìm kiếm theo tên. */
     private void handleList(HttpServletRequest request, HttpServletResponse response, String tab)
             throws ServletException, IOException {
         String searchQuery = request.getParameter("search");
@@ -108,6 +119,7 @@ public class ManageMedicineController extends HttpServlet {
         request.getRequestDispatcher("/admin/manage-medicines.jsp").forward(request, response);
     }
 
+    /** Lấy thông tin mục cần sửa theo ID và đặt vào request để JSP hiển thị form. */
     private void handleShowEditForm(HttpServletRequest request, HttpServletResponse response, String tab)
             throws ServletException, IOException {
         try {
@@ -129,6 +141,7 @@ public class ManageMedicineController extends HttpServlet {
         handleList(request, response, tab);
     }
 
+    /** Xóa thuốc/vật tư: nếu có ràng buộc thì vô hiệu hóa (soft delete). */
     private void handleDelete(HttpServletRequest request, HttpServletResponse response, String tab)
             throws IOException {
         try {
@@ -151,7 +164,7 @@ public class ManageMedicineController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/manage-medicines?tab=" + tab);
     }
 
-    private void handleAdd(HttpServletRequest request, HttpServletResponse response, String tab)
+    private void handleAdd(HttpServletRequest request, HttpServletResponse response, String tab)               // Thêm thuốc mới
             throws IOException, ServletException {
         if ("supply".equals(tab)) {
             String name = request.getParameter("supplyName");
@@ -235,6 +248,7 @@ public class ManageMedicineController extends HttpServlet {
         }
     }
 
+    /** Cập nhật thông tin thuốc hoặc vật tư sau khi Admin sửa form. */
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response, String tab)
             throws IOException, ServletException {
         String idStr = request.getParameter("id");

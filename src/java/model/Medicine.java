@@ -1,16 +1,16 @@
 package model;
 
 /**
- * Model class for Medicines (Dental Clinic Medications).
+ * Model đại diện thuốc nha khoa (bảng Medicines trong DB).
  */
 public class Medicine {
     private int medicineID;
-    private String medicineName;
-    private String unit;
-    private double price;
-    private int stockQuantity;
-    private boolean status; // 1: Active/Selling, 0: Inactive/Not Selling
-    private String imagePath; // Added for medical product images
+    private String medicineName;        // Tên thuốc
+    private String unit;                // Đơn vị: viên, hộp, tuýp, chai...
+    private double price;               // Đơn giá
+    private int stockQuantity;          // Số lượng tồn kho
+    private boolean status;             // true = đang bán, false = ngưng bán
+    private String imagePath;           // Đường dẫn ảnh sản phẩm
 
     // Constructors
     public Medicine() {

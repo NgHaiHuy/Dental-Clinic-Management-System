@@ -11,15 +11,12 @@ import java.util.logging.Logger;
 import model.Medicine;
 
 /**
- * Data Access Object for Medicines.
+ * DAO xử lý CRUD thuốc nha khoa (bảng Medicines).
  */
 public class MedicineDAO extends DBContext {
 
-    /**
-     * Get all medicines from the database.
-     * @return List of medicines
-     */
-    public List<Medicine> getAllMedicines() {
+    /** Lấy toàn bộ thuốc trong kho. */
+    public List<Medicine> getAllMedicines() {           // Lấy danh sách thuốc
         List<Medicine> list = new ArrayList<>();
         String sql = "SELECT MedicineID, MedicineName, Unit, Price, StockQuantity, Status, ImagePath FROM Medicines";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -42,11 +39,7 @@ public class MedicineDAO extends DBContext {
         return list;
     }
 
-    /**
-     * Get medicine by its ID.
-     * @param medicineID The ID of the medicine
-     * @return The Medicine object, or null if not found
-     */
+    /** Lấy thuốc theo MedicineID. Trả null nếu không tìm thấy. */
     public Medicine getMedicineByID(int medicineID) {
         String sql = "SELECT MedicineID, MedicineName, Unit, Price, StockQuantity, Status, ImagePath FROM Medicines WHERE MedicineID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -70,11 +63,7 @@ public class MedicineDAO extends DBContext {
         return null;
     }
 
-    /**
-     * Add a new medicine.
-     * @param m Medicine object to add
-     * @return true if successful, false otherwise
-     */
+    /** Thêm thuốc mới vào DB. Dùng ảnh mặc định nếu imagePath null. */
     public boolean addMedicine(Medicine m) {
         String sql = "INSERT INTO Medicines (MedicineName, Unit, Price, StockQuantity, Status, ImagePath) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -92,11 +81,7 @@ public class MedicineDAO extends DBContext {
         return false;
     }
 
-    /**
-     * Update an existing medicine.
-     * @param m Medicine object with updated values
-     * @return true if successful, false otherwise
-     */
+    /** Cập nhật thông tin thuốc (bao gồm số lượng tồn kho) theo MedicineID. */
     public boolean updateMedicine(Medicine m) {
         String sql = "UPDATE Medicines SET MedicineName = ?, Unit = ?, Price = ?, StockQuantity = ?, Status = ?, ImagePath = ? WHERE MedicineID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -120,7 +105,7 @@ public class MedicineDAO extends DBContext {
      * @param medicineID The ID of the medicine to delete
      * @return true if successful, false otherwise
      */
-    public boolean deleteMedicine(int medicineID) {
+    public boolean deleteMedicine(int medicineID) {                       // Xóa thuốc
         String sqlDelete = "DELETE FROM Medicines WHERE MedicineID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlDelete)) {
             ps.setInt(1, medicineID);
@@ -140,11 +125,7 @@ public class MedicineDAO extends DBContext {
         return false;
     }
 
-    /**
-     * Search medicines by name.
-     * @param txt Search query
-     * @return List of matching medicines
-     */
+    /** Tìm kiếm thuốc theo tên (LIKE %query%). */
     public List<Medicine> searchMedicinesByName(String txt) {
         List<Medicine> list = new ArrayList<>();
         String sql = "SELECT MedicineID, MedicineName, Unit, Price, StockQuantity, Status, ImagePath FROM Medicines WHERE MedicineName LIKE ?";

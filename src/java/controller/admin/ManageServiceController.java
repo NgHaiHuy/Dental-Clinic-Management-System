@@ -11,7 +11,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Service;
 
 /**
- * Controller for Managing Dental Services (CRUD).
+ * Admin quản lý danh mục dịch vụ nha khoa (CRUD).
+ * URL: /admin/manage-services
+ *
+ * GET  action=list   → hiển thị danh sách
+ * GET  action=edit   → form sửa dịch vụ
+ * GET  action=delete → xóa dịch vụ
+ * GET  action=toggle → bật/tắt trạng thái
+ * POST action=add    → thêm dịch vụ mới
+ * POST action=update → cập nhật dịch vụ
  */
 @WebServlet(name = "ManageServiceController", urlPatterns = {"/admin/manage-services"})
 public class ManageServiceController extends HttpServlet {
@@ -70,7 +78,8 @@ public class ManageServiceController extends HttpServlet {
         }
     }
 
-    private void handleListServices(HttpServletRequest request, HttpServletResponse response)
+    /** Đọc danh sách dịch vụ, hỗ trợ tìm kiếm theo tên nếu có query. */
+    private void handleListServices(HttpServletRequest request, HttpServletResponse response)             // Đọc danh sách dịch vụ
             throws ServletException, IOException {
         String searchQuery = request.getParameter("search");
         List<Service> services;
@@ -86,6 +95,7 @@ public class ManageServiceController extends HttpServlet {
         request.getRequestDispatcher("/admin/manage-services.jsp").forward(request, response);
     }
 
+    /** Lấy thông tin dịch vụ theo ID và đặt vào request để JSP hiển thị form sửa. */
     private void handleShowEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -100,6 +110,7 @@ public class ManageServiceController extends HttpServlet {
         handleListServices(request, response);
     }
 
+    /** Đảo trạng thái Active/Inactive của dịch vụ (không xóa hẳn). */
     private void handleToggleStatus(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
@@ -115,6 +126,7 @@ public class ManageServiceController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/manage-services");
     }
 
+    /** Xóa dịch vụ: nếu có ràng buộc FK thì tự động chuyển sang vô hiệu hóa (soft delete). */
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
@@ -131,7 +143,7 @@ public class ManageServiceController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/admin/manage-services");
     }
 
-    private void handleAddService(HttpServletRequest request, HttpServletResponse response)
+    private void handleAddService(HttpServletRequest request, HttpServletResponse response)              // Thêm dịch vụ mới
             throws IOException, ServletException {
         String name = request.getParameter("name");
         String priceStr = request.getParameter("price");
@@ -169,7 +181,7 @@ public class ManageServiceController extends HttpServlet {
         }
     }
 
-    private void handleUpdateService(HttpServletRequest request, HttpServletResponse response)
+    private void handleUpdateService(HttpServletRequest request, HttpServletResponse response)             // Sửa dịch vụ
             throws IOException, ServletException {
         String idStr = request.getParameter("id");
         String name = request.getParameter("name");

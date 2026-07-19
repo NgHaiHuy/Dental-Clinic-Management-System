@@ -4,20 +4,21 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * Model class for MedicalRecords.
+ * Model đại diện bản ghi khám bệnh (bảng MedicalRecords trong DB).
+ * Do bác sĩ tạo sau khi khám xong, là cơ sở để xuất hóa đơn.
  */
 public class MedicalRecord {
-    private int recordID;
-    private int appointmentID;
-    private int doctorID;
-    private String diagnosis;
-    private String treatmentPlan;
-    private Timestamp createdAt;
+    private int recordID;           // Mã bản ghi khám
+    private int appointmentID;      // Liịch hẹn tương ứng
+    private int doctorID;           // Bác sĩ điều trị
+    private String diagnosis;       // Chẩn đoán
+    private String treatmentPlan;   // Phác đồ điều trị
+    private Timestamp createdAt;    // Thời điểm tạo bản ghi
     
-    // Optional helper fields for billing / UI display
-    private String patientName;
-    private String doctorName;
-    private List<PrescriptionDetail> medicines;
+    // Field hỗ trợ hiển thị, không lưu vào DB
+    private String patientName;     // Tên bệnh nhân (để hiển thị)
+    private String doctorName;      // Tên bác sĩ (để hiển thị)
+    private List<PrescriptionDetail> medicines; // Danh sách thuốc kê đơn
 
     // Constructors
     public MedicalRecord() {

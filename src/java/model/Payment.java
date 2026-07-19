@@ -3,15 +3,16 @@ package model;
 import java.sql.Timestamp;
 
 /**
- * Model class for Payments.
+ * Model đại diện giao dịch thanh toán (bảng Payments trong DB).
+ * Mỗi Invoice có đúng 1 Payment tương ứng.
  */
 public class Payment {
     private int paymentID;
-    private int invoiceID;
-    private String paymentMethod;
-    private Timestamp paymentDate;
-    private double amountPaid;
-    private String status; // Completed, Refunded
+    private int invoiceID;              // Liên kết với hóa đơn
+    private String paymentMethod;       // Tiền mặt, chuyển khoản...
+    private Timestamp paymentDate;      // Thời điểm thanh toán
+    private double amountPaid;          // Số tiền thực trả
+    private String status;              // Completed, Refunded
 
     // Constructors
     public Payment() {

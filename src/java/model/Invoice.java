@@ -3,15 +3,15 @@ package model;
 import java.sql.Timestamp;
 
 /**
- * Model class for Invoices.
+ * Model đại diện hóa đơn thanh toán (bảng Invoices trong DB).
  */
 public class Invoice {
-    private int invoiceID;
-    private int recordID;
-    private int staffID;
-    private double totalAmount;
-    private Timestamp createdAt;
-    private String status; // Paid, Unpaid
+    private int invoiceID;          // Mã hóa đơn
+    private int recordID;           // Liên kết với ca khám (MedicalRecords)
+    private int staffID;            // Thu ngân thực hiện thanh toán
+    private double totalAmount;     // Tổng tiền
+    private Timestamp createdAt;    // Thời điểm tạo hóa đơn
+    private String status;          // Paid = đã thanh toán
 
     // Constructors
     public Invoice() {

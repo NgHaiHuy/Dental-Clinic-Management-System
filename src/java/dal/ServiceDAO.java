@@ -11,15 +11,12 @@ import java.util.logging.Logger;
 import model.Service;
 
 /**
- * Data Access Object for Services.
+ * DAO xử lý CRUD dịch vụ nha khoa (bảng Services).
  */
 public class ServiceDAO extends DBContext {
 
-    /**
-     * Get all services from the database.
-     * @return List of services
-     */
-    public List<Service> getAllServices() {
+    /** Lấy toàn bộ dịch vụ. */
+    public List<Service> getAllServices() {                                  // Lấy danh sách dịch vụ
         List<Service> list = new ArrayList<>();
         String sql = "SELECT ServiceID, ServiceName, Price, Description, Status FROM Services";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -40,11 +37,7 @@ public class ServiceDAO extends DBContext {
         return list;
     }
 
-    /**
-     * Get service by its ID.
-     * @param serviceID The ID of the service
-     * @return The Service object, or null if not found
-     */
+    /** Lấy dịch vụ theo ID. Trả null nếu không tìm thấy. */
     public Service getServiceByID(int serviceID) {
         String sql = "SELECT ServiceID, ServiceName, Price, Description, Status FROM Services WHERE ServiceID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -66,11 +59,7 @@ public class ServiceDAO extends DBContext {
         return null;
     }
 
-    /**
-     * Add a new service to the database.
-     * @param s The Service object to add
-     * @return true if successful, false otherwise
-     */
+    /** Thêm dịch vụ mới vào DB. */
     public boolean addService(Service s) {
         String sql = "INSERT INTO Services (ServiceName, Price, Description, Status) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -86,11 +75,7 @@ public class ServiceDAO extends DBContext {
         return false;
     }
 
-    /**
-     * Update an existing service in the database.
-     * @param s The Service object with updated details
-     * @return true if successful, false otherwise
-     */
+    /** Cập nhật thông tin dịch vụ theo ServiceID. */
     public boolean updateService(Service s) {
         String sql = "UPDATE Services SET ServiceName = ?, Price = ?, Description = ?, Status = ? WHERE ServiceID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -114,7 +99,7 @@ public class ServiceDAO extends DBContext {
      * @param serviceID The ID of the service to delete
      * @return true if successful, false otherwise
      */
-    public boolean deleteService(int serviceID) {
+    public boolean deleteService(int serviceID) {                                       // Xóa dịch vụ an toàn
         String sqlDelete = "DELETE FROM Services WHERE ServiceID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlDelete)) {
             ps.setInt(1, serviceID);
@@ -134,11 +119,7 @@ public class ServiceDAO extends DBContext {
         return false;
     }
 
-    /**
-     * Search services by name.
-     * @param txt Search term
-     * @return List of matching services
-     */
+    /** Tìm kiếm dịch vụ theo tên (LIKE %query%). */
     public List<Service> searchServicesByName(String txt) {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT ServiceID, ServiceName, Price, Description, Status FROM Services WHERE ServiceName LIKE ?";

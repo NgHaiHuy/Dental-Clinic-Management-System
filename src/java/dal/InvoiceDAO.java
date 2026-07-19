@@ -18,15 +18,14 @@ import model.Service;
 import model.Medicine;
 
 /**
- * Data Access Object for Invoices and billing operations.
+ * DAO xử lý truy vấn và giao dịch thanh toán (Invoice, InvoiceDetails, Payments).
  */
 public class InvoiceDAO extends DBContext {
 
     /**
-     * Get all completed medical records that do not have a PAID invoice.
-     * @return List of medical records requiring billing
+     * Lấy danh sách ca khám đã hoàn thành nhưng chưa có hóa đơn “Paid”.
      */
-    public List<MedicalRecord> getBillingQueue() {
+    public List<MedicalRecord> getBillingQueue() {      // Lấy danh sách chờ thanh toán
         List<MedicalRecord> list = new ArrayList<>();
         // Records that don't have any invoice, or have an unpaid invoice
         String sql = "SELECT r.RecordID, r.AppointmentID, r.DoctorID, r.Diagnosis, r.TreatmentPlan, r.CreatedAt, " +
@@ -35,7 +34,7 @@ public class InvoiceDAO extends DBContext {
                      "INNER JOIN Users u ON r.DoctorID = u.UserID " +
                      "INNER JOIN Appointments a ON r.AppointmentID = a.AppointmentID " +
                      "INNER JOIN Users c ON a.CustomerID = c.UserID " +
-                     "WHERE r.RecordID NOT IN (SELECT RecordID FROM Invoices WHERE Status = 'Paid')";
+                     "WHERE r.RecordID NOT IN (SELECT RecordID FROM Invoices WHERE Status = 'Paid')";       // Chỉ lấy ca khám RecordID không tồn tại(tức là chưa thanh toán)
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
