@@ -143,7 +143,6 @@ public class BillingController extends HttpServlet {
 
         try {
             int recordID = Integer.parseInt(recordIDStr);
-            double totalAmount = Double.parseDouble(totalAmountStr);
 
             MedicalRecord record = invoiceDAO.getBillingRecordDetails(recordID);
             if (record == null) {
@@ -152,17 +151,11 @@ public class BillingController extends HttpServlet {
                 return;
             }
 
-            // Create Invoice
-            Invoice invoice = new Invoice();
-            invoice.setRecordID(recordID);
-            invoice.setStaffID(staffID);
-            invoice.setTotalAmount(totalAmount);
-            invoice.setStatus("Paid");
-
-            // Re-fetch services and medicines to insert details securely
+            // Re-fetch services and medicines to insert details and calculate total securely
             List<Service> services = invoiceDAO.getServicesByAppointment(record.getAppointmentID());
 
             List<InvoiceDetail> details = new ArrayList<>();
+            double calculatedTotal = 0;
             for (Service s : services) {
                 InvoiceDetail d = new InvoiceDetail();
                 d.setItemType("SERVICE");
@@ -170,9 +163,10 @@ public class BillingController extends HttpServlet {
                 d.setQuantity(1);
                 d.setPrice(s.getPrice());
                 details.add(d);
+                calculatedTotal += s.getPrice();
             }
             
-            // Get selected medicines parameters
+            // Get selected medicines parameters and accumulate price in Java
             String[] selectedMedsArr = request.getParameterValues("selectedMedicines");
             if (selectedMedsArr != null) {
                 for (String medIDStr : selectedMedsArr) {
@@ -189,10 +183,20 @@ public class BillingController extends HttpServlet {
                             d.setQuantity(qty);
                             d.setPrice(price);
                             details.add(d);
+                            calculatedTotal += price * qty;
                         }
                     }
                 }
             }
+
+            double totalAmount = calculatedTotal;
+
+            // Create Invoice
+            Invoice invoice = new Invoice();
+            invoice.setRecordID(recordID);
+            invoice.setStaffID(staffID);
+            invoice.setTotalAmount(totalAmount);
+            invoice.setStatus("Paid");
 
             // Create Payment
             Payment payment = new Payment();
