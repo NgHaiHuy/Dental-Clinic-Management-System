@@ -262,7 +262,7 @@
                 <div class="clinic-info">
                     <h2>Nha Khoa Dental Clinic</h2>
                     <p>Địa chỉ: 123 Cầu Giấy, Hà Nội</p>
-                    <p>Điện thoại: (024) 3756 8888 | Email: contact@dentalclinic.vn</p>
+                    <p>Điện thoại: 0357912161 | Email: contact@dentalclinic.vn</p>
                 </div>
                 <div class="invoice-meta">
                     <h1>HÓA ĐƠN</h1>

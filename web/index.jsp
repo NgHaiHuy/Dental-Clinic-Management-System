@@ -240,7 +240,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-phone-alt" style="color: var(--accent-teal); width: 16px;"></i>
-                            <span><strong>Hotline:</strong> (024) 3756 8888</span>
+                            <span><strong>Hotline:</strong> 0357912161</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-envelope" style="color: var(--accent-teal); width: 16px;"></i>

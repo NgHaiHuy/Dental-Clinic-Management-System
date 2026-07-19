@@ -382,7 +382,7 @@ INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VA
 
 -- Doctor 05
 INSERT INTO Users (Username, Password, FullName, Phone, Email, RoleID) VALUES
-('doctor05', '123', N'BS. Lê Thanh Nghị', '0933444555', 'duc.nm@dental.com', 2);
+('doctor05', '123', N'BS. Lê Thanh Nghị', '0357912161', 'duc.nm@dental.com', 2);
 DECLARE @doc5_id INT = @@IDENTITY;
 INSERT INTO DoctorInfo (DoctorID, Specialization, ExperienceYears, Biography) VALUES
 (@doc5_id, N'Nha chu & Điều trị Hôi miệng', 6, N'Bác sĩ Răng Hàm Mặt, tốt nghiệp loại Giỏi Đại học Y Dược TP.HCM, chuyên điều trị viêm nha chu.');
