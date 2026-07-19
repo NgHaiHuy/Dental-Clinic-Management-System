@@ -69,9 +69,9 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
-                // Validate Phone Number (Vietnamese mobile format: 10 digits starting with 03, 05, 07, 08, 09)
-                if (!phone.trim().matches("^0[35789]\\d{8}$")) {
-                    session.setAttribute("errorMessage", "Số điện thoại không hợp lệ (Phải gồm 10 chữ số và bắt đầu bằng đầu số di động Việt Nam như 09, 03, 07, 08, 05).");
+                // Validate Phone Number (Vietnamese mobile format: 10 digits starting with 03, 08, 09)
+                if (!phone.trim().matches("^0[389]\\d{8}$")) {
+                    session.setAttribute("errorMessage", "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09.");
                     response.sendRedirect(request.getContextPath() + "/customer/profile");
                     return;
                 }

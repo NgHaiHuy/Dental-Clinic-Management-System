@@ -93,9 +93,9 @@ public class AdminUserController extends HttpServlet {
             return;
         }
 
-        // Validate số điện thoại (10 chữ số, đầu số VN)
-        if (!phone.trim().matches("0[35789]\\d{8}")) {
-            request.setAttribute("errorMessage", "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09.");
+        // Validate số điện thoại (10 chữ số, đầu số VN: 03, 08, 09)
+        if (!phone.trim().matches("0[389]\\d{8}")) {
+            request.setAttribute("errorMessage", "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09.");
             doGet(request, response);
             return;
         }
@@ -167,9 +167,9 @@ public class AdminUserController extends HttpServlet {
             int userID = Integer.parseInt(idStr);
             int roleID = Integer.parseInt(roleStr);
 
-            // Validate số điện thoại (10 chữ số, đầu số VN)
-            if (phone == null || !phone.trim().matches("0[35789]\\d{8}")) {
-                request.setAttribute("errorMessage", "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09.");
+            // Validate số điện thoại (10 chữ số, đầu số VN: 03, 08, 09)
+            if (phone == null || !phone.trim().matches("0[389]\\d{8}")) {
+                request.setAttribute("errorMessage", "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09.");
                 doGet(request, response);
                 return;
             }

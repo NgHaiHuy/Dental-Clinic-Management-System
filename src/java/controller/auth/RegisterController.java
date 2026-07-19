@@ -135,8 +135,8 @@ public class RegisterController extends HttpServlet {
         if (phone == null || phone.trim().isEmpty()) {
             return "Số điện thoại không được để trống.";
         }
-        if (!phone.trim().matches("^(0|\\+84)[0-9]{9,10}$")) {
-            return "Số điện thoại không hợp lệ (ví dụ: 0912345678).";
+        if (!phone.trim().matches("^0[389]\\d{8}$")) {
+            return "Số điện thoại không hợp lệ. Phải gồm 10 chữ số và bắt đầu bằng 03, 08 hoặc 09.";
         }
 
         if (email != null && !email.trim().isEmpty()) {
