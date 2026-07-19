@@ -514,7 +514,7 @@
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Số điện thoại *</label>
-                <input type="tel" name="phone" class="modal-input" placeholder="0912345678" required>
+                <input type="tel" name="phone" class="modal-input" placeholder="0912345678" required pattern="0[35789]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09">
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Email</label>
@@ -582,7 +582,7 @@
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Số điện thoại *</label>
-                <input type="tel" name="phone" id="editPhone" class="modal-input" required>
+                <input type="tel" name="phone" id="editPhone" class="modal-input" required pattern="0[35789]\d{8}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 03, 05, 07, 08 hoặc 09">
             </div>
             <div class="modal-form-group">
                 <label class="modal-label">Email</label>
