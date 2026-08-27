@@ -16,7 +16,7 @@ import model.Medicine;
 public class MedicineDAO extends DBContext {
 
     /** Lấy toàn bộ thuốc trong kho. */
-    public List<Medicine> getAllMedicines() {           // Lấy danh sách thuốc
+    public List<Medicine> getAllMedicines() {
         List<Medicine> list = new ArrayList<>();
         String sql = "SELECT MedicineID, MedicineName, Unit, Price, StockQuantity, Status, ImagePath FROM Medicines";
         try (PreparedStatement ps = connection.prepareStatement(sql);

@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.User;
 
 /**
- * AdminUserController - Thành viên 1 (Nghị) phối hợp với Thành viên 6 (Huy)
+ * AdminUserController - Nghị phối hợp với Huy
  *
  * Admin quản lý tài khoản người dùng trong hệ thống.
  * URL: /admin/manage-users

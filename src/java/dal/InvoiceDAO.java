@@ -25,7 +25,7 @@ public class InvoiceDAO extends DBContext {
     /**
      * Lấy danh sách ca khám đã hoàn thành nhưng chưa có hóa đơn “Paid”.
      */
-    public List<MedicalRecord> getBillingQueue() {      // Lấy danh sách chờ thanh toán
+    public List<MedicalRecord> getBillingQueue() {
         List<MedicalRecord> list = new ArrayList<>();
         // Records that don't have any invoice, or have an unpaid invoice
         String sql = "SELECT r.RecordID, r.AppointmentID, r.DoctorID, r.Diagnosis, r.TreatmentPlan, r.CreatedAt, " +

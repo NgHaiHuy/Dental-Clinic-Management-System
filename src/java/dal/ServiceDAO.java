@@ -16,7 +16,7 @@ import model.Service;
 public class ServiceDAO extends DBContext {
 
     /** Lấy toàn bộ dịch vụ. */
-    public List<Service> getAllServices() {                                  // Lấy danh sách dịch vụ
+    public List<Service> getAllServices() {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT ServiceID, ServiceName, Price, Description, Status FROM Services";
         try (PreparedStatement ps = connection.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class ServiceDAO extends DBContext {
      * @param serviceID The ID of the service to delete
      * @return true if successful, false otherwise
      */
-    public boolean deleteService(int serviceID) {                                       // Xóa dịch vụ an toàn
+    public boolean deleteService(int serviceID) {
         String sqlDelete = "DELETE FROM Services WHERE ServiceID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlDelete)) {
             ps.setInt(1, serviceID);
