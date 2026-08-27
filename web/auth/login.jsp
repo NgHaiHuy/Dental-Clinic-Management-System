@@ -1,5 +1,48 @@
+<%--
+================================================================================
+    FILE: login.jsp
+    THÀNH VIÊN 1 (Nghị) - Chức năng: ĐĂNG NHẬP
+================================================================================
+
+    MỤC ĐÍCH:
+    - Trang giao diện cho phép người dùng nhập thông tin đăng nhập (username, password).
+    - Hiển thị thông báo lỗi khi đăng nhập thất bại (sai username/password).
+    - Hiển thị thông báo thành công khi vừa đăng ký xong hoặc vừa đăng xuất.
+    - Cung cấp tài khoản demo để giảng viên/người kiểm thử dễ dàng test hệ thống.
+
+    LUỒNG HOẠT ĐỘNG:
+    1. Người dùng truy cập URL "/auth/login" → LoginController.doGet() được gọi.
+    2. LoginController kiểm tra: nếu đã đăng nhập (session có "loggedInUser") thì redirect
+       về dashboard tương ứng; nếu chưa thì forward đến file login.jsp này.
+    3. Trang login.jsp hiển thị form đăng nhập.
+    4. Người dùng nhập username/password và nhấn "Đăng nhập".
+    5. JavaScript thực hiện CLIENT-SIDE VALIDATION trước khi gửi form:
+       - Kiểm tra username và password không được để trống.
+       - Nếu trống → hiển thị alert() và chặn form gửi đi (e.preventDefault()).
+    6. Nếu validation phía client pass → form gửi POST request đến "/auth/login".
+    7. LoginController.doPost() nhận dữ liệu, thực hiện SERVER-SIDE VALIDATION,
+       truy vấn database qua UserDAO.login(), và xử lý kết quả:
+       - Sai thông tin → forward lại login.jsp kèm errorMessage.
+       - Đúng → lưu User vào session, redirect đến dashboard theo Role.
+
+    TƯƠNG TÁC VỚI CÁC THÀNH PHẦN KHÁC:
+    - LoginController.java: Servlet xử lý logic đăng nhập (GET hiển thị, POST xử lý).
+    - UserDAO.login(): Truy vấn database kiểm tra username/password.
+    - Role.getDashboardUrl(): Trả về URL dashboard tương ứng với roleID của user.
+    - register.jsp: Link "Đăng ký ngay" chuyển hướng đến trang đăng ký.
+    - LogoutController: Khi đăng xuất, redirect về login.jsp?logout=success.
+================================================================================
+--%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="model.User, model.Role"%>
+<%--
+    SCRIPTLET ĐẦU TRANG:
+    - Kiểm tra xem người dùng đã đăng nhập hay chưa (lấy từ session).
+    - Nếu đã đăng nhập: link logo (brand) sẽ dẫn về dashboard tương ứng với role.
+    - Nếu chưa đăng nhập: link logo dẫn về trang chủ ("/").
+    - Mục đích: Cho phép user click vào logo để quay về trang phù hợp.
+--%>
 <%
     User loggedUser = (User) session.getAttribute("loggedInUser");
     String brandUrl = (loggedUser != null) ? (request.getContextPath() + Role.getDashboardUrl(loggedUser.getRoleID())) : (request.getContextPath() + "/");
@@ -268,8 +311,9 @@
 <body>
 
 <div class="auth-wrapper">
-    <!-- LEFT: Branding panel -->
+    <!-- LEFT: Branding panel - Panel bên trái hiển thị thông tin thương hiệu và tính năng -->
     <div class="auth-panel-left">
+        <%-- Link logo: dẫn về dashboard (nếu đã login) hoặc trang chủ (nếu chưa) --%>
         <a href="<%= brandUrl %>" class="brand">
             <div class="brand-icon"><i class="fas fa-tooth"></i></div>
             <div>
@@ -295,12 +339,17 @@
         </div>
     </div>
 
-    <!-- RIGHT: Login form -->
+    <!-- RIGHT: Login form - Panel bên phải chứa form đăng nhập -->
     <div class="auth-panel-right">
         <h1 class="auth-form-title">Đăng nhập</h1>
         <p class="auth-form-subtitle">Chào mừng trở lại! Vui lòng nhập thông tin đăng nhập.</p>
 
-        <%-- Thông báo đăng xuất thành công --%>
+        <%--
+            HIỂN THỊ THÔNG BÁO ĐĂNG XUẤT THÀNH CÔNG:
+            - Khi LogoutController xử lý đăng xuất, nó redirect về: /auth/login?logout=success
+            - Ở đây ta kiểm tra parameter "logout" trong URL.
+            - Nếu giá trị = "success" → hiển thị thông báo xanh (alert-success).
+        --%>
         <% if ("success".equals(request.getParameter("logout"))) { %>
         <div class="alert alert-success">
             <i class="fas fa-check-circle"></i>
@@ -308,7 +357,12 @@
         </div>
         <% } %>
 
-        <%-- Thông báo đăng ký thành công --%>
+        <%--
+            HIỂN THỊ THÔNG BÁO ĐĂNG KÝ THÀNH CÔNG:
+            - Khi RegisterController tạo tài khoản thành công, nó redirect về: /auth/login?registered=success
+            - Ở đây ta kiểm tra parameter "registered" trong URL.
+            - Nếu giá trị = "success" → hiển thị thông báo xanh, hướng dẫn user đăng nhập.
+        --%>
         <% if ("success".equals(request.getParameter("registered"))) { %>
         <div class="alert alert-success">
             <i class="fas fa-check-circle"></i>
@@ -316,7 +370,16 @@
         </div>
         <% } %>
 
-        <%-- Thông báo lỗi --%>
+        <%--
+            HIỂN THỊ THÔNG BÁO LỖI TỪ SERVER:
+            - Khi LoginController.doPost() phát hiện lỗi (input trống, sai mật khẩu...),
+              nó gán errorMessage vào request attribute rồi forward lại login.jsp.
+            - Ở đây ta lấy attribute "errorMessage" từ request.
+            - Nếu có giá trị (không null, không rỗng) → hiển thị thông báo đỏ (alert-danger).
+            - Các lỗi có thể gặp:
+              + "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu." (input trống)
+              + "Tên đăng nhập hoặc mật khẩu không đúng." (xác thực thất bại)
+        --%>
         <% String errorMsg = (String) request.getAttribute("errorMessage");
            if (errorMsg != null && !errorMsg.isEmpty()) { %>
         <div class="alert alert-danger">
@@ -325,11 +388,31 @@
         </div>
         <% } %>
 
+        <%--
+            FORM ĐĂNG NHẬP:
+            - action: gửi POST request đến URL "/auth/login" (LoginController.doPost()).
+            - method="POST": gửi dữ liệu qua request body (bảo mật hơn GET).
+            - novalidate: tắt validation mặc định của trình duyệt, dùng JS validation thay thế.
+            - Khi submit, JavaScript sẽ chặn và kiểm tra trước (client-side validation).
+            - Nếu pass validation → form gửi dữ liệu lên server.
+        --%>
         <form id="loginForm" action="${pageContext.request.contextPath}/auth/login" method="POST" novalidate>
+            <%-- TRƯỜNG TÊN ĐĂNG NHẬP --%>
             <div class="form-group">
                 <label class="form-label" for="username">Tên đăng nhập</label>
                 <div class="input-wrapper">
                     <i class="fas fa-user input-icon"></i>
+                    <%--
+                        GIỮ LẠI GIÁ TRỊ ĐÃ NHẬP (Sticky Form):
+                        - Nếu đăng nhập thất bại, LoginController set attribute "username" = giá trị đã nhập.
+                        - EL expression ${not empty username ? username : ''} sẽ hiển thị lại giá trị cũ.
+                        - Mục đích: User không phải gõ lại username khi chỉ nhập sai password.
+                        
+                        HTML5 VALIDATION:
+                        - required: trình duyệt sẽ không cho submit nếu trường trống
+                          (tuy nhiên đã dùng novalidate nên thuộc tính này chỉ mang tính ngữ nghĩa,
+                           việc validate thực tế do JavaScript đảm nhận).
+                    --%>
                     <input type="text" id="username" name="username" class="form-control"
                            placeholder="Nhập tên đăng nhập"
                            value="${not empty username ? username : ''}"
@@ -337,13 +420,26 @@
                 </div>
             </div>
 
+            <%-- TRƯỜNG MẬT KHẨU --%>
             <div class="form-group">
                 <label class="form-label" for="password">Mật khẩu</label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
+                    <%--
+                        INPUT PASSWORD:
+                        - type="password": ẩn ký tự nhập vào (hiển thị dấu chấm).
+                        - Có nút toggle để chuyển đổi giữa hiện/ẩn mật khẩu.
+                        - Không giữ lại giá trị password khi đăng nhập thất bại (bảo mật).
+                    --%>
                     <input type="password" id="password" name="password" class="form-control"
                            placeholder="Nhập mật khẩu"
                            autocomplete="current-password" required>
+                    <%--
+                        NÚT HIỆN/ẨN MẬT KHẨU:
+                        - type="button": không submit form khi click.
+                        - onclick="togglePassword()": gọi hàm JS để chuyển đổi type input
+                          giữa "password" (ẩn) và "text" (hiện).
+                    --%>
                     <button type="button" class="toggle-password" onclick="togglePassword()" title="Hiện/Ẩn mật khẩu">
                         <i class="fas fa-eye" id="toggleIcon"></i>
                     </button>
@@ -363,12 +459,19 @@
             </button>
         </form>
 
+        <%-- LINK CHUYỂN ĐẾN TRANG ĐĂNG KÝ --%>
         <div class="auth-footer">
             Chưa có tài khoản?
             <a href="${pageContext.request.contextPath}/auth/register">Đăng ký ngay</a>
         </div>
 
-        <!-- Demo account hints -->
+        <%--
+            BẢNG TÀI KHOẢN DEMO:
+            - Cung cấp các tài khoản mẫu để giảng viên/tester có thể nhanh chóng đăng nhập
+              và kiểm tra từng role trong hệ thống.
+            - Nút "Dùng" gọi hàm fillDemo() để tự động điền username/password vào form.
+            - Bao gồm 4 role: Admin, Doctor (Bác sĩ), Staff (Tiếp đón), Customer (Khách hàng).
+        --%>
         <div class="demo-accounts">
             <h4>Tài khoản demo</h4>
             <div class="demo-row">
@@ -396,7 +499,13 @@
 </div>
 
 <script>
-    // Toggle hiển thị/ẩn mật khẩu
+    /**
+     * HÀM TOGGLE HIỆN/ẨN MẬT KHẨU
+     * - Lấy input password và icon toggle.
+     * - Nếu đang ẩn (type="password") → chuyển sang hiện (type="text"), đổi icon thành "fa-eye-slash".
+     * - Nếu đang hiện (type="text") → chuyển sang ẩn (type="password"), đổi icon thành "fa-eye".
+     * - Giúp người dùng kiểm tra lại mật khẩu đã nhập có đúng không.
+     */
     function togglePassword() {
         const input = document.getElementById('password');
         const icon  = document.getElementById('toggleIcon');
@@ -409,14 +518,43 @@
         }
     }
 
-    // Điền tài khoản demo
+    /**
+     * HÀM ĐIỀN TÀI KHOẢN DEMO
+     * - Nhận username và password của tài khoản demo.
+     * - Tự động điền vào 2 input field tương ứng.
+     * - Focus vào trường username để user biết đã điền xong, chỉ cần nhấn Enter hoặc click Đăng nhập.
+     *
+     * @param {string} user - Tên đăng nhập demo (vd: 'admin', 'doctor01')
+     * @param {string} pass - Mật khẩu demo (vd: '123')
+     */
     function fillDemo(user, pass) {
         document.getElementById('username').value = user;
         document.getElementById('password').value = pass;
         document.getElementById('username').focus();
     }
 
-    // Client-side validation trước khi submit
+    /**
+     * ============================================================
+     * CLIENT-SIDE VALIDATION - Kiểm tra dữ liệu phía trình duyệt
+     * ============================================================
+     *
+     * Mục đích:
+     * - Kiểm tra nhanh trước khi gửi request lên server.
+     * - Tránh gửi request không cần thiết, giảm tải cho server.
+     * - Mang lại trải nghiệm phản hồi nhanh cho người dùng.
+     *
+     * Logic kiểm tra:
+     * 1. Lấy giá trị username và password, dùng .trim() để loại bỏ khoảng trắng thừa.
+     * 2. Kiểm tra: nếu username HOẶC password rỗng (sau khi trim):
+     *    - Gọi e.preventDefault() để CHẶN form không gửi đi.
+     *    - Hiển thị alert() thông báo cho người dùng.
+     * 3. Nếu cả hai đều có giá trị → cho phép form submit bình thường → gửi POST đến server.
+     *
+     * LƯU Ý:
+     * - Client-side validation chỉ là lớp bảo vệ đầu tiên, có thể bị bypass (tắt JS).
+     * - Server-side validation (trong LoginController.doPost()) là lớp bảo vệ chính,
+     *   LUÔN kiểm tra lại lần nữa để đảm bảo an toàn.
+     */
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();

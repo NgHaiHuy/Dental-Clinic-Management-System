@@ -1,3 +1,41 @@
+<%--
+================================================================================
+    FILE: register.jsp
+    THÀNH VIÊN 1 (Nghị) - Chức năng: ĐĂNG KÝ TÀI KHOẢN
+================================================================================
+
+    MỤC ĐÍCH:
+    - Trang giao diện cho phép người dùng mới tạo tài khoản Khách hàng (Customer).
+    - Thu thập thông tin: username, họ tên, mật khẩu, xác nhận mật khẩu, SĐT, email.
+    - Hiển thị thanh đo độ mạnh mật khẩu (password strength meter) để khuyến khích
+      người dùng đặt mật khẩu an toàn.
+
+    LUỒNG HOẠT ĐỘNG:
+    1. Người dùng truy cập "/auth/register" → RegisterController.doGet() forward đến file này.
+    2. Trang hiển thị form đăng ký với nhiều lớp validation:
+       a. HTML5 Validation: các thuộc tính required, pattern, oninput trên <input>.
+       b. Client-side Validation (JavaScript): kiểm tra trước khi submit.
+       c. Server-side Validation (Java): kiểm tra lại toàn bộ trong RegisterController.doPost().
+    3. Nếu server phát hiện lỗi → forward lại register.jsp kèm errorMessage + giữ lại dữ liệu đã nhập.
+    4. Nếu thành công → redirect đến /auth/login?registered=success.
+
+    CLIENT-SIDE VALIDATION BAO GỒM:
+    - Kiểm tra tất cả trường bắt buộc (*) không được để trống.
+    - Kiểm tra mật khẩu và xác nhận mật khẩu phải khớp nhau.
+    - Kiểm tra checkbox đồng ý điều khoản phải được tick.
+    - Kiểm tra SĐT qua thuộc tính HTML5 pattern: chỉ cho phép 10 số, bắt đầu bằng 03/08/09.
+    - Thanh password strength meter: đánh giá độ mạnh mật khẩu theo 5 tiêu chí.
+    - Input SĐT chỉ cho phép nhập số (oninput loại bỏ ký tự không phải số).
+
+    TƯƠNG TÁC VỚI CÁC THÀNH PHẦN KHÁC:
+    - RegisterController.java: Servlet nhận POST, validate server-side, gọi UserDAO để tạo tài khoản.
+    - UserDAO.register(): Thêm bản ghi mới vào bảng Users với RoleID = 4 (Customer).
+    - UserDAO.isUsernameExists(): Kiểm tra username đã tồn tại chưa.
+    - UserDAO.isEmailExists(): Kiểm tra email đã tồn tại chưa.
+    - login.jsp: Link "Đăng nhập ngay" chuyển hướng về trang đăng nhập.
+================================================================================
+--%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -161,13 +199,29 @@
 <body>
 
 <div class="register-card">
+    <!-- Header: Logo và tiêu đề trang đăng ký -->
     <div class="card-header">
         <div class="brand-icon"><i class="fas fa-tooth"></i></div>
         <h1 class="card-title">Tạo tài khoản mới</h1>
         <p class="card-subtitle">Đăng ký để đặt lịch khám nha khoa trực tuyến</p>
     </div>
 
-    <%-- Thông báo lỗi --%>
+    <%--
+        HIỂN THỊ THÔNG BÁO LỖI TỪ SERVER:
+        - Khi RegisterController.doPost() phát hiện lỗi validation hoặc lỗi logic,
+          nó set attribute "errorMessage" vào request rồi forward lại register.jsp.
+        - Ở đây ta lấy errorMessage từ request attribute để hiển thị.
+        - Các lỗi có thể gặp:
+          + "Tên đăng nhập không được để trống."
+          + "Tên đăng nhập phải từ 4 đến 50 ký tự."
+          + "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới."
+          + "Mật khẩu phải có ít nhất 3 ký tự."
+          + "Xác nhận mật khẩu không khớp."
+          + "Số điện thoại không hợp lệ."
+          + "Tên đăng nhập đã được sử dụng."
+          + "Email đã được đăng ký."
+          + "Đã xảy ra lỗi hệ thống."
+    --%>
     <% String errorMsg = (String) request.getAttribute("errorMessage");
        if (errorMsg != null && !errorMsg.isEmpty()) { %>
     <div class="alert alert-danger">
@@ -176,14 +230,28 @@
     </div>
     <% } %>
 
+    <%--
+        FORM ĐĂNG KÝ:
+        - action: gửi POST request đến "/auth/register" → RegisterController.doPost().
+        - novalidate: tắt validation mặc định HTML5, sử dụng JavaScript validation thay thế.
+        - Dữ liệu gửi đi gồm: username, fullName, password, confirmPassword, phone, email.
+    --%>
     <form id="registerForm" action="${pageContext.request.contextPath}/auth/register" method="POST" novalidate>
+        <%-- HÀNG 1: Username và Họ tên (hiển thị 2 cột cạnh nhau) --%>
         <div class="form-row">
+            <%-- TRƯỜNG TÊN ĐĂNG NHẬP --%>
             <div class="form-group">
                 <label class="form-label" for="username">
                     Tên đăng nhập <span class="required">*</span>
                 </label>
                 <div class="input-wrapper">
                     <i class="fas fa-user input-icon"></i>
+                    <%--
+                        GIỮ LẠI GIÁ TRỊ ĐÃ NHẬP (Sticky Form):
+                        - Khi đăng ký thất bại, RegisterController set attribute "regUsername".
+                        - EL expression ${not empty regUsername ? regUsername : ''} hiển thị lại giá trị cũ.
+                        - Giúp user không phải nhập lại toàn bộ thông tin.
+                    --%>
                     <input type="text" id="username" name="username" class="form-control"
                            placeholder="vd: nguyenvan"
                            value="${not empty regUsername ? regUsername : ''}"
@@ -191,6 +259,7 @@
                 </div>
             </div>
 
+            <%-- TRƯỜNG HỌ VÀ TÊN --%>
             <div class="form-group">
                 <label class="form-label" for="fullName">
                     Họ và tên <span class="required">*</span>
@@ -205,30 +274,53 @@
             </div>
         </div>
 
+        <%-- TRƯỜNG MẬT KHẨU --%>
         <div class="form-group">
             <label class="form-label" for="password">
                 Mật khẩu <span class="required">*</span>
             </label>
             <div class="input-wrapper">
                 <i class="fas fa-lock input-icon"></i>
+                <%--
+                    INPUT MẬT KHẨU VỚI KIỂM TRA ĐỘ MẠNH:
+                    - oninput="checkPasswordStrength(this.value)": Mỗi khi user gõ ký tự,
+                      hàm JS sẽ được gọi để đánh giá và cập nhật thanh strength meter.
+                    - autocomplete="new-password": gợi ý trình duyệt đây là mật khẩu mới
+                      (không phải mật khẩu đăng nhập cũ).
+                --%>
                 <input type="password" id="password" name="password" class="form-control"
                        placeholder="Ít nhất 3 ký tự"
                        autocomplete="new-password" required
                        oninput="checkPasswordStrength(this.value)">
+                <%-- Nút toggle hiện/ẩn mật khẩu --%>
                 <button type="button" class="toggle-password" onclick="togglePwd('password','icon1')" title="Hiện/Ẩn">
                     <i class="fas fa-eye" id="icon1"></i>
                 </button>
             </div>
+            <%--
+                THANH ĐO ĐỘ MẠNH MẬT KHẨU (Password Strength Meter):
+                - strength-bar: thanh nền xám.
+                - strength-fill: phần tô màu bên trong, chiều rộng thay đổi theo điểm đánh giá.
+                - strength-label: text hiển thị mức độ (Rất yếu / Trung bình / Khá mạnh / Mạnh / Rất mạnh).
+                - Được cập nhật realtime bởi hàm checkPasswordStrength() mỗi khi user gõ.
+            --%>
             <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
             <div class="strength-label" id="strengthLabel"></div>
         </div>
 
+        <%-- TRƯỜNG XÁC NHẬN MẬT KHẨU --%>
         <div class="form-group">
             <label class="form-label" for="confirmPassword">
                 Xác nhận mật khẩu <span class="required">*</span>
             </label>
             <div class="input-wrapper">
                 <i class="fas fa-lock input-icon"></i>
+                <%--
+                    XÁC NHẬN MẬT KHẨU:
+                    - Người dùng phải nhập lại mật khẩu lần nữa để đảm bảo không gõ nhầm.
+                    - JavaScript sẽ so sánh giá trị này với trường password khi submit.
+                    - Server-side cũng kiểm tra lại: password.equals(confirmPassword).
+                --%>
                 <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
                        placeholder="Nhập lại mật khẩu"
                        autocomplete="new-password" required>
@@ -238,13 +330,27 @@
             </div>
         </div>
 
+        <%-- HÀNG 2: Số điện thoại và Email (hiển thị 2 cột cạnh nhau) --%>
         <div class="form-row">
+            <%-- TRƯỜNG SỐ ĐIỆN THOẠI --%>
             <div class="form-group">
                 <label class="form-label" for="phone">
                     Số điện thoại <span class="required">*</span>
                 </label>
                 <div class="input-wrapper">
                     <i class="fas fa-phone input-icon"></i>
+                    <%--
+                        VALIDATE SỐ ĐIỆN THOẠI BẰNG HTML5:
+                        - pattern="0[389]\d{8}": Regex yêu cầu SĐT phải:
+                          + Bắt đầu bằng "0"
+                          + Ký tự thứ 2 là 3, 8, hoặc 9 (đầu số nhà mạng VN phổ biến)
+                          + Tiếp theo là đúng 8 chữ số
+                          + Tổng cộng 10 ký tự
+                        - title: Thông báo hiển thị khi validation HTML5 thất bại.
+                        - oninput="this.value = this.value.replace(/[^0-9]/g, '')":
+                          Lọc realtime - tự động xóa mọi ký tự không phải số khi user gõ.
+                          Ví dụ: user gõ "091a2b3" → tự động thành "09123".
+                    --%>
                     <input type="tel" id="phone" name="phone" class="form-control"
                            placeholder="0912345678"
                            value="${not empty regPhone ? regPhone : ''}"
@@ -252,10 +358,17 @@
                 </div>
             </div>
 
+            <%-- TRƯỜNG EMAIL (không bắt buộc) --%>
             <div class="form-group">
                 <label class="form-label" for="email">Email</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope input-icon"></i>
+                    <%--
+                        EMAIL - TRƯỜNG KHÔNG BẮT BUỘC:
+                        - Không có dấu (*) required, user có thể bỏ trống.
+                        - type="email": trình duyệt sẽ kiểm tra định dạng email cơ bản.
+                        - Server-side cũng validate bằng regex nếu user có nhập.
+                    --%>
                     <input type="email" id="email" name="email" class="form-control"
                            placeholder="email@example.com"
                            value="${not empty regEmail ? regEmail : ''}">
@@ -263,6 +376,11 @@
             </div>
         </div>
 
+        <%--
+            CHECKBOX ĐỒNG Ý ĐIỀU KHOẢN:
+            - Bắt buộc phải tick trước khi đăng ký.
+            - JavaScript kiểm tra: nếu chưa tick → chặn submit và hiển thị alert.
+        --%>
         <div class="terms-check">
             <input type="checkbox" id="agreeTerms" required>
             <label for="agreeTerms">
@@ -277,6 +395,7 @@
         </button>
     </form>
 
+    <%-- LINK CHUYỂN ĐẾN TRANG ĐĂNG NHẬP (nếu đã có tài khoản) --%>
     <div class="form-footer">
         Đã có tài khoản?
         <a href="${pageContext.request.contextPath}/auth/login">Đăng nhập ngay</a>
@@ -284,7 +403,16 @@
 </div>
 
 <script>
-    // Toggle show/hide password
+    /**
+     * HÀM TOGGLE HIỆN/ẨN MẬT KHẨU (dùng chung cho cả 2 trường password)
+     *
+     * @param {string} inputId - ID của input cần toggle (vd: 'password', 'confirmPassword')
+     * @param {string} iconId  - ID của icon tương ứng (vd: 'icon1', 'icon2')
+     *
+     * Cách hoạt động:
+     * - Nếu input đang là type="password" (ẩn) → đổi thành "text" (hiện), icon → fa-eye-slash.
+     * - Ngược lại → đổi về "password" (ẩn), icon → fa-eye.
+     */
     function togglePwd(inputId, iconId) {
         const input = document.getElementById(inputId);
         const icon  = document.getElementById(iconId);
@@ -297,34 +425,92 @@
         }
     }
 
-    // Password strength checker
+    /**
+     * ================================================================
+     * HÀM KIỂM TRA ĐỘ MẠNH MẬT KHẨU (Password Strength Checker)
+     * ================================================================
+     *
+     * Được gọi mỗi khi user gõ ký tự vào trường password (qua sự kiện oninput).
+     *
+     * THUẬT TOÁN ĐÁNH GIÁ:
+     * Điểm (score) bắt đầu từ 0, cộng thêm 1 điểm cho mỗi tiêu chí đạt được:
+     *   +1 điểm: Mật khẩu dài >= 6 ký tự
+     *   +1 điểm: Mật khẩu dài >= 10 ký tự
+     *   +1 điểm: Có cả chữ HOA (A-Z) và chữ thường (a-z)
+     *   +1 điểm: Có chứa chữ số (0-9)
+     *   +1 điểm: Có chứa ký tự đặc biệt (không phải chữ/số)
+     *
+     * BẢNG MỨC ĐỘ (tổng tối đa 5 điểm):
+     *   0 điểm: Không hiển thị gì
+     *   1 điểm: "Rất yếu"    - thanh đỏ 25%
+     *   2 điểm: "Trung bình" - thanh vàng 50%
+     *   3 điểm: "Khá mạnh"   - thanh xanh dương 75%
+     *   4 điểm: "Mạnh"       - thanh xanh lá 90%
+     *   5 điểm: "Rất mạnh"   - thanh xanh đậm 100%
+     *
+     * @param {string} pwd - Giá trị mật khẩu hiện tại
+     */
     function checkPasswordStrength(pwd) {
         const fill  = document.getElementById('strengthFill');
         const label = document.getElementById('strengthLabel');
         let score = 0;
-        if (pwd.length >= 6)                              score++;
-        if (pwd.length >= 10)                             score++;
-        if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd))      score++;
-        if (/[0-9]/.test(pwd))                            score++;
-        if (/[^A-Za-z0-9]/.test(pwd))                    score++;
 
+        // Tính điểm dựa trên 5 tiêu chí
+        if (pwd.length >= 6)                              score++;  // Tiêu chí 1: Đủ dài (>= 6)
+        if (pwd.length >= 10)                             score++;  // Tiêu chí 2: Rất dài (>= 10)
+        if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd))      score++;  // Tiêu chí 3: Có cả hoa và thường
+        if (/[0-9]/.test(pwd))                            score++;  // Tiêu chí 4: Có chữ số
+        if (/[^A-Za-z0-9]/.test(pwd))                    score++;  // Tiêu chí 5: Có ký tự đặc biệt
+
+        // Mảng mức độ: mỗi phần tử chứa % chiều rộng thanh, màu sắc, và text hiển thị
         const levels = [
-            { pct: '0%',   color: '',          text: '' },
-            { pct: '25%',  color: '#ef4444',   text: 'Rất yếu' },
-            { pct: '50%',  color: '#f59e0b',   text: 'Trung bình' },
-            { pct: '75%',  color: '#06b6d4',   text: 'Khá mạnh' },
-            { pct: '90%',  color: '#10b981',   text: 'Mạnh' },
-            { pct: '100%', color: '#059669',   text: 'Rất mạnh' },
+            { pct: '0%',   color: '',          text: '' },           // 0 điểm
+            { pct: '25%',  color: '#ef4444',   text: 'Rất yếu' },   // 1 điểm - Đỏ
+            { pct: '50%',  color: '#f59e0b',   text: 'Trung bình' },// 2 điểm - Vàng
+            { pct: '75%',  color: '#06b6d4',   text: 'Khá mạnh' },  // 3 điểm - Xanh dương
+            { pct: '90%',  color: '#10b981',   text: 'Mạnh' },      // 4 điểm - Xanh lá
+            { pct: '100%', color: '#059669',   text: 'Rất mạnh' },  // 5 điểm - Xanh đậm
         ];
+
+        // Lấy mức độ tương ứng với score (giới hạn tối đa 5)
         const lv = levels[Math.min(score, 5)];
-        fill.style.width  = lv.pct;
-        fill.style.background = lv.color;
-        label.textContent = pwd.length ? lv.text : '';
-        label.style.color = lv.color;
+
+        // Cập nhật giao diện thanh strength meter
+        fill.style.width  = lv.pct;       // Chiều rộng thanh tô màu
+        fill.style.background = lv.color;  // Màu sắc thanh
+        label.textContent = pwd.length ? lv.text : '';  // Text mức độ (ẩn nếu chưa nhập gì)
+        label.style.color = lv.color;      // Màu text khớp với thanh
     }
 
-    // Client-side validation
+    /**
+     * ================================================================
+     * CLIENT-SIDE VALIDATION - Kiểm tra dữ liệu phía trình duyệt
+     * ================================================================
+     *
+     * Được kích hoạt khi user nhấn nút "Tạo tài khoản" (sự kiện submit).
+     *
+     * CÁC BƯỚC KIỂM TRA (theo thứ tự):
+     *
+     * BƯỚC 1: Kiểm tra trường bắt buộc
+     * - username, password, confirmPassword, fullName, phone đều không được trống.
+     * - Nếu bất kỳ trường nào trống → chặn submit, hiển thị alert.
+     *
+     * BƯỚC 2: Kiểm tra mật khẩu xác nhận
+     * - So sánh giá trị password và confirmPassword.
+     * - Nếu không khớp → chặn submit, hiển thị alert.
+     *
+     * BƯỚC 3: Kiểm tra checkbox điều khoản
+     * - Kiểm tra agreeTerms.checked (checkbox đã được tick chưa).
+     * - Nếu chưa tick → chặn submit, hiển thị alert.
+     *
+     * LƯU Ý QUAN TRỌNG:
+     * - Client-side validation có thể bị bypass (tắt JavaScript, dùng Postman...).
+     * - Server-side validation trong RegisterController.validateRegisterInput() sẽ
+     *   kiểm tra lại TẤT CẢ các điều kiện một cách nghiêm ngặt hơn.
+     * - Đây chỉ là lớp bảo vệ đầu tiên để cải thiện trải nghiệm người dùng.
+     */
     document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Lấy giá trị các trường, trim() loại bỏ khoảng trắng đầu/cuối
         const username = document.getElementById('username').value.trim();
         const pwd      = document.getElementById('password').value;
         const cfm      = document.getElementById('confirmPassword').value;
@@ -332,21 +518,28 @@
         const phone    = document.getElementById('phone').value.trim();
         const terms    = document.getElementById('agreeTerms').checked;
 
+        // Bước 1: Kiểm tra trường bắt buộc - nếu bất kỳ trường nào trống thì chặn submit
         if (!username || !pwd || !cfm || !fullName || !phone) {
-            e.preventDefault();
+            e.preventDefault();  // Chặn form gửi đi
             alert('Vui lòng điền đầy đủ các trường bắt buộc (*).');
-            return;
+            return;  // Dừng kiểm tra tiếp
         }
+
+        // Bước 2: Kiểm tra mật khẩu xác nhận có khớp với mật khẩu không
         if (pwd !== cfm) {
             e.preventDefault();
             alert('Mật khẩu xác nhận không khớp!');
             return;
         }
+
+        // Bước 3: Kiểm tra đã đồng ý điều khoản chưa
         if (!terms) {
             e.preventDefault();
             alert('Bạn phải đồng ý với Điều khoản sử dụng để tiếp tục.');
             return;
         }
+
+        // Nếu tất cả validation pass → form được submit bình thường → gửi POST đến server
     });
 </script>
 </body>
